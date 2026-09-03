@@ -1,0 +1,86 @@
+.custom-navbar {
+  background-color: #2C5C80;
+  position: relative;
+}
+
+.logo {
+  width: 150px;
+  height: auto;
+}
+
+.user-profile-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+  margin-left: auto;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  line-height: 1.2;
+}
+
+.user-name {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.user-role {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.user-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  flex-shrink: 0;
+}
+
+@media (max-width: 991.98px) {
+  .navbar-collapse {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #2C5C80;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+  }
+}
+
+@media (max-width: 400px) {
+  .custom-navbar .container-fluid {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .logo {
+    width: 100px;
+  }
+
+  .user-name {
+    font-size: 0.75rem;
+  }
+
+  .user-role {
+    font-size: 0.65rem;
+  }
+
+  .user-avatar {
+    width: 34px;
+    height: 34px;
+  }
+
+  .user-profile-toggle {
+    gap: 0.5rem;
+  }
+}

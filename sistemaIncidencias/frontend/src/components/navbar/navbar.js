@@ -8,7 +8,7 @@
   async function loadNavbar() {
     const placeholder = document.getElementById(PLACEHOLDER_ID);
     try {
-      const res = await fetch(NAVBAR_URL);
+     const res = await fetch(NAVBAR_URL, { cache: "no-store" });
 
       if (!res.ok) {
         throw new Error(`HTTP ${res.status} al pedir ${NAVBAR_URL}`);
