@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vite'
 
 export default defineConfig({
-  // configuraciones adicionales si las necesitas
-});
+  // Opciones de configuración aquí
+})
