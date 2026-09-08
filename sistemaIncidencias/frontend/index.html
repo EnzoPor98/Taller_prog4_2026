@@ -56,12 +56,41 @@
     <script>
       const form = document.getElementById("loginForm");
 
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        console.log("pepe");
-        window.location.href =
-          "/src/pages/directorSistemas/directorSistemas.html";
-      });
-    </script>
-  </body>
+<body>
+  <header>
+    <img src="./src/assets/logoMunicipalidad.png" alt="Logo Municipalidad" />
+  </header>
+  <main>
+    <article>
+      <h1>Bienvenido al Sistema de Incidencias</h1>
+      <p>
+        Este sistema permite gestionar y reportar incidencias de manera eficiente.
+      </p>
+    </article>
+    <form id ="loginForm" action="#" method="post">
+      <p>Para comenzar, por favor inicie sesión.</p>
+      <div>
+        <label for="username">Usuario</label>
+        <input type="text" id="username" name="username" required />
+      </div>
+      <div>
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" name="password" required />
+      </div>
+      <button type="submit">INICIAR SESIÓN</button>
+    </form>
+  </main>
+  <footer>
+    <h6>© 2024 Sistema de Incidencias. Todos los derechos reservados.</h6>
+  </footer>
+<script>
+  const form = document.getElementById("loginForm");
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    window.location.href = "/src/pages/empleadoSistemas/empleadoSistemas.html";
+  });
+</script>
+</body>
+
 </html>
