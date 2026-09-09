@@ -2,8 +2,9 @@
 const categorias = [
   { id: 1, descripcion: 'Hardware', activo: true },
   { id: 2, descripcion: 'Software', activo: true },
-  { id: 3, descripcion: 'Redes',    activo: false },
+  { id: 3, descripcion: 'Redes',    activo: true },
 ];
+
 
 // Referencias al DOM
 const tbody = document.getElementById('categorias-tbody');
@@ -74,6 +75,9 @@ function guardarCategoria(e) {
 // --- Render de la tabla ----------------------------------------------
 
 function renderTabla() {
+  // En cada iteracion refrescar lista(simular backend) para selector en articulos
+  localStorage.setItem("categorias", JSON.stringify(categorias));
+
   tbody.innerHTML = categorias.map((cat, idx) => `
     <tr>
       <th scope="row">${cat.id}</th>
