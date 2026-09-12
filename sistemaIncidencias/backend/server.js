@@ -23,7 +23,7 @@ app.use(
 
 
 // Ruta raíz de prueba
-app.get('/', (req, res) => {
+app.get('/healtcheck', (req, res) => {
   res.json({ mensaje: '¡El servidor está funcionando correctamente!' });
 });
 
