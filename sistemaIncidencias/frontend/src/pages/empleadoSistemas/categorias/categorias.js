@@ -1,9 +1,4 @@
-// Los datos de la tabla
-const categorias = [
-  { id: 1, descripcion: 'Hardware', activo: true },
-  { id: 2, descripcion: 'Software', activo: true },
-  { id: 3, descripcion: 'Redes',    activo: true },
-];
+const BACKEND_URL = 'http://localhost:3000/api/categories';
 
 
 // Referencias al DOM
@@ -22,49 +17,109 @@ function abrirModalCrear() {
 }
 
 // Abre el modal con los datos de la fila cargados, para editar
-function abrirModalEditar(idx) {
-  const cat = categorias[idx];
+async function abrirModalEditar(idx) {
+  let cat
+  try {
+    const response = await fetch(`http://localhost:3000/api/categories/${idx}`);
+
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+    cat = await response.json();
+    console.log("🚀 ~ renderTabla ~ cats:", cat);
+  } catch (error) {
+    console.error('Ocurrio un error al recuperar las categorias')
+  }
+
 
   document.getElementById('createModalTitle').textContent = 'Editar Categoria';
-  document.getElementById('descripcion').value       = cat.descripcion;
+  document.getElementById('descripcion').value = cat.descripcion;
   document.getElementById('flexCheckChecked').checked = cat.activo;
 
   modal.dataset.modo = 'editar';
-  modal.dataset.idx  = idx;
+  modal.dataset.idx = idx;
   new bootstrap.Modal(modal).show();
 }
 
 // --- Acciones de la tabla --------------------------------------------
 
-function eliminarCategoria(idx) {
-  const cat = categorias[idx];
-  if (!confirm(`¿Eliminar la categoría "${cat.descripcion}"?`)) return;
-  categorias.splice(idx, 1);
+async function eliminarCategoria(idx) {
+  if (!confirm(`¿Eliminar la categoría?`)) return;
+
+  try {
+    const respuesta = await fetch(`http://localhost:3000/api/categories/${idx}`, {
+      method: 'DELETE'
+    });
+
+    if (!respuesta.ok) {
+      throw new Error(`Error en la petición: ${respuesta.status}`);
+    }
+
+    const resultado = await respuesta.json();
+    
+    console.log('Categoría eliminada con éxito:', resultado);
+
+  } catch (error) {
+    console.error('Ocurrió un error al eliminar la categoría', error);
+  }
+
   renderTabla();
 }
 
 // Se llama cuando el usuario aprieta "Guardar" en el modal
-function guardarCategoria(e) {
+async function guardarCategoria(e) {
   e.preventDefault();
 
   const descripcion = document.getElementById('descripcion').value.trim();
-  const activo      = document.getElementById('flexCheckChecked').checked;
+  const activo = document.getElementById('flexCheckChecked').checked;
+  const id = document.getElementById('flexCheckChecked').checked;
+
 
   if (!descripcion) {
     alert('La descripción no puede estar vacía');
     return;
   }
 
+  const categoria = {
+    descripcion,
+    activo
+  };
   if (modal.dataset.modo === 'crear') {
-    categorias.push({
-      id: (categorias.at(-1)?.id ?? 0) + 1,
-      descripcion,
-      activo,
-    });
+
+    try {
+      const respuesta = await fetch('http://localhost:3000/api/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(categoria)
+      });
+
+      if (!respuesta.ok) {
+        throw new Error(`Error en la petición: ${respuesta.status}`);
+      }
+
+    } catch (error) {
+      console.error('Ocurrio un error al guardar la categoria')
+    }
+
+
   } else {
     const idx = Number(modal.dataset.idx);
-    categorias[idx].descripcion = descripcion;
-    categorias[idx].activo      = activo;
+
+    try {
+      const respuesta = await fetch(`http://localhost:3000/api/categories/${idx}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(categoria)
+      });
+
+      if (!respuesta.ok) {
+        throw new Error(`Error en la petición: ${respuesta.status}`);
+      }
+
+    } catch (error) {
+      console.error('Ocurrio un error al actualizar la categoria')
+
+    }
   }
 
   document.getElementById('categoria-form').reset();
@@ -74,9 +129,19 @@ function guardarCategoria(e) {
 
 // --- Render de la tabla ----------------------------------------------
 
-function renderTabla() {
-  // En cada iteracion refrescar lista(simular backend) para selector en articulos
-  localStorage.setItem("categorias", JSON.stringify(categorias));
+async function renderTabla() {
+  let categorias = [];
+  try {
+    const response = await fetch('http://localhost:3000/api/categories');
+
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+    categorias = await response.json();
+    console.log("🚀 ~ renderTabla ~ categorias:", categorias);
+  } catch (error) {
+    console.error('Ocurrio un error al recuperar las categorias')
+  }
 
   tbody.innerHTML = categorias.map((cat, idx) => `
     <tr>
@@ -84,8 +149,8 @@ function renderTabla() {
       <td>${cat.descripcion}</td>
       <td>
         ${cat.activo
-          ? '<span class="badge bg-success">Activa</span>'
-          : '<span class="badge bg-secondary">Inactiva</span>'}
+      ? '<span class="badge bg-success">Activa</span>'
+      : '<span class="badge bg-secondary">Inactiva</span>'}
       </td>
       <td>
         <button class="btn btn-sm btn-outline-primary" onclick="abrirModalEditar(${idx})">
@@ -106,7 +171,7 @@ tbody.addEventListener('click', (e) => {
   if (!el) return;
   const idx = Number(el.dataset.idx);
   if (el.dataset.action === 'eliminar') eliminarCategoria(idx);
-  if (el.dataset.action === 'editar')   abrirModalEditar(idx);
+  if (el.dataset.action === 'editar') abrirModalEditar(idx);
 });
 
 document.getElementById('categoria-form').addEventListener('submit', guardarCategoria);
@@ -115,6 +180,6 @@ document.getElementById('categoria-form').addEventListener('submit', guardarCate
 renderTabla();
 
 // Funciones que el HTML usa con onclick
-window.abrirModalCrear   = abrirModalCrear;
-window.abrirModalEditar  = abrirModalEditar;
+window.abrirModalCrear = abrirModalCrear;
+window.abrirModalEditar = abrirModalEditar;
 window.eliminarCategoria = eliminarCategoria;
