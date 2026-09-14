@@ -25,12 +25,16 @@ article{
     border: 1px solid black;
     border-radius: 25px;
     padding: 1rem;
+    margin-top: 1rem;
 }
 
 #incidencia{
     border-top: 1px black dashed;
     margin-top: 1rem;
     padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 form input{
@@ -54,11 +58,8 @@ form textarea{
 
 /* Tablet */
 @media (min-width: 451px) and (max-width: 768px) {
-    form{
-        margin: auto;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-        width: 500px;
+    main{
+        padding: 5rem;
     }
 
     form textarea{
@@ -69,11 +70,9 @@ form textarea{
 
 /* Desktop */
 @media (min-width: 769px){
-    form{
+    article{
         margin: auto;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-        width: 500px;
+        width: 800px;
     }
 
     form textarea{

@@ -13,6 +13,8 @@ body{
 
 main{
     flex: 1;
+    padding: 1rem;
+    text-align: center;
 }
 
 footer{
@@ -20,22 +22,18 @@ footer{
     padding: 1rem;
 }
 
-.cuadros{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    flex-wrap: wrap;
-    margin: 0.5rem;
+.incidencias{
+    border: 1px solid black;
+    border-radius: 25px;
+    padding: 1rem 1rem 0 1rem;
+    margin: auto;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
 }
 
-.cuadro{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #2C5C80;
-    border-radius: 15px;
-    padding: 1rem;
-    margin: 0.5rem;
+.alert{
+    width: 200px;
+    text-align: center;
 }
 
 .tabla{
@@ -44,4 +42,34 @@ footer{
 
 .table thead{
     text-align: center; 
+}
+
+/* Mobile */
+@media (max-width: 450px) {
+    .incidencias{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 300px;
+    }
+}
+
+/* Tablet */
+@media (min-width: 451px) and (max-width: 768px){
+    .contenedor-alertas{
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+/* Desktop */
+@media (min-width: 769px){
+    .incidencias{
+        width: 800px;
+    }
+
+    .contenedor-alertas{
+        display: flex;
+        justify-content: space-around;
+    }
 }
