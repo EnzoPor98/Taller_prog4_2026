@@ -33,35 +33,9 @@ article p {
     margin: 10px 0;
 }
 
-form{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    width: 300px;
-}
-form p{
-    margin: 10px 0;
-}
-
-form input{
-    margin: 10px 0;
-    padding: 5px;
-    width: 200px;
-    display: block;
-}
-
-form button{
-    width: 150px;
-    height: 50px;
-    margin: 10px 0;
-    background-color: #2C5C80;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 10px;
+/* El form usa los estilos de Bootstrap; aquí solo lo dejamos ocupar todo el ancho de la card */
+form {
+    width: 100%;
 }
 
 footer{
