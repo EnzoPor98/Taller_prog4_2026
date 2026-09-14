@@ -11,10 +11,6 @@ body{
     min-height: 100vh;
 }
 
-header{
-    /* NADA */
-}
-
 main{
     flex: 1;
 }
