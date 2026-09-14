@@ -26,34 +26,53 @@
     <main>
       <h1>Mis Incidencias</h1>
       <form class="d-flex" role="search">
-        <input
-          class="form-control me-2"
-          type="search"
-          placeholder="Search"
-          aria-label="Search"
-        />
-        <select class="form-select" aria-label="Default select example">
-          <option selected>Filtro</option>
-          <option value="1">ID</option>
-          <option value="2">Articulo</option>
-          <option value="3">Estado</option>
-          <option value="4">Fecha</option>
-          <option value="5">Prioridad</option>
-        </select>
-        <button class="btn btn-outline-success" type="submit">BUSCAR</button>
+        <h3>Filtros de busqueda</h3>
+        <div class="filtro-palabra">
+          <input
+            class="form-control me-2"
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+          />
+        </div>
+        <div
+          class="btn-group"
+          role="group"
+          aria-label="Button group with nested dropdown"
+        >
+          <button type="button" class="btn btn-primary">Articulo</button>
+          <button type="button" class="btn btn-primary">Fecha</button>
+
+          <div class="btn-group" role="group">
+            <button
+              type="button"
+              class="btn btn-primary dropdown-toggle"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Estados
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Pendientes</a></li>
+              <li><a class="dropdown-item" href="#">En Proceso</a></li>
+              <li><a class="dropdown-item" href="#">Finalizadas</a></li>
+            </ul>
+          </div>
+        </div>
       </form>
       <div class="table-responsive">
         <table class="table table-bordered table-striped">
-          <thead>
+          <thead class="table-info">
             <tr>
               <th scope="col">ID</th>
               <th scope="col">ARTICULO</th>
               <th scope="col">ESTADO</th>
-              <th scope="col">ASIGNADO A</th>
+              <th scope="col">ASIGNADO</th>
               <th scope="col">FECHA</th>
               <th scope="col">PRIORIDAD</th>
               <th scope="col">PEDIDO</th>
               <th scope="col">SOLUCION</th>
+              <th scope="col">CANCELAR</th>
             </tr>
           </thead>
           <tbody>

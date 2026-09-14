@@ -24,26 +24,54 @@
       <div id="navbar-placeholder"></div>
     </header>
     <main>
-      <h1>LISTA DE ARTICULOS</h1>
+      <h1>Lista de Articulos</h1>
       <form class="d-flex" role="search">
-        <input
-          class="form-control me-2"
-          type="search"
-          placeholder="Search"
-          aria-label="Search"
-        />
-        <select class="form-select" aria-label="Default select example">
-          <option selected>Filtro</option>
-          <option value="1">ID</option>
-          <option value="2">Area</option>
-          <option value="3">Categoria</option>
-          <option value="4">Descripcion</option>
-        </select>
-        <button class="btn btn-outline-success" type="submit">BUSCAR</button>
+        <h3>Filtros de busqueda</h3>
+        <div class="filtro-palabra">
+          <input
+            class="form-control me-2"
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+          />
+        </div>
+        <div
+          class="btn-group"
+          role="group"
+          aria-label="Button group with nested dropdown"
+        >
+          <button type="button" class="btn btn-primary">Descripcion</button>
+          <div class="btn-group" role="group">
+            <button
+              type="button"
+              class="btn btn-primary dropdown-toggle"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Area
+            </button>
+            <ul class="dropdown-menu">
+              <!-- AREAS -->
+            </ul>
+          </div>
+          <div class="btn-group" role="group">
+            <button
+              type="button"
+              class="btn btn-primary dropdown-toggle"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Categoria
+            </button>
+            <ul class="dropdown-menu">
+              <!-- CATEGORIAS -->
+            </ul>
+          </div>
+        </div>
       </form>
       <div class="table-responsive">
         <table class="table table-bordered table-striped">
-          <thead>
+          <thead class="table-info">
             <tr>
               <th scope="col">ID</th>
               <th scope="col">AREA</th>
