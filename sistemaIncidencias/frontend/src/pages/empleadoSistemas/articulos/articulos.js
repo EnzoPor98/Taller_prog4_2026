@@ -10,8 +10,25 @@ const areas = [
     { id: 8, descripcion: 'Sistemas / Informática', activo: true },
 ];
 
+function goToMenu() {
+    window.location.href = '../empleadoSistemas.html';
+}
 // Categorías desde localStorage (las que el módulo de categorías ya guardó)
-const categorias = JSON.parse(localStorage.getItem("categorias")) || [];
+async function getCategorias() {
+  let categorias = [];
+  try {
+    const response = await fetch('http://localhost:3000/api/categories');
+
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+    categorias = await response.json();
+  } catch (error) {
+    console.error('Ocurrio un error al recuperar las categorias')
+  }
+  return categorias;
+}
+const categorias = await getCategorias();
 
 // Datos persistidos de artículos en localStorage
 let articulos = JSON.parse(localStorage.getItem("articulos")) || [];
@@ -21,8 +38,20 @@ const tbody = document.getElementById('articulos-tbody');
 const modal = document.getElementById('createModal');
 
 // Funciones 
-function poblarSelectCategorias() {
+async function poblarSelectCategorias() {
     const select = document.getElementById('categoria');
+    let categorias = [];
+    try {
+        const response = await fetch('http://localhost:3000/api/categories');
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        categorias = await response.json();
+        console.log("🚀 ~ poblarSelectCategorias ~ categorias:", categorias)
+    } catch (error) {
+        console.error('Ocurrio un error al recuperar las categorias')
+    }
+
     // Dejamos solo la primera opción vacía
     select.innerHTML = '<option value="" disabled selected>Selecciona una categoría</option>';
     categorias.forEach(cat => {
@@ -57,17 +86,19 @@ function abrirModalCrear() {
     new bootstrap.Modal(modal).show();
 }
 
-function abrirModalEditar(idx) {
+async function abrirModalEditar(idx) {
     const art = articulos[idx];
+    console.log("🚀 ~ abrirModalEditar ~ art:", art)
     document.getElementById('createModalTitle').textContent = 'Editar Artículo';
 
-    poblarSelectCategorias();
+    // Esperamos a que los <select> se pueblen antes de setear los valores
+    await poblarSelectCategorias();
     poblarSelectAreas();
 
     // Cargamos los valores actuales del artículo
     document.getElementById('descripcion').value = art.descripcion;
-    document.getElementById('categoria').value = art.categoria.id;
-    document.getElementById('area').value = art.area.id;
+    document.getElementById('categoria').value  = art.categoria?.id;
+    document.getElementById('area').value        = art.area?.id;
     document.getElementById('flexCheckChecked').checked = art.activo;
 
     modal.dataset.modo = 'editar';
@@ -86,7 +117,7 @@ function eliminarArticulo(idx) {
 }
 
 // Se llama cuando el usuario aprieta "Guardar" en el modal
-function guardarArticulo(e) {
+async function guardarArticulo(e) {
     e.preventDefault();
 
     const descripcion = document.getElementById('descripcion').value.trim();
@@ -103,13 +134,10 @@ function guardarArticulo(e) {
         return;
     }
 
-    const catObj = categorias.find(c => c.id == categoriaId);
+    // Guardamos el objeto entero (categoría y área) para que la tabla
+    // pueda mostrar la descripción sin tener que volver a buscarla
+    const catObj  = categorias.find(c => c.id == categoriaId);
     const areaObj = areas.find(a => a.id == areaId);
-
-    if (!catObj || !areaObj) {
-        alert('Selección inválida');
-        return;
-    }
 
     if (modal.dataset.modo === 'crear') {
         articulos.push({
@@ -122,9 +150,9 @@ function guardarArticulo(e) {
     } else {
         const idx = Number(modal.dataset.idx);
         articulos[idx].descripcion = descripcion;
-        articulos[idx].categoria = catObj;
-        articulos[idx].area = areaObj;
-        articulos[idx].activo = activo;
+        articulos[idx].categoria   = catObj;
+        articulos[idx].area        = areaObj;
+        articulos[idx].activo       = activo;
     }
 
     document.getElementById('articulo-form').reset();
@@ -135,31 +163,45 @@ function guardarArticulo(e) {
 // ----------------------------------------------------
 // Render de la tabla
 // ----------------------------------------------------
-function renderTabla() {
-    // Set LS
+async function renderTabla() {
     localStorage.setItem("articulos", JSON.stringify(articulos));
+    if (articulos.length == 0) {
+        tbody.innerHTML = '';
+        return;
+    }
 
-    tbody.innerHTML = articulos.map((art, idx) => `
-    <tr>
-      <th scope="row">${art.id}</th>
-      <td>${art.area.descripcion}</td>
-      <td>${art.categoria.descripcion}</td>
-      <td>${art.descripcion}</td>
-      <td>
-        ${art.activo
-            ? '<span class="badge bg-success">Activa</span>'
-            : '<span class="badge bg-secondary">Inactiva</span>'}
-      </td>
-      <td>
-        <button class="btn btn-sm btn-outline-primary" data-action="editar" data-idx="${idx}">
-          <i class="fa fa-edit"></i>
-        </button>
-        <button class="btn btn-sm btn-outline-danger" data-action="eliminar" data-idx="${idx}">
-          <i class="fa fa-trash"></i>
-        </button>
-      </td>
-    </tr>
-  `).join('');
+    // Si las categorías todavía no llegaron, no las podemos mostrar
+    if (categorias.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Cargando categorías…</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = articulos.map((art, idx) => {
+        // Soporta ambas formas: objeto entero (nuevo) o solo id (viejo)
+        const cat  = art.categoria?.descripcion ?? categorias.find(c => c.id === art.categoriaId)?.descripcion ?? '—';
+        const area = art.area?.descripcion      ?? areas.find(a => a.id === art.areaId)?.descripcion      ?? '—';
+        return `
+        <tr>
+          <th scope="row">${art.id}</th>
+          <td>${area}</td>
+          <td>${cat}</td>
+          <td>${art.descripcion}</td>
+          <td>
+            ${art.activo
+                ? '<span class="badge bg-success">Activa</span>'
+                : '<span class="badge bg-secondary">Inactiva</span>'}
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-primary" data-action="editar" data-idx="${idx}">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger" data-action="eliminar" data-idx="${idx}">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
 }
 
 // Click de las filas
@@ -178,6 +220,6 @@ window.abrirModalCrear = abrirModalCrear;
 window.abrirModalEditar = abrirModalEditar;
 window.eliminarArticulo = eliminarArticulo;
 window.guardarArticulo = guardarArticulo;
-
+window.goToMenu = goToMenu;
 
 renderTabla();

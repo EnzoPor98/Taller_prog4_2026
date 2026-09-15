@@ -13,12 +13,28 @@
 <body>
     <div id="navbar-placeholder"></div>
     <div class="container mt-4">
-        <h1>Categorias</h1>
+        <div class="row">
+            <div class="col m-2 d-flex justify-content-start">
+                <button type="button" class="btn btn-primary" onclick="goToMenu()">
+                    Volver
+                </button>
+            </div>
+            <div class="col d-flex justify-content-center align-items-center">
+                <h1>Categorias</h1>
+            </div>
+            <div class="col m-2 d-flex justify-content-end">
+                <button type="button" class="btn btn-primary" onclick="abrirModalCrear()">
+                    Crear Categoria
+                </button>
+            </div>
+        </div>
+
+
+
+
         <div class="alert alert-primary" role="alert">
             Lista de categorias del catálogo. Aquí puedes dar de alta, baja y modificar las categorías.
-            <button type="button" class="btn btn-primary" onclick="abrirModalCrear()">
-                Crear Categoria
-            </button>
+
         </div>
         <!-- Tabla de datos -->
         <table class="table table-striped">
@@ -31,14 +47,13 @@
                 </tr>
             </thead>
             <tbody id="categorias-tbody">
-               
+
             </tbody>
         </table>
     </div>
     </div>
     <!-- Modal De registro-->
-    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalTitle"
-        aria-hidden="true">
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -49,7 +64,8 @@
                     <form id="categoria-form" action="#" method="post">
                         <div class="mb-3">
                             <label for="descripcion" class="form-label">Descripcion</label>
-                            <input type="text" class="form-control" id="descripcion" placeholder="Ingrese la descripción">
+                            <input type="text" class="form-control" id="descripcion"
+                                placeholder="Ingrese la descripción">
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>

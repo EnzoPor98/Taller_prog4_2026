@@ -5,7 +5,9 @@ const BACKEND_URL = 'http://localhost:3000/api/categories';
 const tbody = document.getElementById('categorias-tbody');
 const modal = document.getElementById('createModal');
 
-// --- Modal -----------------------------------------------------------
+function goToMenu() {
+  window.location.href = '/src/pages/empleadoSistemas/empleadoSistemas.html';
+}
 
 // Abre el modal vacío para crear una categoría nueva
 function abrirModalCrear() {
@@ -138,7 +140,6 @@ async function renderTabla() {
       throw new Error(`Error HTTP: ${response.status}`);
     }
     categorias = await response.json();
-    console.log("🚀 ~ renderTabla ~ categorias:", categorias);
   } catch (error) {
     console.error('Ocurrio un error al recuperar las categorias')
   }
@@ -183,3 +184,4 @@ renderTabla();
 window.abrirModalCrear = abrirModalCrear;
 window.abrirModalEditar = abrirModalEditar;
 window.eliminarCategoria = eliminarCategoria;
+window.goToMenu = goToMenu;
