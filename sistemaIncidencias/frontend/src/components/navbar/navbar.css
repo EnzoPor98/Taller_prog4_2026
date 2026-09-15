@@ -4,9 +4,8 @@
 }
 
 .logo {
-  width: 150px;
-  height: auto;
-}
+    width: 200px;
+  }
 
 .user-profile-toggle {
   display: flex;
@@ -64,7 +63,7 @@
   }
 
   .logo {
-    width: 100px;
+    width: 200px;
   }
 
   .user-name {

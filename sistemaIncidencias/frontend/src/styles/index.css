@@ -4,68 +4,115 @@
 }
 
 body{
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-}
-
-main{
-    flex: 1;
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    min-height: 100vh;
 }
 
 header{
-    background-color: #2C5C80;
+    width: 100vw;
     text-align: center;
 }
 
-article h1 {
-    text-align: center;
-    margin: 10px 0;
-}
-
-article p {
-    text-align: center;
-    margin: 10px 0;
-}
-
-form{
+main{
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    padding: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    width: 300px;
-}
-form p{
-    margin: 10px 0;
-}
-
-form input{
-    margin: 10px 0;
-    padding: 5px;
-    width: 200px;
-    display: block;
-}
-
-form button{
-    width: 150px;
-    height: 50px;
-    margin: 10px 0;
-    background-color: #2C5C80;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 10px;
+    flex-grow: 1;
 }
 
 footer{
+    width: 100vw;
     background-color: #2C5C80;
+    padding: 1rem;
+}
+
+.titulo{
     text-align: center;
-    padding: 10px 0;
+    margin-bottom: 3rem;
+}
+
+/* Mobile */
+@media (max-width: 450px) {
+    p{
+        font-size: 0.9rem;
+        text-align: center;
+    }
+
+    #loginForm{
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+        padding: 2rem 1rem;
+        border: 1px solid black;
+        border-radius: 5px;
+    }
+
+    #loginButton{
+        background-color: #2C5C80;
+        font-weight: bold;
+        color: white;
+        border: none;
+        padding: 1rem;
+        width: 12rem;
+        margin: 0 auto;
+    }
+}
+
+/* Tablet */
+@media (min-width: 451px) and (max-width: 768px){
+    p{
+        font-size: 0.9rem;
+        text-align: center;
+    }
+
+    #loginForm{
+        display: flex;
+        flex-direction: column;
+        width: 400px;
+        padding: 3rem 2rem;
+        border: 1px solid black;
+        border-radius: 5px;
+    }
+
+    #loginButton{
+        background-color: #2C5C80;
+        font-weight: bold;
+        color: white;
+        border: none;
+        padding: 1rem;
+        width: 15rem;
+        margin: 0 auto;
+    }
+}
+
+/* Desktop */
+@media (min-width: 769px){
+    p{
+        font-size: 1rem;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    #loginForm{
+        display: flex;
+        flex-direction: column;
+        width: 450px;
+        padding: 2rem;
+        border: 1px solid black;
+        border-radius: 5px;
+    }
+
+    #loginButton{
+        background-color: #2C5C80;
+        font-weight: bold;
+        color: white;
+        border: none;
+        padding: 1rem;
+        width: 15rem;
+        margin: 0 auto;
+    }
 }
