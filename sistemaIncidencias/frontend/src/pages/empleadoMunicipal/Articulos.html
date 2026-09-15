@@ -18,6 +18,8 @@
       rel="stylesheet"
       href="../../styles/empleadoMunicipal/Articulos.css"
     />
+    <!-- SCRIPTS -->
+    <script src="Articulos.js" defer></script>
   </head>
   <body>
     <header>
@@ -25,52 +27,54 @@
     </header>
     <main>
       <h1>Lista de Articulos</h1>
-      <form class="d-flex" role="search">
-        <h3>Filtros de busqueda</h3>
-        <div class="filtro-palabra">
-          <input
-            class="form-control me-2"
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-          />
-        </div>
-        <div
-          class="btn-group"
-          role="group"
-          aria-label="Button group with nested dropdown"
-        >
-          <button type="button" class="btn btn-primary">Descripcion</button>
-          <div class="btn-group" role="group">
-            <button
-              type="button"
-              class="btn btn-primary dropdown-toggle"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Area
-            </button>
-            <ul class="dropdown-menu">
-              <!-- AREAS -->
-            </ul>
+      <article class="container-fluid">
+        <form class="d-flex" role="search">
+          <h3>Filtros de busqueda</h3>
+          <div class="filtro-palabra">
+            <input
+              class="form-control me-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+            />
           </div>
-          <div class="btn-group" role="group">
-            <button
-              type="button"
-              class="btn btn-primary dropdown-toggle"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Categoria
-            </button>
-            <ul class="dropdown-menu">
-              <!-- CATEGORIAS -->
-            </ul>
+          <div
+            class="btn-group"
+            role="group"
+            aria-label="Button group with nested dropdown"
+          >
+            <button type="button" class="btn btn-primary">Descripcion</button>
+            <div class="btn-group" role="group">
+              <button
+                type="button"
+                class="btn btn-primary dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Area
+              </button>
+              <ul class="dropdown-menu">
+                <!-- AREAS -->
+              </ul>
+            </div>
+            <div class="btn-group" role="group">
+              <button
+                type="button"
+                class="btn btn-primary dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Categoria
+              </button>
+              <ul class="dropdown-menu">
+                <!-- CATEGORIAS -->
+              </ul>
+            </div>
           </div>
-        </div>
-      </form>
-      <div class="table-responsive">
-        <table class="table table-bordered table-striped">
+        </form>
+      </article>
+      <article class="table-responsive">
+        <table class="table table-striped table-bordered">
           <thead class="table-info">
             <tr>
               <th scope="col">ID</th>
@@ -80,11 +84,11 @@
               <th scope="col">ACTIVO</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="bodyTable">
             <!-- CONTENIDO -->
           </tbody>
         </table>
-      </div>
+      </article>
     </main>
     <footer></footer>
   </body>

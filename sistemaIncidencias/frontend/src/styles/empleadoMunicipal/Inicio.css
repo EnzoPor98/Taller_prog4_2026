@@ -45,7 +45,7 @@ footer{
 }
 
 /* Mobile */
-@media (max-width: 450px) {
+@media (max-width: 465px) {
     .incidencias{
         display: flex;
         flex-direction: column;
@@ -55,17 +55,19 @@ footer{
 }
 
 /* Tablet */
-@media (min-width: 451px) and (max-width: 768px){
+@media (min-width: 466px) and (max-width: 768px){
     .contenedor-alertas{
         display: flex;
-        justify-content: space-between;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        align-items: center;
     }
 }
 
 /* Desktop */
 @media (min-width: 769px){
     .incidencias{
-        width: 800px;
+        width: 750px;
     }
 
     .contenedor-alertas{
