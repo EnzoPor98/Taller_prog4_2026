@@ -14,12 +14,9 @@
     <link rel="stylesheet" href="/src/components/navbar/navbar.css" />
     <script src="/src/components/navbar/navbar.js" defer></script>
     <!-- ESTILOS -->
-    <link
-      rel="stylesheet"
-      href="../../styles/empleadoMunicipal/Inicio.css"
-    />
+    <link rel="stylesheet" href="../../styles/empleadoMunicipal/Inicio.css" />
     <!-- SCRIPTS -->
-     <script src="Incidencias.js" defer></script>
+    <script src="Incidencias.js" defer></script>
   </head>
   <body>
     <header>
@@ -67,27 +64,25 @@
           <div class="alert alert-success" role="alert">0000 FINALIZADAS</div>
         </div>
       </article>
-      <article class="tabla">
+      <article class="table-responsive">
         <h2>Ultimas Incidencias</h2>
-        <div class="table-responsive">
-          <table class="table table-bordered table-striped">
-            <thead class="table-info">
-              <tr>
-                <th scope="col">ID</th>
-                <th scope="col">ARTICULO</th>
-                <th scope="col">ESTADO</th>
-                <th scope="col">ASIGNADO</th>
-                <th scope="col">FECHA</th>
-                <th scope="col">PRIORIDAD</th>
-                <th scope="col">PEDIDO</th>
-                <th scope="col">SOLUCION</th>
-              </tr>
-            </thead>
-            <tbody id="bodyTable">
-              <!-- CONTENIDO -->
-            </tbody>
-          </table>
-        </div>
+        <table class="table table-bordered table-striped">
+          <thead class="table-info">
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">ARTICULO</th>
+              <th scope="col">ESTADO</th>
+              <th scope="col">ASIGNADO</th>
+              <th scope="col">FECHA</th>
+              <th scope="col">PRIORIDAD</th>
+              <th scope="col">PEDIDO</th>
+              <th scope="col">SOLUCION</th>
+            </tr>
+          </thead>
+          <tbody id="bodyTable">
+            <!-- CONTENIDO -->
+          </tbody>
+        </table>
       </article>
     </main>
     <footer></footer>
