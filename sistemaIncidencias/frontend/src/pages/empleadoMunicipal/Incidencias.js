@@ -86,10 +86,23 @@ function cargarTabla(incidencias) {
 
     const fila = document.createElement("tr");
 
+    let contador = 0;
     for (let atr of atributos_inc) {
       const columna = document.createElement("td");
       columna.textContent = atr;
       fila.appendChild(columna);
+
+      contador += 1;
+      if(contador == atributos_inc.length){
+        const columnaAcciones = document.createElement("td");
+
+        const boton = document.createElement('button');
+        boton.textContent = "CANCELAR";
+        boton.className = "btn btn-danger";
+
+        columnaAcciones.appendChild(boton);
+        fila.appendChild(columnaAcciones);
+      }
     }
 
     tbody.appendChild(fila);

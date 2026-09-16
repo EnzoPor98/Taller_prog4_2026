@@ -19,7 +19,7 @@
       href="../../styles/empleadoMunicipal/Incidencias.css"
     />
     <!-- SCRIPTS -->
-     <script src="Incidencias.js" defer></script>
+    <script src="Incidencias.js" defer></script>
   </head>
   <body>
     <header>
@@ -27,42 +27,105 @@
     </header>
     <main>
       <h1>Mis Incidencias</h1>
-      <form class="d-flex" role="search">
-        <h3>Filtros de busqueda</h3>
-        <div class="filtro-palabra">
-          <input
-            class="form-control me-2"
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-          />
-        </div>
-        <div
-          class="btn-group"
-          role="group"
-          aria-label="Button group with nested dropdown"
-        >
-          <button type="button" class="btn btn-primary">Articulo</button>
-          <button type="button" class="btn btn-primary">Fecha</button>
+      <article>
+        <form class="d-flex" role="search">
+          <h3>Filtros de busqueda</h3>
+          <div class="filtro-palabra">
+            <input
+              class="form-control me-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+            />
+          </div>
+          <div
+            class="btn-group"
+            role="group"
+            aria-label="Button group with nested dropdown"
+          >
+            <button type="button" class="btn btn-primary">Articulo</button>
+            <button type="button" class="btn btn-primary">Fecha</button>
 
-          <div class="btn-group" role="group">
-            <button
-              type="button"
-              class="btn btn-primary dropdown-toggle"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Estados
-            </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Pendientes</a></li>
-              <li><a class="dropdown-item" href="#">En Proceso</a></li>
-              <li><a class="dropdown-item" href="#">Finalizadas</a></li>
-            </ul>
+            <div class="btn-group" role="group">
+              <button
+                type="button"
+                class="btn btn-primary dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Estados
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Pendientes</a></li>
+                <li><a class="dropdown-item" href="#">En Proceso</a></li>
+                <li><a class="dropdown-item" href="#">Finalizadas</a></li>
+              </ul>
+            </div>
+          </div>
+        </form>
+      </article>
+      <article>
+        <!-- Button trigger modal -->
+        <button
+          type="button"
+          class="btn btn-danger"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal"
+        >
+          CREAR NUEVA INCIDENCIA
+        </button>
+
+        <!-- Modal -->
+        <div
+          class="modal fade"
+          id="exampleModal"
+          tabindex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div
+            class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+          >
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">
+                  Formulario de Incidencia
+                </h1>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <div class="contenedor-buscar">
+                  <label>ID del articulo</label>
+                  <input type="number" />
+                  <button type="button" class="btn btn-primary">Buscar</button>
+                </div>
+                <div class="alert alert-primary" role="alert">
+                  Articulo encontrado.
+                </div>
+                <div class="contenedor-textarea">
+                  <label>Descripcion del pedido:</label>
+                  <textarea
+                    maxlength="250"
+                    placeholder="Escribe hasta 200 caracteres"
+                    disabled
+                  ></textarea>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-success" disabled>
+                  Reportar Incidencia
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </form>
-      <div class="table-responsive">
+      </article>
+      <article class="table-responsive">
         <table class="table table-bordered table-striped">
           <thead class="table-info">
             <tr>
@@ -74,14 +137,14 @@
               <th scope="col">PRIORIDAD</th>
               <th scope="col">PEDIDO</th>
               <th scope="col">SOLUCION</th>
-              <th scope="col">CANCELAR</th>
+              <th scope="col">ACCION</th>
             </tr>
           </thead>
           <tbody id="bodyTable">
             <!-- CONTENIDO -->
           </tbody>
         </table>
-      </div>
+      </article>
     </main>
     <footer></footer>
   </body>
