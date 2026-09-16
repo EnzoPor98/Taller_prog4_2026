@@ -20,6 +20,7 @@ app.use(
     return `${timestamp} [TFI-PROG-4] ${method} ${endpoint} ${status} ${responseTime} ms`;
   })
 );
+app.use(express.static('public'));
 
 
 // Ruta raíz de prueba
