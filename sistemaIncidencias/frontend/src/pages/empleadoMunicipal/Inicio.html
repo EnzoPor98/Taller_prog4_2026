@@ -16,56 +16,31 @@
     <!-- ESTILOS -->
     <link rel="stylesheet" href="../../styles/empleadoMunicipal/Inicio.css" />
     <!-- SCRIPTS -->
-    <script src="Incidencias.js" defer></script>
+    <script src="Inicio.js" defer></script>
   </head>
   <body>
     <header>
-      <nav class="navbar navbar-expand-lg custom-navbar" data-bs-theme="dark">
-        <div class="container-fluid">
-          <img
-            class="logo"
-            src="/src/assets/logoMunicipalidad.png"
-            alt="Logo Municipalidad"
-          />
-          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-              <a class="nav-link" href="#">INICIO</a>
-              <a class="nav-link" href="#">ARTICULOS</a>
-              <a class="nav-link" href="#">INCIDENCIAS</a>
-            </div>
-          </div>
-          <!-- Perfil de usuario: reemplaza al navbar-toggler de Bootstrap -->
-          <div
-            class="user-profile-toggle"
-            role="button"
-            tabindex="0"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNavAltMarkup"
-            aria-controls="navbarNavAltMarkup"
-            aria-expanded="false"
-            aria-label="Abrir menú / perfil"
-          >
-            <div class="user-info">
-              <span class="user-name">Nombre Apellido</span>
-              <span class="user-role">Rol del usuario</span>
-            </div>
-            <div class="user-avatar"></div>
-          </div>
-        </div>
-      </nav>
+      <div id="navbar-placeholder"></div>
     </header>
     <main>
-      <h1>BIENVENIDO, USUARIO</h1>
+      <h1>¡Bienvenido, {USUARIO}!</h1>
       <article class="incidencias">
         <h3>Panel de Incidencias</h3>
         <div class="contenedor-alertas">
-          <div class="alert alert-primary" role="alert">0000 PENDIENTES</div>
-          <div class="alert alert-warning" role="alert">0000 EN PROCESO</div>
-          <div class="alert alert-success" role="alert">0000 FINALIZADAS</div>
+          <div
+            id="cuadro_pendientes"
+            class="alert alert-primary"
+            role="alert"
+          ></div>
+          <div
+            id="cuadro_en_proceso"
+            class="alert alert-warning"
+            role="alert"
+          ></div>
         </div>
       </article>
       <article class="table-responsive">
-        <h2>Ultimas Incidencias</h2>
+        <h2>Mis Ultimas Incidencias</h2>
         <table class="table table-bordered table-striped">
           <thead class="table-info">
             <tr>

@@ -1,25 +1,25 @@
-const usuario = {
-  id_usuario: 123,
-  id_area: 1,
-  nombres: "Nombre_1 Nombre_2",
-  apellidos: "Apellido_1 Apellido_2",
-  usuario: "Correo@mail.com",
-  contrasenia: "NomApe",
-  avatar: "",
-  rol: 3,
-  activo: 1,
-};
-
 document.addEventListener("DOMContentLoaded", () => {
-    cargarDatos(usuario);
+  cargarFormulario();
 });
 
-function cargarDatos(usuario){
-    document.getElementById('identificador').value = usuario.id_usuario;
-    document.getElementById('area').value = usuario.id_area;
-    document.getElementById('nombres').value = usuario.nombres;
-    document.getElementById('apellidos').value = usuario.apellidos;
-    document.getElementById('usuario').value = usuario.usuario;
-    // document.getElementById('avatar').value = usuario.avatar;
-    document.getElementById('rol').value = usuario.rol;
+async function cargarFormulario() {
+  try {
+    const respuesta = await fetch(
+      "http://localhost:3000/src/pages/empleadoMunicipal/Perfil",
+    );
+
+    const { usuario } = await respuesta.json();
+
+    for (let usu of usuario) {
+      document.getElementById("identificador").value = usu.id_usuario;
+      document.getElementById("area").value = usu.id_area;
+      document.getElementById("nombres").value = usu.nombres;
+      document.getElementById("apellidos").value = usu.apellidos;
+      document.getElementById("usuario").value = usu.usuario;
+      // document.getElementById('avatar').value = usu.avatar;
+      document.getElementById("rol").value = usu.rol;
+    }
+  } catch (error) {
+    console.error("Error al conectar con el backend:", error);
+  }
 }
