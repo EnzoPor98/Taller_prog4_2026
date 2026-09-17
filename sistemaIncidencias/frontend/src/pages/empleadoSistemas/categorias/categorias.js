@@ -22,21 +22,19 @@ function abrirModalCrear() {
 async function abrirModalEditar(idx) {
   let cat
   try {
-    const response = await fetch(`http://localhost:3000/api/categories/${idx}`);
+    const response = await fetch(`${BACKEND_URL}/${idx}`);
 
     if (!response.ok) {
       throw new Error(`Error HTTP: ${response.status}`);
     }
     cat = await response.json();
-    console.log("🚀 ~ renderTabla ~ cats:", cat);
   } catch (error) {
     console.error('Ocurrio un error al recuperar las categorias')
   }
 
-
   document.getElementById('createModalTitle').textContent = 'Editar Categoria';
-  document.getElementById('descripcion').value = cat.descripcion;
-  document.getElementById('flexCheckChecked').checked = cat.activo;
+  document.getElementById('descripcion').value = cat[0].descripcion;
+  document.getElementById('flexCheckChecked').checked = cat[0].activo;
 
   modal.dataset.modo = 'editar';
   modal.dataset.idx = idx;
@@ -45,11 +43,11 @@ async function abrirModalEditar(idx) {
 
 // --- Acciones de la tabla --------------------------------------------
 
-async function eliminarCategoria(idx) {
-  if (!confirm(`¿Eliminar la categoría?`)) return;
+async function eliminarCategoria(categoriaId) {
 
+  if (!confirm(`¿Eliminar la categoría?`)) return;
   try {
-    const respuesta = await fetch(`http://localhost:3000/api/categories/${idx}`, {
+    const respuesta = await fetch(`${BACKEND_URL}/${categoriaId}`, {
       method: 'DELETE'
     });
 
@@ -58,8 +56,8 @@ async function eliminarCategoria(idx) {
     }
 
     const resultado = await respuesta.json();
-    
-    console.log('Categoría eliminada con éxito:', resultado);
+
+    alert('Categoría eliminada con éxito');
 
   } catch (error) {
     console.error('Ocurrió un error al eliminar la categoría', error);
@@ -89,7 +87,7 @@ async function guardarCategoria(e) {
   if (modal.dataset.modo === 'crear') {
 
     try {
-      const respuesta = await fetch('http://localhost:3000/api/categories', {
+      const respuesta = await fetch(`${BACKEND_URL}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(categoria)
@@ -98,9 +96,11 @@ async function guardarCategoria(e) {
       if (!respuesta.ok) {
         throw new Error(`Error en la petición: ${respuesta.status}`);
       }
+      alert('Categoria creada correctamente')
 
     } catch (error) {
-      console.error('Ocurrio un error al guardar la categoria')
+      alert
+      ('Ocurrio un error al guardar la categoria')
     }
 
 
@@ -108,7 +108,7 @@ async function guardarCategoria(e) {
     const idx = Number(modal.dataset.idx);
 
     try {
-      const respuesta = await fetch(`http://localhost:3000/api/categories/${idx}`, {
+      const respuesta = await fetch(`${BACKEND_URL}/${idx}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(categoria)
@@ -117,9 +117,10 @@ async function guardarCategoria(e) {
       if (!respuesta.ok) {
         throw new Error(`Error en la petición: ${respuesta.status}`);
       }
+      alert('Categoria actualizada correctamente')
 
     } catch (error) {
-      console.error('Ocurrio un error al actualizar la categoria')
+      alert('Ocurrio un error al actualizar la categoria')
 
     }
   }
@@ -134,7 +135,7 @@ async function guardarCategoria(e) {
 async function renderTabla() {
   let categorias = [];
   try {
-    const response = await fetch('http://localhost:3000/api/categories');
+    const response = await fetch(`${BACKEND_URL}`);
 
     if (!response.ok) {
       throw new Error(`Error HTTP: ${response.status}`);
@@ -144,25 +145,27 @@ async function renderTabla() {
     console.error('Ocurrio un error al recuperar las categorias')
   }
 
-  tbody.innerHTML = categorias.map((cat, idx) => `
+  tbody.innerHTML = categorias.map((cat) => {
+    return `
     <tr>
-      <th scope="row">${cat.id}</th>
+      <th scope="row">${cat.id_categoria}</th>
       <td>${cat.descripcion}</td>
       <td>
         ${cat.activo
-      ? '<span class="badge bg-success">Activa</span>'
-      : '<span class="badge bg-secondary">Inactiva</span>'}
+        ? '<span class="badge bg-success">Activa</span>'
+        : '<span class="badge bg-secondary">Inactiva</span>'}
       </td>
       <td>
-        <button class="btn btn-sm btn-outline-primary" onclick="abrirModalEditar(${idx})">
+        <button class="btn btn-sm btn-outline-primary" onclick="abrirModalEditar(${cat.id_categoria})">
           <i class="fa fa-edit"></i>
         </button>
-        <button class="btn btn-sm btn-outline-danger" onclick="eliminarCategoria(${idx})">
+        <button class="btn btn-sm btn-outline-danger" onclick="eliminarCategoria(${cat.id_categoria})">
           <i class="fa fa-trash"></i>
         </button>
       </td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
 }
 
 // --- Eventos ---------------------------------------------------------
