@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import apiRouter from './src/routes/index.js';
 import morgan from 'morgan';
-
+import pool from './config/db.js';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -36,7 +36,16 @@ app.use((req, res) => {
   res.status(404).json({ error: `Cannot GET ${req.originalUrl}` });
 });
 
-// Iniciar el servidor
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+try {
+
+  await pool.query('SELECT 1'); //Si responde esta conectado
+  console.log('Conexión exitosa a la base de datos ✅ ');
+
+  app.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  });
+} catch (error) {
+  console.error('❌ Error al conectar con la base de datos');
+  console.error(error.message);
+  process.exit(1);
+}
