@@ -1,0 +1,5 @@
+Levantar pgWeb
+
+docker run --network=host \
+  -e PGWEB_DATABASE_URL="postgres://root:rootpassword@localhost:5432/incidencias_db" \
+  sosedoff/pgweb
