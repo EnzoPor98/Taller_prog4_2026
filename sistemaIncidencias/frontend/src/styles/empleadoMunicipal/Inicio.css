@@ -56,6 +56,9 @@ footer{
 
 /* Tablet */
 @media (min-width: 466px) and (max-width: 768px){
+    .incidencias{
+        width: 450px;
+    }
     .contenedor-alertas{
         display: flex;
         flex-wrap: wrap;

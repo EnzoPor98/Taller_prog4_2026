@@ -1,0 +1,71 @@
+<!-- Button trigger modal -->
+<button
+  type="button"
+  class="btn btn-danger"
+  data-bs-toggle="modal"
+  data-bs-target="#exampleModal"
+>
+  CREAR NUEVA INCIDENCIA
+</button>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">
+          Formulario de Incidencia
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="container text-center">
+          <div class="row div-buscador">
+            <div class="col">
+              <span>ID del Articulo</span>
+            </div>
+            <div class="col">
+              <input id="articuloInput" class="form-control" type="number" />
+            </div>
+            <div class="col">
+              <button id="buscarArticulo" class="btn btn-primary" type="button">
+                Buscar
+              </button>
+            </div>
+          </div>
+          <div class="row" id="div-articulo" hidden>
+            <!-- DATOS DEL ARTICULO A REPORTAR -->
+          </div>
+          <div class="row div-pedido">
+            <div class="col">
+              <span>Descripcion del pedido</span>
+              <textarea
+                id="pedidoInput"
+                class="form-control"
+                maxlength="250"
+                placeholder="Escribe hasta 200 caracteres"
+                disabled
+              ></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" disabled>
+            Continuar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

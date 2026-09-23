@@ -18,8 +18,10 @@
       rel="stylesheet"
       href="../../styles/empleadoMunicipal/Incidencias.css"
     />
+    <link rel="stylesheet" href="../../components/nueva_incidencia/NuevaIncidencia.css">
     <!-- SCRIPTS -->
     <script src="Incidencias.js" defer></script>
+    <script src="../../components/nueva_incidencia/NuevaIncidencia.js" defer></script>
   </head>
   <body>
     <header>
@@ -64,68 +66,8 @@
           </div>
         </form>
       </article>
-      <article>
-        <!-- Button trigger modal -->
-        <button
-          type="button"
-          class="btn btn-danger"
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
-        >
-          CREAR NUEVA INCIDENCIA
-        </button>
-
-        <!-- Modal -->
-        <div
-          class="modal fade"
-          id="exampleModal"
-          tabindex="-1"
-          aria-labelledby="exampleModalLabel"
-          aria-hidden="true"
-        >
-          <div
-            class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
-          >
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">
-                  Formulario de Incidencia
-                </h1>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div class="modal-body">
-                <div class="contenedor-buscar">
-                  <label>ID del articulo</label>
-                  <input type="number" />
-                  <button type="button" class="btn btn-primary">Buscar</button>
-                </div>
-                <div class="alert alert-primary" role="alert">
-                  Articulo encontrado.
-                </div>
-                <div class="contenedor-textarea">
-                  <label>Descripcion del pedido:</label>
-                  <textarea
-                    maxlength="250"
-                    placeholder="Escribe hasta 200 caracteres"
-                    disabled
-                  ></textarea>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-success" disabled>
-                  Reportar Incidencia
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
       <article class="table-responsive">
+        <div id="formulario-placeholder"></div>
         <table class="table table-bordered table-striped">
           <thead class="table-info">
             <tr>
