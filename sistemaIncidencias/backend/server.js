@@ -2,7 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import apiRouter from './src/routes/index.js';
 import morgan from 'morgan';
+<<<<<<< HEAD
 
+=======
+import pool from './config/db.js';
+>>>>>>> origin/main
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -20,6 +24,10 @@ app.use(
     return `${timestamp} [TFI-PROG-4] ${method} ${endpoint} ${status} ${responseTime} ms`;
   })
 );
+<<<<<<< HEAD
+=======
+app.use(express.static('public'));
+>>>>>>> origin/main
 
 
 // Ruta raíz de prueba
@@ -33,9 +41,26 @@ app.use('/api', apiRouter);
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ error: `Cannot GET ${req.originalUrl}` });
+<<<<<<< HEAD
 });
 
 // Iniciar el servidor
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
+=======
+>>>>>>> origin/main
 });
+
+try {
+
+  await pool.query('SELECT 1'); //Si responde esta conectado
+  console.log('Conexión exitosa a la base de datos ✅ ');
+
+  app.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  });
+} catch (error) {
+  console.error('❌ Error al conectar con la base de datos');
+  console.error(error.message);
+  process.exit(1);
+}
