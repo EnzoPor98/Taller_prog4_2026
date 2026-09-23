@@ -16,6 +16,8 @@ header{
     text-align: center;
 }
 
+<<<<<<< HEAD
+=======
 main{
     display: flex;
     flex-direction: column;
@@ -24,6 +26,7 @@ main{
     flex-grow: 1;
 
 } 
+>>>>>>> origin/main
 article h1 {
     text-align: center;
     margin: 10px 0;

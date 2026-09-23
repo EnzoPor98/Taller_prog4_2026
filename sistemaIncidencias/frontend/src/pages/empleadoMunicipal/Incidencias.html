@@ -18,8 +18,10 @@
       rel="stylesheet"
       href="../../styles/empleadoMunicipal/Incidencias.css"
     />
+    <link rel="stylesheet" href="../../components/nueva_incidencia/NuevaIncidencia.css">
     <!-- SCRIPTS -->
-     <script src="Incidencias.js" defer></script>
+    <script src="Incidencias.js" defer></script>
+    <script src="../../components/nueva_incidencia/NuevaIncidencia.js" defer></script>
   </head>
   <body>
     <header>
@@ -27,42 +29,45 @@
     </header>
     <main>
       <h1>Mis Incidencias</h1>
-      <form class="d-flex" role="search">
-        <h3>Filtros de busqueda</h3>
-        <div class="filtro-palabra">
-          <input
-            class="form-control me-2"
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-          />
-        </div>
-        <div
-          class="btn-group"
-          role="group"
-          aria-label="Button group with nested dropdown"
-        >
-          <button type="button" class="btn btn-primary">Articulo</button>
-          <button type="button" class="btn btn-primary">Fecha</button>
-
-          <div class="btn-group" role="group">
-            <button
-              type="button"
-              class="btn btn-primary dropdown-toggle"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Estados
-            </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Pendientes</a></li>
-              <li><a class="dropdown-item" href="#">En Proceso</a></li>
-              <li><a class="dropdown-item" href="#">Finalizadas</a></li>
-            </ul>
+      <article>
+        <form class="d-flex" role="search">
+          <h3>Filtros de busqueda</h3>
+          <div class="filtro-palabra">
+            <input
+              class="form-control me-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+            />
           </div>
-        </div>
-      </form>
-      <div class="table-responsive">
+          <div
+            class="btn-group"
+            role="group"
+            aria-label="Button group with nested dropdown"
+          >
+            <button type="button" class="btn btn-primary">Articulo</button>
+            <button type="button" class="btn btn-primary">Fecha</button>
+
+            <div class="btn-group" role="group">
+              <button
+                type="button"
+                class="btn btn-primary dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Estados
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Pendientes</a></li>
+                <li><a class="dropdown-item" href="#">En Proceso</a></li>
+                <li><a class="dropdown-item" href="#">Finalizadas</a></li>
+              </ul>
+            </div>
+          </div>
+        </form>
+      </article>
+      <article class="table-responsive">
+        <div id="formulario-placeholder"></div>
         <table class="table table-bordered table-striped">
           <thead class="table-info">
             <tr>
@@ -74,14 +79,14 @@
               <th scope="col">PRIORIDAD</th>
               <th scope="col">PEDIDO</th>
               <th scope="col">SOLUCION</th>
-              <th scope="col">CANCELAR</th>
+              <th scope="col">ACCION</th>
             </tr>
           </thead>
           <tbody id="bodyTable">
             <!-- CONTENIDO -->
           </tbody>
         </table>
-      </div>
+      </article>
     </main>
     <footer></footer>
   </body>
