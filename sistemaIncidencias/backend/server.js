@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
 // -------------------------------------------------- EMPLEADO MUNICIPAL
 // ---------------------------------------------------------------------
 
-// LISTA TODOS LOS ARTICULOS.
+// BROWSE: OBTIENE TODOS LOS ARTICULOS.
 app.get("/src/pages/empleadoMunicipal/Articulos", async (req, res) => {
   try {
     const sql = "SELECT * FROM public.articulos;";
@@ -29,6 +29,19 @@ app.get("/src/pages/empleadoMunicipal/Articulos", async (req, res) => {
     res.status(200).json({ articulos: rows });
   } catch (error) {
     console.log(`Paso algo -> ${error}`);
+    res.status(500).json({ error: "Error interno." });
+  }
+});
+
+// READ: OBTIENE UN SOLO ARTICULO.
+app.get("/src/pages/empleadoMunicipal/Articulos/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const sql = "SELECT * FROM public.articulos WHERE id_articulo  = $1";
+    const { rows } = await pool.query(sql, [id]);
+
+    res.status(200).json(rows);
+  } catch (error) {
     res.status(500).json({ error: "Error interno." });
   }
 });
