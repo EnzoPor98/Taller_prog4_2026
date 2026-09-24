@@ -3,11 +3,6 @@ import {
     generarCodigo5Digitos
 } from '../utils/example-data.js'
 
-<<<<<<< HEAD
-const getCategories = async (req, res) => {
-    // ejemplo de respuesta a un get
-    return res.status(200).json(categorias);
-=======
 import pool from '../../config/db.js';
 
 const getCategories = async (req, res) => {
@@ -21,7 +16,6 @@ const getCategories = async (req, res) => {
         return res.status(500).json({ mensaje: 'Ocurrio un error en la creacion de la categoria' });
     }
 
->>>>>>> origin/main
 };
 
 
@@ -29,9 +23,6 @@ const getCategories = async (req, res) => {
 const getCategory = async (req, res) => {
     //Agregar manejo de errores 
     const { id } = req.params; //Solo para ejemplo lo que recibimos en el id es el index desde el front
-<<<<<<< HEAD
-    return res.status(200).json(categorias[id]);
-=======
 
     try {
         if (!id) {
@@ -48,7 +39,6 @@ const getCategory = async (req, res) => {
         console.log("🚀 ~ createCategory ~ error:", error)
         return res.status(500).json({ mensaje: 'Ocurrio un error al recuperar la categoria' });
     }
->>>>>>> origin/main
 
 };
 
@@ -62,16 +52,6 @@ const createCategory = async (req, res) => {
     if (!activo) {
         return res.status(500).json({ mensaje: 'Se debe indicar el estado de la categoria' });
     }
-<<<<<<< HEAD
-    if (activo && descripcion) {
-        categorias.push({
-            id: generarCodigo5Digitos(),
-            descripcion: descripcion.trim(),
-            activo
-        })
-    }
-    return res.status(200).json({ mensaje: 'Categoría creada con éxito' });
-=======
 
 
     try {
@@ -89,7 +69,6 @@ const createCategory = async (req, res) => {
         return res.status(500).json({ mensaje: 'Ocurrio un error en la creacion de la categoria' });
     }
 
->>>>>>> origin/main
 
 };
 
@@ -105,12 +84,6 @@ const updateCategory = async (req, res) => {
         return res.status(500).json({ mensaje: 'Se debe indicar el estado de la categoria' });
     }
 
-<<<<<<< HEAD
-    Object.assign(categorias[id], {
-        descripcion: descripcion,
-        activo: activo
-    });
-=======
 
     try {
         const query = `
@@ -138,22 +111,12 @@ const updateCategory = async (req, res) => {
     }
 
 
->>>>>>> origin/main
     return res.status(200).json({ mensaje: 'Categoría actualizada con éxito' });
 
 };
 
 // Agregar manejo de errores
 const deleteCategory = async (req, res) => {
-<<<<<<< HEAD
-
-    const { id } = req.params;
-    const indice = Number(id);
-
-    categorias.splice(indice, 1);
-
-    return res.status(200).json({ mensaje: 'Categoría eliminada con éxito' });
-=======
     const { id } = req.params;
     const categoriaId = Number(id);
 
@@ -171,7 +134,6 @@ const deleteCategory = async (req, res) => {
     }
 
 
->>>>>>> origin/main
 
 };
 
