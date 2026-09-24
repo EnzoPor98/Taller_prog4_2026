@@ -1,11 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="/src/components/navbar/navbar.css" />
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Incidencias</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+
 <body>
-    pepe   
+    <div id="navbar-placeholder"></div>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col m-2 d-flex justify-content-start">
+                <button type="button" class="btn btn-primary" onclick="goToMenu()">
+                    Volver
+                </button>
+            </div>
+            <div class="col d-flex justify-content-center align-items-center">
+                <h1>Incidencias</h1>
+            </div>
+            <div class="col m-2 d-flex justify-content-end">
+                <button type="button" class="btn btn-primary" onclick="abrirModalCrear()">
+                    Crear incidencia
+                </button>
+            </div>
+        </div>
+
+
+
+
+        <div class="alert alert-primary" role="alert">
+            Gestiona las incidencias asignadas a tu cargo.
+        </div>
+        <!-- Tabla de datos -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Desc</th>
+                    <th scope="col">Active</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="incidencias-tbody">
+
+            </tbody>
+        </table>
+    </div>
+    </div>
+    <!-- Modal De registro-->
+    <!-- <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalTitle">Crear Categoria</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="categoria-form" action="#" method="post">
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripcion</label>
+                            <input type="text" class="form-control" id="descripcion"
+                                placeholder="Ingrese la descripción">
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                            <label class="form-check-label" for="flexCheckChecked">
+                                Categoria activa
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" form="categoria-form">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <script src="/src/components/navbar/navbar.js" defer></script>
+    <script type="module" src="/src/pages/empleadoSistemas/categorias/categorias.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
