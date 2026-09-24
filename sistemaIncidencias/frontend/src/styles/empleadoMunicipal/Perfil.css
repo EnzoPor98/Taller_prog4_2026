@@ -13,7 +13,8 @@ body{
 
 main{
     text-align: center;
-    margin: 1rem;
+    padding: 1rem;
+    flex: 1;
 }
 
 footer{
@@ -21,62 +22,63 @@ footer{
     background-color: #2C5C80;
 }
 
-article{
+form{
+    margin-top: 1rem;
     border: 1px solid black;
     border-radius: 25px;
     padding: 1rem;
-    margin-top: 1rem;
-}
-
-#incidencia{
-    border-top: 1px black dashed;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 form input{
-    width: 100px;
-    margin-bottom: 1rem;
+    text-align: center;
 }
 
-form textarea{
-    resize: none;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
+.info{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin: 0.5rem 0;
+}
+
+.info label{
+    margin-right: 1rem;
+}
+
+.user{
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed black;
+}
+
+button{
+    margin-top: 1rem;
 }
 
 /* Mobile */
 @media (max-width: 450px) {
-    form textarea{
-        width: 250px;
-        height: 300px;
+    .info input{
+        width: 200px;
     }
 }
 
 /* Tablet */
 @media (min-width: 451px) and (max-width: 768px) {
     main{
-        padding: 5rem;
+        margin: auto;
     }
 
-    form textarea{
-        width: 300px;
-        height: 300px;
+    .info input{
+        width: 200px;
     }
 }
 
 /* Desktop */
 @media (min-width: 769px){
-    article{
+    main{
         margin: auto;
-        width: 800px;
     }
 
-    form textarea{
-        width: 300px;
-        height: 300px;
+    .info input{
+        width: 400px;
     }
 }
