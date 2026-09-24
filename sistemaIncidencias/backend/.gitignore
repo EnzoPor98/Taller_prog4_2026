@@ -1,6 +1,5 @@
 # Dependencias
 node_modules/
-config/database.js
 
 # Variables de entorno 
 .env
