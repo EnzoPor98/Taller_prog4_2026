@@ -24,9 +24,9 @@
                 <h1>Incidencias</h1>
             </div>
             <div class="col m-2 d-flex justify-content-end">
-                <button type="button" class="btn btn-primary" onclick="abrirModalCrear()">
+                <!-- <button type="button" class="btn btn-primary" onclick="abrirModalCrear()">
                     Crear incidencia
-                </button>
+                </button> -->
             </div>
         </div>
 
@@ -37,13 +37,18 @@
             Gestiona las incidencias asignadas a tu cargo.
         </div>
         <!-- Tabla de datos -->
-        <table class="table table-striped">
+        <table class="table table-sm table-striped">
             <thead>
                 <tr>
                     <th scope="col">ID</th>
+                    <th scope="col">Prioridad</th>
                     <th scope="col">Desc</th>
-                    <th scope="col">Active</th>
+                    <th scope="col">Creador</th>
+                    <th scope="col">Responsable</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Estado</th>
                     <th scope="col">Acciones</th>
+
                 </tr>
             </thead>
             <tbody id="incidencias-tbody">
@@ -84,7 +89,7 @@
     </div> -->
 
     <script src="/src/components/navbar/navbar.js" defer></script>
-    <script type="module" src="/src/pages/empleadoSistemas/categorias/categorias.js" defer></script>
+    <script type="module" src="/src/pages/empleadoSistemas/incidencias/incidencias.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

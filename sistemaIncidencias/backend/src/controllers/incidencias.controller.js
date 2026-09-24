@@ -2,7 +2,8 @@ import pool from '../../config/db.js';
 
 const getIncidencias = async (req, res) => {
     try {
-        const query = `SELECT 
+        const idUsuario = req.usuario.id;
+        let query = `SELECT 
                             inc.id_incidencia,
                             inc.prioridad, 
                             inc.creado, 
@@ -20,11 +21,20 @@ const getIncidencias = async (req, res) => {
                             INNER JOIN usuarios user_asign
                                 ON inc.asignado_a = user_asign.id_usuario
                             INNER JOIN estados estado
-                                ON inc.id_estado = estado.id_estado`;
+                                ON inc.id_estado = estado.id_estado
+                                
+                                `;
+        const params = [];
+        if (idUsuario) {
+            params.push(idUsuario);
+            query += ` WHERE inc.asignado_a = $1`;
+        }
 
-        const result = await pool.query(query);
-        const areas = result.rows;
-        return res.status(200).json(areas);
+        query += ` ORDER BY inc.id_incidencia ASC`;
+
+        const result = await pool.query(query, params);
+        const incidencias = result.rows;
+        return res.status(200).json(incidencias);
     } catch (error) {
         console.log("🚀 ~ getIncidencias ~ error:", error)
         return res.status(500).json({ mensaje: 'Ocurrio un error al recuperar las incicencias' });
@@ -32,17 +42,54 @@ const getIncidencias = async (req, res) => {
 
 };
 
+const updateIncidencia = async (req, res) => {
+    const {
+        finalizada, descripcion_resolucion
+    } = req.body;
+    const id_incidencia= req.params.id;
+    console.log("🚀 ~ updateIncidencia ~ id_incidencia:", id_incidencia)
+    let status= null;
+    if (finalizada == true) {
+        status = 3;
+    
+    }
 
+
+
+        try {
+            const queryUpdate = `
+  UPDATE incidencias
+  SET
+    id_estado = $1,
+    descripcion_resolucion = $2
+  WHERE id_incidencia = $3
+  RETURNING *;
+`;
+        const values = [
+            status, descripcion_resolucion, id_incidencia
+        ]
+        const result = await pool.query(queryUpdate, values);
+
+ const query = `
+        INSERT INTO incidencias_estados (id_incidencia,id_estado, fecha_hora_estado)
+        VALUES ($1, $2, $3)
+        RETURNING *;
+        `;
+        await pool.query(query, [Number(id_incidencia), Number(status), new Date().toISOString()]);
+
+
+        return res.status(200).json({ mensaje: 'Categoría actualizada con éxito' });
+
+
+    } catch (error) {
+        console.log("🚀 ~ deleteCategory ~ error:", error)
+        return res.status(500).json({ mensaje: 'Ocurrio un error al actualizar la categoria' });
+
+    }
+
+}
 
 export {
-    getIncidencias
+    getIncidencias,
+    updateIncidencia
 };
-
-//    {
-//         "id_incidencia": 4,
-//         "id_estado": 1,
-//         "creado": "2026-09-13T18:52:51.346Z",
-//         "prioridad": 1,
-//         "descripcion_pedido": "No carga la batería",
-//         "descripcion_resolucion": ""
-//     }

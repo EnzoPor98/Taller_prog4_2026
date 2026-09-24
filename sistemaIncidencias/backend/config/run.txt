@@ -45,3 +45,7 @@ CREATE TABLE articulos_archivos (
         REFERENCES archivos(id_archivo)
         ON DELETE CASCADE
 );
+
+cambiar esta columna para insertar tb la fecha, la hs sola no nos sirve
+ALTER TABLE incidencias_estados
+ALTER COLUMN fecha_hora_estado TYPE TIMESTAMP WITH TIME ZONE
