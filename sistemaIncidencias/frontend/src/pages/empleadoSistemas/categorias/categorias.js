@@ -1,4 +1,5 @@
 const BACKEND_URL = 'http://localhost:3000/api/categories';
+const { Modal } = window.bootstrap;
 
 
 // Referencias al DOM
@@ -15,7 +16,7 @@ function abrirModalCrear() {
   document.getElementById('categoria-form').reset();
   document.getElementById('flexCheckChecked').checked = true;
   modal.dataset.modo = 'crear';
-  new bootstrap.Modal(modal).show();
+  new Modal(modal).show();
 }
 
 // Abre el modal con los datos de la fila cargados, para editar
@@ -38,7 +39,7 @@ async function abrirModalEditar(idx) {
 
   modal.dataset.modo = 'editar';
   modal.dataset.idx = idx;
-  new bootstrap.Modal(modal).show();
+  new Modal(modal).show();
 }
 
 // --- Acciones de la tabla --------------------------------------------
@@ -126,7 +127,7 @@ async function guardarCategoria(e) {
   }
 
   document.getElementById('categoria-form').reset();
-  bootstrap.Modal.getInstance(modal).hide();
+  Modal.getInstance(modal).hide();
   renderTabla();
 }
 

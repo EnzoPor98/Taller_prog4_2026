@@ -1,5 +1,8 @@
 const BACKEND_URL = 'http://localhost:3000/api/incidencias';
 const token = localStorage.getItem('token');
+// Bootstrap viene expuesto en window.bootstrap desde /src/main.js
+// (cargado como módulo, así que se garantiza antes que este script).
+const { Modal } = window.bootstrap;
 
 let incidencias = [];
 
@@ -62,9 +65,44 @@ async function cerrarIncidencia(id) {
         console.error('Error cerrando incidencia:', err);
     }
 }
-function verIncidencia(id) {
+async function verIncidencia(id) {
     console.log('Ver Incidencia:', id);
-    // TODO: abrir modal con detalle o navegar al detalle
+    try {
+        const response = await fetch(`${BACKEND_URL}/${id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const inc = await response.json();
+        console.log(inc);
+
+        // Popular el modal
+        document.getElementById('viewModalTitle').textContent = `Detalle de Incidencia #${inc.id_incidencia}`;
+
+        const badge = document.getElementById('view-prioridad-badge');
+        badge.className = `badge bg-${mapBadge(inc.prioridad)}`;
+        badge.textContent = mapPriority(inc.prioridad);
+
+        document.getElementById('view-estado').textContent = inc.estado?.descripcion ?? '-';
+        document.getElementById('view-descripcion-pedido').textContent = inc.descripcion_pedido ?? '-';
+        document.getElementById('view-descripcion-resolucion').textContent = inc.descripcion_resolucion ?? '-';
+        document.getElementById('view-articulo').textContent = inc.articulo?.descripcion ?? '-';
+        document.getElementById('view-creador').textContent = inc.creador
+            ? `${inc.creador.nombres} ${inc.creador.apellidos}`
+            : '-';
+        document.getElementById('view-asignado').textContent = inc.asignado_a
+            ? `${inc.asignado_a.nombres} ${inc.asignado_a.apellidos}`
+            : '-';
+        document.getElementById('view-creado').textContent = formatearFecha(inc.creado);
+
+        const modal = new Modal(document.getElementById('viewModal'));
+        modal.show();
+    } catch (err) {
+        console.error('Error obteniendo incidencia:', err);
+    }
 }
 // --- Render de la tabla ----------------------------------------------
 

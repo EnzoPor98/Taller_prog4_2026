@@ -2,6 +2,9 @@
 const BACKEND_URL = 'http://localhost:3000/api';
 const token = localStorage.getItem('token');
 
+// Bootstrap viene expuesto en window.bootstrap desde /src/main.js
+// (cargado como módulo, así que se garantiza antes que este script).
+const { Modal } = window.bootstrap;
 
 function goToMenu() {
     window.location.href = '../empleadoSistemas.html';
@@ -23,8 +26,6 @@ async function getAreas() {
     return areas;
 }
 
-const areas = await getAreas();
-
 // Categorías desde localStorage (las que el módulo de categorías ya guardó)
 async function getCategorias() {
     let categorias = [];
@@ -41,7 +42,12 @@ async function getCategorias() {
     return categorias;
 }
 
-const categorias = await getCategorias();
+//Resolver juntas las 2 promesas(Funciones asincronas)
+let areas = [];
+let categorias = [];
+(async () => {
+    [areas, categorias] = await Promise.all([getAreas(), getCategorias()]);
+})();
 
 // RenderTabla hace el get de todos los articulos.
 let articulos = []
@@ -83,7 +89,7 @@ function abrirModalCrear() {
     poblarSelectAreas();
 
     modal.dataset.modo = 'crear';
-    new bootstrap.Modal(modal).show();
+    new Modal(modal).show();
 }
 
 async function abrirModalEditar(idArticulo) {
@@ -102,7 +108,7 @@ async function abrirModalEditar(idArticulo) {
 
     modal.dataset.modo = 'editar';
     modal.dataset.idx = idArticulo;
-    new bootstrap.Modal(modal).show();
+    new Modal(modal).show();
 }
 
 // ----------------------------------------------------
@@ -211,7 +217,7 @@ async function guardarArticulo(e) {
     }
 
     document.getElementById('articulo-form').reset();
-    bootstrap.Modal.getInstance(modal).hide();
+    Modal.getInstance(modal).hide();
     renderTabla();
 }
 
