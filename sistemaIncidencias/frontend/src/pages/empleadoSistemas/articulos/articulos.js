@@ -1,62 +1,68 @@
 // Lista de áreas (podría venir de un backend en el futuro)
-const areas = [
-    { id: 1, descripcion: 'Secretaría de Gobierno', activo: true },
-    { id: 2, descripcion: 'Secretaría de Hacienda', activo: true },
-    { id: 3, descripcion: 'Obras Públicas', activo: true },
-    { id: 4, descripcion: 'Desarrollo Social', activo: true },
-    { id: 5, descripcion: 'Tránsito y Transporte', activo: true },
-    { id: 6, descripcion: 'Recursos Humanos', activo: true },
-    { id: 7, descripcion: 'Atención al Ciudadano', activo: true },
-    { id: 8, descripcion: 'Sistemas / Informática', activo: true },
-];
+const BACKEND_URL = 'http://localhost:3000/api';
+const token = localStorage.getItem('token');
+
+// Bootstrap viene expuesto en window.bootstrap desde /src/main.js
+// (cargado como módulo, así que se garantiza antes que este script).
+const { Modal } = window.bootstrap;
 
 function goToMenu() {
     window.location.href = '../empleadoSistemas.html';
 }
+
+
+async function getAreas() {
+    let areas = [];
+    try {
+        const response = await fetch(`${BACKEND_URL}/areas`);
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        areas = await response.json();
+    } catch (error) {
+        console.error('Ocurrio un error al recuperar las areas')
+    }
+    return areas;
+}
+
 // Categorías desde localStorage (las que el módulo de categorías ya guardó)
 async function getCategorias() {
-  let categorias = [];
-  try {
-    const response = await fetch('http://localhost:3000/api/categories');
+    let categorias = [];
+    try {
+        const response = await fetch(`${BACKEND_URL}/categories`);
 
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        categorias = await response.json();
+    } catch (error) {
+        console.error('Ocurrio un error al recuperar las categorias')
     }
-    categorias = await response.json();
-  } catch (error) {
-    console.error('Ocurrio un error al recuperar las categorias')
-  }
-  return categorias;
+    return categorias;
 }
-const categorias = await getCategorias();
 
-// Datos persistidos de artículos en localStorage
-let articulos = JSON.parse(localStorage.getItem("articulos")) || [];
+//Resolver juntas las 2 promesas(Funciones asincronas)
+let areas = [];
+let categorias = [];
+(async () => {
+    [areas, categorias] = await Promise.all([getAreas(), getCategorias()]);
+})();
+
+// RenderTabla hace el get de todos los articulos.
+let articulos = []
 
 // Referencias DOM
 const tbody = document.getElementById('articulos-tbody');
 const modal = document.getElementById('createModal');
 
-// Funciones 
-async function poblarSelectCategorias() {
+function poblarSelectCategorias() {
     const select = document.getElementById('categoria');
-    let categorias = [];
-    try {
-        const response = await fetch('http://localhost:3000/api/categories');
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        categorias = await response.json();
-        console.log("🚀 ~ poblarSelectCategorias ~ categorias:", categorias)
-    } catch (error) {
-        console.error('Ocurrio un error al recuperar las categorias')
-    }
-
     // Dejamos solo la primera opción vacía
     select.innerHTML = '<option value="" disabled selected>Selecciona una categoría</option>';
     categorias.forEach(cat => {
         const opt = document.createElement('option');
-        opt.value = cat.id;
+        opt.value = cat.id_categoria;
         opt.textContent = cat.descripcion;
         select.appendChild(opt);
     });
@@ -67,7 +73,7 @@ function poblarSelectAreas() {
     select.innerHTML = '<option value="" disabled selected>Selecciona un área</option>';
     areas.forEach(a => {
         const opt = document.createElement('option');
-        opt.value = a.id;
+        opt.value = a.id_area;
         opt.textContent = a.descripcion;
         select.appendChild(opt);
     });
@@ -83,36 +89,57 @@ function abrirModalCrear() {
     poblarSelectAreas();
 
     modal.dataset.modo = 'crear';
-    new bootstrap.Modal(modal).show();
+    new Modal(modal).show();
 }
 
-async function abrirModalEditar(idx) {
-    const art = articulos[idx];
-    console.log("🚀 ~ abrirModalEditar ~ art:", art)
+async function abrirModalEditar(idArticulo) {
+    const art = articulos.find(art => art.id_articulo == idArticulo);
     document.getElementById('createModalTitle').textContent = 'Editar Artículo';
 
     // Esperamos a que los <select> se pueblen antes de setear los valores
-    await poblarSelectCategorias();
+    poblarSelectCategorias();
     poblarSelectAreas();
 
     // Cargamos los valores actuales del artículo
     document.getElementById('descripcion').value = art.descripcion;
-    document.getElementById('categoria').value  = art.categoria?.id;
-    document.getElementById('area').value        = art.area?.id;
+    document.getElementById('categoria').value = art.categoria?.id_categoria;
+    document.getElementById('area').value = art.area?.id_area;
     document.getElementById('flexCheckChecked').checked = art.activo;
 
     modal.dataset.modo = 'editar';
-    modal.dataset.idx = idx;
-    new bootstrap.Modal(modal).show();
+    modal.dataset.idx = idArticulo;
+    new Modal(modal).show();
 }
 
 // ----------------------------------------------------
 // Acciones de la tabla
 // ----------------------------------------------------
-function eliminarArticulo(idx) {
-    const art = articulos[idx];
+async function eliminarArticulo(idArticulo) {
+    const art = articulos.find(art => art.id_articulo == idArticulo);
+
     if (!confirm(`¿Eliminar el artículo "${art.descripcion}"?`)) return;
-    articulos.splice(idx, 1);
+
+    try {
+        const respuesta = await fetch(`${BACKEND_URL}/articulos/${idArticulo}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+
+        });
+
+        if (!respuesta.ok) {
+            throw new Error(`Error en la petición: ${respuesta.status}`);
+        }
+
+        const resultado = await respuesta.json();
+
+        alert('Articulo eliminado con éxito');
+
+    } catch (error) {
+        console.error('Ocurrió un error al eliminar el articulo', error);
+    }
     renderTabla();
 }
 
@@ -136,27 +163,61 @@ async function guardarArticulo(e) {
 
     // Guardamos el objeto entero (categoría y área) para que la tabla
     // pueda mostrar la descripción sin tener que volver a buscarla
-    const catObj  = categorias.find(c => c.id == categoriaId);
-    const areaObj = areas.find(a => a.id == areaId);
+    const articulo = {
+        areaId,
+        categoriaId,
+        descripcion,
+        activo
+    }
+
 
     if (modal.dataset.modo === 'crear') {
-        articulos.push({
-            id: (articulos.at(-1)?.id ?? 0) + 1,
-            descripcion,
-            categoria: catObj,
-            area: areaObj,
-            activo,
-        });
+        try {
+            const respuesta = await fetch(`${BACKEND_URL}/articulos`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(articulo)
+            });
+
+            if (!respuesta.ok) {
+                throw new Error(`Error en la petición: ${respuesta.status}`);
+            }
+            alert('Categoria creada correctamente')
+
+        } catch (error) {
+            alert
+                ('Ocurrio un error al guardar la categoria')
+        }
     } else {
-        const idx = Number(modal.dataset.idx);
-        articulos[idx].descripcion = descripcion;
-        articulos[idx].categoria   = catObj;
-        articulos[idx].area        = areaObj;
-        articulos[idx].activo       = activo;
+        const idArticulo = modal.dataset.idx;
+        try {
+            const token = localStorage.getItem('token');
+            const respuesta = await fetch(`${BACKEND_URL}/articulos/${idArticulo}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(articulo)
+            });
+
+            if (!respuesta.ok) {
+                throw new Error(`Error en la petición: ${respuesta.status}`);
+            }
+            alert('Categoria ACTUALIZADA correctamente')
+
+        } catch (error) {
+            console.log("🚀 ~ guardarArticulo ~ error:", error)
+            alert
+                ('Ocurrio error al actualizar el articulo')
+        }
     }
 
     document.getElementById('articulo-form').reset();
-    bootstrap.Modal.getInstance(modal).hide();
+    Modal.getInstance(modal).hide();
     renderTabla();
 }
 
@@ -164,27 +225,30 @@ async function guardarArticulo(e) {
 // Render de la tabla
 // ----------------------------------------------------
 async function renderTabla() {
-    localStorage.setItem("articulos", JSON.stringify(articulos));
-    if (articulos.length == 0) {
-        tbody.innerHTML = '';
-        return;
-    }
+    try {
+        const response = await fetch(`${BACKEND_URL}/articulos`,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            }
+        );
 
-    // Si las categorías todavía no llegaron, no las podemos mostrar
-    if (categorias.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Cargando categorías…</td></tr>`;
-        return;
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        articulos = await response.json();
+    } catch (error) {
+        console.error('Ocurrio un error al recuperar las categorias')
     }
-
     tbody.innerHTML = articulos.map((art, idx) => {
         // Soporta ambas formas: objeto entero (nuevo) o solo id (viejo)
-        const cat  = art.categoria?.descripcion ?? categorias.find(c => c.id === art.categoriaId)?.descripcion ?? '—';
-        const area = art.area?.descripcion      ?? areas.find(a => a.id === art.areaId)?.descripcion      ?? '—';
         return `
         <tr>
-          <th scope="row">${art.id}</th>
-          <td>${area}</td>
-          <td>${cat}</td>
+          <th scope="row">${art.id_articulo}</th>
+          <td>${art?.area?.descripcion}</td>
+          <td>${art?.categoria?.descripcion}</td>
           <td>${art.descripcion}</td>
           <td>
             ${art.activo
@@ -192,10 +256,10 @@ async function renderTabla() {
                 : '<span class="badge bg-secondary">Inactiva</span>'}
           </td>
           <td>
-            <button class="btn btn-sm btn-outline-primary" data-action="editar" data-idx="${idx}">
+            <button class="btn btn-sm btn-outline-primary" data-action="editar" data-idx="${art.id_articulo}">
               <i class="fa fa-edit"></i>
             </button>
-            <button class="btn btn-sm btn-outline-danger" data-action="eliminar" data-idx="${idx}">
+            <button class="btn btn-sm btn-outline-danger" data-action="eliminar" data-idx="${art.id_articulo}">
               <i class="fa fa-trash"></i>
             </button>
           </td>
