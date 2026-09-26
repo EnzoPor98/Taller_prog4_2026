@@ -1,4 +1,17 @@
 const BACKEND_URL = 'http://localhost:3000/api/categories';
+
+
+const socket = io('http://localhost:3000'); // o io() si es mismo origen
+
+socket.on('connect', () => {
+  console.log('Conectado a sockets:', socket.id);
+});
+
+// Cuando se crea una categoría (desde este cliente u otro), refresco la tabla
+socket.on('categoria-creada', () => {
+  renderTabla();
+});
+
 const { Modal } = window.bootstrap;
 
 

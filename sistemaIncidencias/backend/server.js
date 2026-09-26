@@ -3,12 +3,25 @@ import cors from 'cors';
 import morgan from 'morgan';
 import apiRouter from './src/routes/index.js';
 import pool from './config/db.js';
+import { createServer } from 'node:http';
+import { Server } from 'socket.io';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+});
+
+app.set('io', io);
+
 // Middlewares
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(
   morgan((tokens, req, res) => {
@@ -113,12 +126,21 @@ app.use((req, res) => {
   res.status(404).json({ error: `Cannot GET ${req.originalUrl}` });
 });
 
+// 3. Configurar los eventos de Socket.IO
+io.on('connection', (socket) => {
+  console.log(`Cliente conectado: ${socket.id}`);
+
+  socket.on('disconnect', () => {
+    console.log('Cliente desconectado');
+  });
+});
+
 // Iniciar el servidor
 try {
   await pool.query('SELECT 1'); // Si responde está conectado
   console.log('Conexión exitosa a la base de datos ✅');
 
-  app.listen(PORT, () => {
+  httpServer.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
   });
 } catch (error) {

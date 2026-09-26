@@ -43,9 +43,13 @@ const getCategory = async (req, res) => {
 };
 
 const createCategory = async (req, res) => {
+    console.log("🚀 ~ createCategory ~ req.body:", req.body)
     const {
-        descripcion, activo
+        descripcion
     } = req.body;
+
+    const activo = req.body?.activo === 'true' || req.body?.activo === true;
+
     if (!descripcion) {
         return res.status(500).json({ mensaje: 'Descripcion obligatoria' });
     }
@@ -63,6 +67,8 @@ const createCategory = async (req, res) => {
         const values = [descripcion, Number(activo)];
         const result = await pool.query(query, values);
 
+        const io = req.app.get('io');
+        io.emit('categoria-creada', result.rows[0]);
         return res.status(200).json({ mensaje: 'Categoría creada con éxito' });
     } catch (error) {
         console.log("🚀 ~ createCategory ~ error:", error)
