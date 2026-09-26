@@ -1,9 +1,10 @@
-const nombre = localStorage.getItem("nombre");
-const apellido = localStorage.getItem("apellido");
-const rol = localStorage.getItem("rol");
+const usuario = JSON.parse(localStorage.getItem("usuario"));
 
-
-
+function logout() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("usuario");
+  window.location.href = "/index.html";
+}
 
 (function () {
   // Ruta ABSOLUTA desde la raíz del proyecto (funciona sin importar
@@ -12,11 +13,17 @@ const rol = localStorage.getItem("rol");
   const PLACEHOLDER_ID = "navbar-placeholder";
 
   function loadDataUser() {
-    if (!nombre || !apellido) return;
+    if (!usuario.nombres || !usuario.apellidos) return;
     const nameEl = document.getElementById("userName");
     const roleEl = document.querySelector(".user-role");
-    if (nameEl) nameEl.textContent = `${nombre} ${apellido}`;
-    if (roleEl) roleEl.textContent = getRol(rol) || "Rol del usuario";
+    if (nameEl) nameEl.textContent = `${usuario.nombres} ${usuario.apellidos}`;
+    if (roleEl) roleEl.textContent = getRol(usuario.rol) || "Rol del usuario";
+
+
+    const avatar = document.querySelector(".user-avatar");
+
+    avatar.src = `https://api.dicebear.com/10.x/lorelei/svg?seed=${usuario.nombres}`;
+    avatar.alt = `Avatar de ${usuario.nombres}`;
   }
 
   async function loadNavbar() {
@@ -38,11 +45,11 @@ const rol = localStorage.getItem("rol");
 
   function getRol(rol) {
     switch (rol) {
-      case "sistemas":
+      case 3:
         return "Empleado del área de sistemas";
-      case "director":
+      case 1:
         return "Director del área de sistemas";
-      case "municipal":
+      case 2:
         return "Empleado Municipal";
       default:
         return "Rol del usuario";
