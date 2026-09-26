@@ -30,7 +30,7 @@ const getIncidencias = async (req, res) => {
             query += ` WHERE inc.asignado_a = $1`;
         }
 
-        query += ` ORDER BY inc.id_incidencia ASC`;
+        query += ` ORDER BY inc.creado ASC`;
 
         const result = await pool.query(query, params);
         const incidencias = result.rows;
@@ -42,16 +42,56 @@ const getIncidencias = async (req, res) => {
 
 };
 
+const getIncidencia = async (req, res) => {
+    //Agregar manejo de errores 
+    const { id } = req.params; //Solo para ejemplo lo que recibimos en el id es el index desde el front
+
+    try {
+        if (!id) {
+            return res.status(500).json({ mensaje: 'Se requiere el id de la categoria' });
+        }
+
+               let query = `SELECT 
+                            inc.id_incidencia,
+                            inc.prioridad, 
+                            inc.creado, 
+                            inc.descripcion_pedido,
+                            inc.descripcion_resolucion,
+                            row_to_json(art) AS articulo,
+                            row_to_json(user_create) AS creador,
+                            row_to_json(user_asign) AS asignado_a,
+                            row_to_json(estado) AS estado
+                        FROM incidencias inc
+                            INNER JOIN articulos art
+                                ON inc.id_articulo = art.id_articulo
+                            INNER JOIN usuarios user_create
+                                ON inc.creado_por = user_create.id_usuario
+                            INNER JOIN usuarios user_asign
+                                ON inc.asignado_a = user_asign.id_usuario
+                            INNER JOIN estados estado
+                                ON inc.id_estado = estado.id_estado
+                                WHERE inc.id_incidencia = $1
+                                ORDER BY inc.creado ASC`;
+
+
+        const result = await pool.query(query, [id]);
+        const incidencia = result.rows;
+        return res.status(200).json(incidencia.length ==1 ? incidencia[0] : incidencia);
+    } catch (error) {
+        console.log("🚀 ~ createArticulo ~ error:", error)
+        return res.status(500).json({ mensaje: 'Ocurrio un error al recuperar la categoria' });
+    }
+
+};
+
 const updateIncidencia = async (req, res) => {
     const {
         finalizada, descripcion_resolucion
     } = req.body;
     const id_incidencia= req.params.id;
-    console.log("🚀 ~ updateIncidencia ~ id_incidencia:", id_incidencia)
     let status= null;
     if (finalizada == true) {
         status = 3;
-    
     }
 
 
@@ -91,5 +131,6 @@ const updateIncidencia = async (req, res) => {
 
 export {
     getIncidencias,
+    getIncidencia,
     updateIncidencia
 };
