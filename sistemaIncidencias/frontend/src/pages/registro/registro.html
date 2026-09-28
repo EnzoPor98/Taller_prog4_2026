@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inicio</title>
+    <link rel="stylesheet" href="../../styles/index.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+</head>
+
+<body>
+    <header>
+        <img src="../../assets/logoMunicipalidad.png" alt="Logo Municipalidad" />
+    </header>
+    <main>
+        <article>
+            <h1>Bienvenido al Sistema de Incidencias</h1>
+            <p>
+                Este sistema permite gestionar y reportar incidencias de manera eficiente.
+            </p>
+        </article>
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Para comenzar, por favor registre su usuario.</h5>
+                <div class="card-content">
+                    <form id="registerForm" action="#" method="post">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input type="text" id="nombre" name="nombre" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="apellido" class="form-label">Apellido</label>
+                            <input type="text" id="apellido" name="apellido" class="form-control" required />
+                        </div>
+                        <div class="mb-3"> <label for="rol" class="form-label">Rol</label> <select class="form-select"
+                                id="rol" name="rol" required>
+                                <option value="" selected disabled>Seleccione un rol</option>
+                                <option value="sistemas">Sistemas</option>
+                                <option value="municipal">Municipal</option>
+                                <option value="director">Director</option>
+                            </select> </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Correo Electrónico</label>
+                            <input type="email" id="email" name="email" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" id="password" name="password" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control"
+                                required />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Registrarse</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <h6>© 2024 Sistema de Incidencias. Todos los derechos reservados.</h6>
+    </footer>
+    <script>
+        const form = document.getElementById("registerForm");
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById("nombre").value;
+            const apellido = document.getElementById("apellido").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            const rol = document.getElementById("rol").value;
+
+            if (password !== confirmPassword) {
+                alert("Las contraseñas no coinciden. Por favor, inténtelo de nuevo.");
+                return;
+            }
+
+            // Simulacion de almacenamiento de datos en localStorage
+            localStorage.setItem("nombre", nombre);
+            localStorage.setItem("apellido", apellido);
+            localStorage.setItem("email", email);
+            localStorage.setItem("password", password);
+            localStorage.setItem("rol", rol);
+
+            alert("Usuario registrado exitosamente. Ahora puede iniciar sesión.");
+            window.location.href = "../../index.html";
+
+
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

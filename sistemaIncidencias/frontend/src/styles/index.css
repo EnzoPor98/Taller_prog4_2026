@@ -11,17 +11,36 @@ body {
   min-height: 100vh;
 }
 
-header {
-  width: 100vw;
-  text-align: center;
+header{
+    width: 100vw;
+    text-align: center;
+    background-color: #2C5C80;
 }
 
-main {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  flex-grow: 1;
+<<<<<<< HEAD
+=======
+main{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+
+} 
+>>>>>>> origin/main
+article h1 {
+    text-align: center;
+    margin: 10px 0;
+}
+
+article p {
+    text-align: center;
+    margin: 10px 0;
+}
+
+/* El form usa los estilos de Bootstrap; aquí solo lo dejamos ocupar todo el ancho de la card */
+form {
+    width: 100%;
 }
 
 footer {

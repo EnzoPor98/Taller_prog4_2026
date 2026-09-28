@@ -1,5 +1,5 @@
 .custom-navbar {
-  background-color: #2C5C80;
+  background-color: #2C5C80 !important;
   position: relative;
 }
 
@@ -44,7 +44,7 @@
   flex-shrink: 0;
 }
 
-@media (max-width: 991.98px) {
+/* @media (max-width: 991.98px) {
   .navbar-collapse {
     position: absolute;
     top: 100%;
@@ -54,7 +54,7 @@
     padding: 1rem 1.5rem;
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
   }
-}
+} */
 
 @media (max-width: 400px) {
   .custom-navbar .container-fluid {
@@ -81,5 +81,11 @@
 
   .user-profile-toggle {
     gap: 0.5rem;
+  }
+}
+/* Ocultar user data pantalla muy angosta */
+@media (max-width: 576px) {
+  .user-info {
+    display: none;
   }
 }

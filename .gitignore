@@ -1,0 +1,21 @@
+# Local DB dumps / snapshots
+*.sql
+*.dump
+*.pgsql
+*.pgdmp
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Per-subproject node_modules y .env ya están cubiertos
+# por los .gitignore de backend/ y frontend/, pero por las dudas:
+node_modules/
+.env
+.env.local
