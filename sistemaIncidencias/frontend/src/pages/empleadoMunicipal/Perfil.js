@@ -4,9 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function cargarFormulario() {
   try {
-    const respuesta = await fetch(
-      "http://localhost:3000/src/pages/empleadoMunicipal/Perfil",
-    );
+    const respuesta = await fetch("http://localhost:3000/api/perfil");
 
     const { usuario } = await respuesta.json();
 

@@ -18,10 +18,12 @@
       rel="stylesheet"
       href="../../styles/empleadoMunicipal/Incidencias.css"
     />
-    <link rel="stylesheet" href="../../components/nueva_incidencia/NuevaIncidencia.css">
+    <link
+      rel="stylesheet"
+      href="../../components/nueva_incidencia/NuevaIncidencia.css"
+    />
     <!-- SCRIPTS -->
     <script src="Incidencias.js" defer></script>
-    <script src="../../components/nueva_incidencia/NuevaIncidencia.js" defer></script>
   </head>
   <body>
     <header>
@@ -67,7 +69,15 @@
         </form>
       </article>
       <article class="table-responsive">
-        <div id="formulario-placeholder"></div>
+        <!-- Button trigger modal -->
+        <button
+          type="button"
+          class="btn btn-danger"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal"
+        >
+          CREAR NUEVA INCIDENCIA
+        </button>
         <table class="table table-bordered table-striped">
           <thead class="table-info">
             <tr>
@@ -87,6 +97,80 @@
           </tbody>
         </table>
       </article>
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">
+                Formulario de Incidencia
+              </h1>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="container text-center">
+                <div class="row div-buscador">
+                  <div class="col">
+                    <span>ID del Articulo</span>
+                  </div>
+                  <div class="col">
+                    <input
+                      id="articuloInput"
+                      class="form-control"
+                      type="number"
+                    />
+                  </div>
+                  <div class="col">
+                    <button
+                      id="buscarArticulo"
+                      class="btn btn-primary"
+                      type="button"
+                    >
+                      Buscar
+                    </button>
+                  </div>
+                </div>
+                <div class="row" id="div-articulo" hidden>
+                  <!-- DATOS DEL ARTICULO A REPORTAR -->
+                </div>
+                <div class="row div-pedido">
+                  <div class="col">
+                    <span>Descripcion del pedido</span>
+                    <textarea
+                      id="pedidoInput"
+                      class="form-control"
+                      maxlength="250"
+                      placeholder="Escribe hasta 250 caracteres"
+                      disabled
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button
+                  id="botonReportar"
+                  type="button"
+                  class="btn btn-success"
+                  disabled
+                >
+                  Continuar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
     <footer></footer>
   </body>

@@ -4,9 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function cargarTabla() {
   try {
-    const respuesta = await fetch(
-      "http://localhost:3000/src/pages/empleadoMunicipal/Incidencias",
-    );
+    const respuesta = await fetch("http://localhost:3000/api/incidencias");
     const { incidencias } = await respuesta.json();
 
     const tbody = document.getElementById("bodyTable");
@@ -50,3 +48,46 @@ async function cargarTabla() {
     console.error("Error al conectar con el backend:", error);
   }
 }
+
+const articulo = document
+  .getElementById("buscarArticulo")
+  .addEventListener("click", async () => {
+    try {
+      const idArticulo = Number(document.getElementById("articuloInput").value);
+
+      const respuesta = await fetch(
+        `http://localhost:3000/api/articulos/${idArticulo}`,
+      );
+
+      const divAlerta = document.getElementById("div-articulo");
+      const alerta = document.createElement("div");
+
+      divAlerta.style.whiteSpace = "pre-line";
+      divAlerta.textContent = "";
+      alerta.textContent = "";
+
+      if (respuesta.status === 200) {
+        const articulo = await respuesta.json();
+
+        const info = `Articulo encontrado:
+                      Descripcion: ${articulo.descripcion}
+                      Categoria: ${articulo.id_categoria}
+                      Area: ${articulo.id_area}`;
+
+        alerta.classList.add("alert", "alert-success");
+        alerta.textContent = info;
+        divAlerta.appendChild(alerta);
+
+        document.getElementById("pedidoInput").disabled = false;
+        document.getElementById("botonReportar").disabled = false;
+      } else {
+        alerta.classList.add("alert", "alert-danger");
+        alerta.textContent = "No se encontro el articulo.";
+        divAlerta.appendChild(alerta);
+      }
+
+      divAlerta.hidden = false;
+    } catch (error) {
+      console.error("Error al conectar con el backend:", error);
+    }
+  });
