@@ -44,7 +44,7 @@
 
   </main>
   <footer>
-    <h6>© 2024 Sistema de Incidencias. Todos los derechos reservados.</h6>
+    <h6>© 2026 Sistema de Incidencias. Todos los derechos reservados.</h6>
   </footer>
   <script type="module" src="./src/main.js"></script>
   <script>
@@ -74,6 +74,7 @@
         });
 
         const data = await response.json();
+        console.log("🚀 ~ data:", data)
 
         if (!response.ok) {
           alert(data.mensaje || "Email o contraseña incorrectos.");
