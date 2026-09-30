@@ -17,17 +17,12 @@ header{
     background-color: #2C5C80;
 }
 
-<<<<<<< HEAD
-=======
-main{
+main {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     flex-grow: 1;
-
+    width: 100%;
 } 
->>>>>>> origin/main
 article h1 {
     text-align: center;
     margin: 10px 0;

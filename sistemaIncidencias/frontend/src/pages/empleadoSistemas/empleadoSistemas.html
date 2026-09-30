@@ -10,43 +10,60 @@
     <title>Sistema de Incidencias</title>
 </head>
 
-<body>
-    <!-- Inyeccion de navbar -->
-    <div id="navbar-placeholder"></div>
-    <!-- Tabla -->
-    <div class="row m-2">
-        <div class="col-sm-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Categorias</h5>
-                    <p class="card-text">Alta, baja y modificación de categorías del catálogo.</p>
-                    <a href="./categorias/categorias.html" class="btn btn-primary">BREAD(abm)</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Articulos</h5>
-                    <p class="card-text">Alta, baja y modificación de artículos del catálogo.</p>
-                    <a href="./articulos/articulos.html" class="btn btn-primary">BREAD(abm)</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Incidencias</h5>
-                    <p class="card-text">Alta, baja y modificación de incidencias del sistema.</p>
-                    <a href="./incidencias/incidencias.html" class="btn btn-primary">BREAD(abm)</a>
-                </div>
-            </div>
-        </div>
-    </div>
+<body class="d-flex flex-column min-vh-100">
+    <main class="flex-grow-1">
 
+        <!-- Inyeccion de navbar -->
+        <div id="navbar-placeholder"></div>
+        <div class="container py-4">
+            <div class="row g-4">
+                <!-- Categorias -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title fw-bold">Categorias</h5>
+                            <p class="card-text text-muted">Gestiona las categorías del catálogo: alta, edición y baja
+                                de registros.</p>
+                        </div>
+                        <button type="button" data-seccion="categorias" class="btn btn-primary botones">Gestionar
+                            categorías</button>
 
+                    </div>
+                </div>
+                <!-- Articulos -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title fw-bold">Articulos</h5>
+                            <p class="card-text text-muted">Gestiona los artículos del catálogo: alta, edición y baja de
+                                registros.</p>
+                        </div>
+                        <button type="button" data-seccion="articulos" class="btn btn-primary botones">Gestionar
+                            artículos</button>
+                    </div>
+                </div>
+                <!-- Incidencias -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title fw-bold">Incidencias</h5>
+                            <p class="card-text text-muted">Gestiona las incidencias del sistema: registro, seguimiento
+                                y cierre.</p>
+                        </div>
+                        <button type="button" data-seccion="incidencias" class="btn btn-primary botones">Ver
+                            incidencias</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    <div class="mt-auto" id="footer-placeholder"></div>
+    <!-- <footer >
+    </footer> -->
     <script type="module" src="/src/main.js"></script>
     <script src="/src/components/navbar/navbar.js" defer></script>
+    <script src="/src/components/footer/footer.js" defer></script>
     <script src="/src/pages/empleadoSistemas/empleadoSistemas.js" defer></script>
 </body>
 

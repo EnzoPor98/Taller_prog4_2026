@@ -1,0 +1,66 @@
+
+/*
+Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) {
+    ...
+}
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) {
+    ...
+}
+
+// Large devices (desktops, 992px and up)
+@media (min-width: 992px) {
+    ...
+}
+
+// Extra large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) {
+    ...
+}
+
+*/
+.card {
+  flex-direction: column;
+  min-height: 250px;
+  max-width: 400px;
+}
+
+.card .botones {
+  margin-top: auto;
+  background-color: #2C5C80 !important;
+  border-color: #2C5C80 !important;
+  border-radius: 0;
+  color: #fff;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.card .botones:hover,
+.card .botones:focus,
+.card .botones:active,
+.card .botones:focus-visible {
+  background-color: #234760 !important;
+  border-color: #234760 !important;
+  color: #fff !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
+@media (width <= 780px) {
+  .card {
+    margin: 5px;
+    min-height: 200px;
+    max-width: 100%;
+  }
+}
+
+@media (width <= 570px) {
+  .card {
+    margin: 5px;
+    min-height: 200px;
+    max-width: 100%;
+  }
+}

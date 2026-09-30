@@ -39,11 +39,11 @@ const getArticulo = async (req, res) => {
         }
 
         const query = `
-        SELECT * FROM categorias where id_categoria=$1;
+        SELECT * FROM articulos where id_articulo=$1;
         `;
         const result = await pool.query(query, [id]);
-        const categorias = result.rows;
-        return res.status(200).json(categorias);
+        const articulo = result.rows;
+        return res.status(200).json(articulo[0]);
     } catch (error) {
         console.log("🚀 ~ createArticulo ~ error:", error)
         return res.status(500).json({ mensaje: 'Ocurrio un error al recuperar la categoria' });
