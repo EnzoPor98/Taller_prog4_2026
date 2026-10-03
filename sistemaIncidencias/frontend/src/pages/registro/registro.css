@@ -3,6 +3,7 @@
     margin: 0;
 }
 
+
 body{
     display: flex;
     flex-direction: column;
@@ -49,8 +50,8 @@ footer{
     margin-bottom: 3rem;
 }
 .card {
-    border: none !important;
-    box-shadow: none !important;
+    border: none;
+    box-shadow: none;
 }
 /* Mobile */
 @media (max-width: 450px) {
@@ -59,7 +60,7 @@ footer{
         text-align: center;
     }
 
-    #loginForm{
+    #registerForm{
         display: flex;
         flex-direction: column;
         width: 300px;
@@ -87,7 +88,7 @@ footer{
         text-align: center;
     }
 
-    #loginForm{
+    #registerForm{
         display: flex;
         flex-direction: column;
         width: 400px;
@@ -116,7 +117,7 @@ footer{
         margin-bottom: 1rem;
     }
 
-    #loginForm{
+    #registerForm{
         display: flex;
         flex-direction: column;
         width: 450px;
