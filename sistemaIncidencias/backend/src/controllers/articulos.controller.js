@@ -55,6 +55,9 @@ const createArticulo = async (req, res) => {
     const {
         areaId, categoriaId, descripcion, activo
     } = req.body;
+
+    const archivo = req.file;
+
     if (!descripcion) {
         return res.status(500).json({ mensaje: 'Descripcion obligatoria' });
     }
@@ -69,8 +72,36 @@ const createArticulo = async (req, res) => {
         VALUES ($1, $2, $3, $4)
         RETURNING *;
         `;
-        const values = [Number(areaId), Number(categoriaId), descripcion, Number(activo)];
-        const result = await pool.query(query, values);
+        const activoNumber = activo === 'true' ? 1 : 0;
+        const values = [Number(areaId), Number(categoriaId), descripcion, activoNumber];
+        let result = await pool.query(query, values);
+
+        if (archivo) {
+            const nombre = archivo.originalname
+            const tipo = archivo.mimetype
+            const ruta = archivo.path;
+            const tamanio = archivo.size
+            const fecha_creacion = new Date();
+            const queryArchivo = ` 
+                INSERT INTO archivos (nombre, tipo, tamanio,contenido,fecha_creacion)
+                    VALUES ($1, $2, $3, $4,$5)
+                    RETURNING *;`;
+
+            const dataArchivo = [nombre, tipo, tamanio, ruta, fecha_creacion];
+            let archivoCreado = await pool.query(queryArchivo, dataArchivo);
+
+            const queryArchivoArticulo = ` 
+            INSERT INTO articulos_archivos (id_articulo, id_archivo)
+                VALUES ($1, $2)
+                RETURNING *;`;
+
+            const archivoId = archivoCreado.rows[0].id_archivo
+            const articuloId = result.rows[0].id_articulo
+
+
+            const relation = [articuloId, archivoId];
+            await pool.query(queryArchivoArticulo, relation);
+        }
 
         return res.status(200).json({ mensaje: 'Articulo con éxito' });
     } catch (error) {
@@ -110,7 +141,7 @@ const updateArticulo = async (req, res) => {
                         `;
 
 
-        const values = [Number(areaId), Number(categoriaId), descripcion, Number(activo) , Number(id)];
+        const values = [Number(areaId), Number(categoriaId), descripcion, Number(activo), Number(id)];
 
         const result = await pool.query(query, values);
 

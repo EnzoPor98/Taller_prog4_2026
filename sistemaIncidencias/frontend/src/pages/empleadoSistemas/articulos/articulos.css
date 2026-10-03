@@ -1,0 +1,7 @@
+.image-preview {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    max-width: 400px;
+    max-height: 400px;
+}

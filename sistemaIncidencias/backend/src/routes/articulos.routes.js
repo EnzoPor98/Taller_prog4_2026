@@ -8,6 +8,8 @@ import {
     deleteArticulo
 } from '../controllers/articulos.controller.js';
 import { verificarToken } from '../middleware/auth.middleware.js';
+import { upload } from '../middleware/upload.middleware.js';
+
 
 const router = Router();
 
@@ -15,7 +17,11 @@ const router = Router();
 // Con middleware de token.
 router.get('/', verificarToken, getArticulos);
 router.get('/:id', verificarToken, getArticulo);
-router.post('/', verificarToken, createArticulo);
+router.post('/', 
+    verificarToken, 
+    upload.single('archivo'),
+    createArticulo
+);
 router.patch('/:id', verificarToken, updateArticulo);
 router.delete('/:id', verificarToken, deleteArticulo);
 
