@@ -85,7 +85,29 @@
 }
 /* Ocultar user data pantalla muy angosta */
 @media (max-width: 576px) {
-  .user-info {
-    display: none;
+  .custom-navbar .container-fluid {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .logo {
+    width: 200px;
+  }
+
+  .user-name {
+    font-size: 1 rem;
+  }
+
+  .user-role {
+    font-size: 0.65rem;
+  }
+
+  .user-avatar {
+    width: 34px;
+    height: 34px;
+  }
+
+  .user-profile-toggle {
+    gap: 0.5rem;
   }
 }

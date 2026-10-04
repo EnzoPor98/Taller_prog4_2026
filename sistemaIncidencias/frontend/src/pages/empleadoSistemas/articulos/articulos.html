@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="/src/components/navbar/navbar.css" />
     <link rel="stylesheet" href="../empleadoSistemas.css" />
+    <link rel="stylesheet" href="./articulos.css" />
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +18,7 @@
     <div class="container mt-4">
         <div class="row">
             <div class="col m-2 d-flex justify-content-start">
-                <button type="button" class="btn btn-primary botones" onclick="goToMenu()">
+                <button type="button" class="btn btn-primary" onclick="goToMenu()">
                     Volver
                 </button>
             </div>
@@ -25,8 +26,8 @@
                 <h1>Articulos</h1>
             </div>
             <div class="col m-2 d-flex justify-content-end">
-                <button type="button" class="botones btn btn-primary" onclick="abrirModalCrear()">
-                    Crear Articulo</button>
+                <button type="button" class="btn btn-primary" onclick="abrirModalCrear()">
+                    Crear</button>
             </div>
         </div>
         <div class="alert alert-primary" role="alert">
@@ -34,7 +35,7 @@
         </div>
 
         <!-- Tabla de datos -->
-        <table class="table table-striped">
+        <table class="table table-sm table-striped">
             <thead>
                 <tr>
                     <th scope="col">ID</th>
