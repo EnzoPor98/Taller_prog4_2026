@@ -124,7 +124,8 @@ async function renderTabla() {
     } catch (error) {
         console.error('Ocurrio un error al recuperar las categorias')
     }
-
+    
+    // <td>${incidencia.asignado_a.nombres} ${incidencia.asignado_a.apellidos}</td>
     tbody.innerHTML = incidencias.map((incidencia) => {
         return `
     <tr>
@@ -134,10 +135,9 @@ async function renderTabla() {
       </td>
       <td>${incidencia.descripcion_pedido}</td>
       <td>${incidencia.creador.nombres} ${incidencia.creador.apellidos}</td>
-      <td>${incidencia.asignado_a.nombres} ${incidencia.asignado_a.apellidos}</td>
-      <td>${formatearFecha(incidencia.creado)}</td>
-      <td>${incidencia.estado.descripcion}</td>
-      <td>
+      <td class="mobile-hide">${formatearFecha(incidencia.creado)}</td>
+      <td class="mobile-hide">${incidencia.estado.descripcion}</td>
+      <td class="mobile-buttons">
         <button class="btn btn-sm btn-outline-primary" data-action="ver" data-id="${incidencia.id_incidencia}">
           <i class="fa fa-eye fa-lg"></i>
         </button>
