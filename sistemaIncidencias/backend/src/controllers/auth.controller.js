@@ -6,13 +6,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const register = async (req, res) => {
     const { usuario, contrasenia, nombre, apellido, rol, area } = req.body;
 
-    if (!usuario) {
-        return res.status(500).json({ mensaje: 'Usuario obligatorio' });
-    }
-    if (!contrasenia) {
-        return res.status(500).json({ mensaje: 'Contraseña obligatoria' });
-    }
-
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
@@ -55,13 +48,6 @@ const register = async (req, res) => {
 const login = async (req, res) => {
     const { usuario, contrasenia } = req.body;
 
-
-    if (!usuario) {
-        return res.status(500).json({ mensaje: 'Usuario obligatorio' });
-    }
-    if (!contrasenia) {
-        return res.status(500).json({ mensaje: 'Contraseña obligatoria' });
-    }
     try {
         const query = `
         SELECT * FROM usuarios
