@@ -5,6 +5,12 @@ import {
 
 import pool from '../../config/db.js';
 
+const toBit = (value) => {
+    if (value === true || value === 'true' || value === 1 || value === '1') return 1;
+    if (value === false || value === 'false' || value === 0 || value === '0') return 0;
+    return value;
+};
+
 const getCategories = async (req, res) => {
     // ejemplo de respuesta a un get
     try {
@@ -21,14 +27,10 @@ const getCategories = async (req, res) => {
 
 // Dentro de cada metodo usar la logica de manejo de datos necesaria
 const getCategory = async (req, res) => {
-    //Agregar manejo de errores 
+    //Agregar manejo de errores
     const { id } = req.params; //Solo para ejemplo lo que recibimos en el id es el index desde el front
 
     try {
-        if (!id) {
-            return res.status(500).json({ mensaje: 'Se requiere el id de la categoria' });
-        }
-
         const query = `
         SELECT * FROM categorias where id_categoria=$1;
         `;
@@ -43,16 +45,7 @@ const getCategory = async (req, res) => {
 };
 
 const createCategory = async (req, res) => {
-    const {
-        descripcion, activo
-    } = req.body;
-    if (!descripcion) {
-        return res.status(500).json({ mensaje: 'Descripcion obligatoria' });
-    }
-    if (!activo) {
-        return res.status(500).json({ mensaje: 'Se debe indicar el estado de la categoria' });
-    }
-
+    const { descripcion, activo } = req.body;
 
     try {
         const query = `
@@ -60,10 +53,10 @@ const createCategory = async (req, res) => {
         VALUES ($1, $2)
         RETURNING *;
         `;
-        const values = [descripcion, Number(activo)];
+        const values = [descripcion, toBit(activo)];
         const result = await pool.query(query, values);
 
-        return res.status(200).json({ mensaje: 'Categoría creada con éxito' });
+        return res.status(200).json({ mensaje: 'Categoría creada con éxito', categoria: result.rows[0] });
     } catch (error) {
         console.log("🚀 ~ createCategory ~ error:", error)
         return res.status(500).json({ mensaje: 'Ocurrio un error en la creacion de la categoria' });
@@ -76,43 +69,27 @@ const updateCategory = async (req, res) => {
     const { id } = req.params;
     const { descripcion, activo } = req.body;
 
-
-    if (!descripcion) {
-        return res.status(500).json({ mensaje: 'Descripcion obligatoria' });
-    }
-    if (!activo) {
-        return res.status(500).json({ mensaje: 'Se debe indicar el estado de la categoria' });
-    }
-
-
     try {
         const query = `
-  UPDATE categorias
-  SET
-    descripcion = $1,
-    activo = $2
-  WHERE id_categoria = $3
-  RETURNING *;
-`;
+        UPDATE categorias
+        SET
+          descripcion = $1,
+          activo = $2
+        WHERE id_categoria = $3
+        RETURNING *;
+        `;
         const values = [
             descripcion,
-            Number(activo),
+            toBit(activo),
             id
         ]
         const result = await pool.query(query, values);
 
         return res.status(200).json({ mensaje: 'Categoría actualizada con éxito' });
-
-
     } catch (error) {
-        console.log("🚀 ~ deleteCategory ~ error:", error)
+        console.log("🚀 ~ updateCategory ~ error:", error)
         return res.status(500).json({ mensaje: 'Ocurrio un error al actualizar la categoria' });
-
     }
-
-
-    return res.status(200).json({ mensaje: 'Categoría actualizada con éxito' });
-
 };
 
 // Agregar manejo de errores

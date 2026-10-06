@@ -255,7 +255,7 @@ async function renderTabla() {
                 ? '<span class="badge bg-success">Activa</span>'
                 : '<span class="badge bg-secondary">Inactiva</span>'}
           </td>
-          <td>
+          <td class="mobile-buttons">
             <button class="btn btn-sm btn-outline-primary" data-action="editar" data-idx="${art.id_articulo}">
               <i class="fa fa-edit"></i>
             </button>
