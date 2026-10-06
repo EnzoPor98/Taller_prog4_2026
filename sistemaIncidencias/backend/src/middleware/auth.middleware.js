@@ -12,7 +12,6 @@ export const verificarToken = (req, res, next) => {
 
     jwt.verify(token, JWT_SECRET, (error, decoded) => {
         if (error) {
-            console.log("🚀 ~ verificarToken ~ error:", error)
             return res.status(403).json({ mensaje: 'Token inválido o expirado' });
         }
         req.usuario = decoded;
