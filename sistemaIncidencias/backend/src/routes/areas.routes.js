@@ -16,7 +16,8 @@ const router = Router();
  *     responses:
  *       200:
  *         description: Respuesta exitosa con una lista de areas.
- *         
+ *       500:
+ *         description: Error interno del servidor.
  */
 router.get('/', getAreas);
 
