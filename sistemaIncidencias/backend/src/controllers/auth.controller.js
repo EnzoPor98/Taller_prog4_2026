@@ -4,16 +4,12 @@ import pool from '../../config/db.js';
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const register = async (req, res) => {
-    const { usuario, contrasenia } = req.body;
+    const { usuario, contrasenia, nombre, apellido, rol, area } = req.body;
 
-    if (!usuario) {
-        return res.status(500).json({ mensaje: 'Usuario obligatorio' });
-    }
-    if (!contrasenia) {
-        return res.status(500).json({ mensaje: 'Contraseña obligatoria' });
-    }
-
+    const client = await pool.connect();
     try {
+        await client.query('BEGIN');
+
         const existeQuery = `SELECT id_usuario FROM usuarios WHERE usuario = $1;`;
         const existe = await pool.query(existeQuery, [usuario]);
 
@@ -22,36 +18,42 @@ const register = async (req, res) => {
         }
 
         const query = `
-        INSERT INTO usuarios (usuario, contrasenia)
-        VALUES ($1, crypt($2, gen_salt('bf')))
+        INSERT INTO usuarios (id_area,nombres,apellidos, usuario, contrasenia,avatar,rol,activo)
+        VALUES ($1, $2, $3, $4, encode(digest($5, 'sha256'), 'hex'),$6,$7,$8)
         RETURNING id_usuario, usuario;
         `;
-        const values = [usuario, contrasenia];
+        const values = [
+            Number(area),
+            nombre,
+            apellido,
+            usuario,
+            contrasenia,
+            " ",//Forzar, lo ideal seria tener un avatar, o que permita null
+            Number(rol),
+            1];
         const result = await pool.query(query, values);
+
+        await client.query('COMMIT');
 
         return res.status(200).json({ mensaje: 'Usuario creado con éxito', usuario: result.rows[0] });
     } catch (error) {
+        await client.query('ROLLBACK');
         console.log("🚀 ~ register ~ error:", error)
         return res.status(500).json({ mensaje: 'Ocurrio un error en la creacion del usuario' });
+    } finally {
+        client.release();
     }
 };
 
 const login = async (req, res) => {
     const { usuario, contrasenia } = req.body;
 
-
-    if (!usuario) {
-        return res.status(500).json({ mensaje: 'Usuario obligatorio' });
-    }
-    if (!contrasenia) {
-        return res.status(500).json({ mensaje: 'Contraseña obligatoria' });
-    }
     try {
         const query = `
         SELECT * FROM usuarios
-        WHERE 
+        WHERE
         activo = 1 AND
-        usuario = $1 AND 
+        usuario = $1 AND
         contrasenia = encode(digest($2, 'sha256'), 'hex');
         `;
         const values = [usuario, contrasenia];

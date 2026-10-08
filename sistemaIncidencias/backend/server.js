@@ -1,14 +1,17 @@
-import express from "express";
-import cors from "cors";
-import morgan from "morgan";
-import apiRouter from "./src/routes/index.js";
-import pool from "./config/db.js";
+import express from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+import apiRouter from './src/routes/index.js';
+import pool from './config/db.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './swagger.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middlewares
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(
   morgan((tokens, req, res) => {
@@ -166,6 +169,12 @@ app.post("/api/incidencias", async (req, res) => {
 
 // Rutas de la API
 app.use("/api", apiRouter);
+
+app.use ('/api-docs', 
+  swaggerUi.serve , 
+  swaggerUi.setup (swaggerSpec)
+); // Aquí van las rutas de tu aplicación... app.listen (port, () => { console.log ( ` El servidor se está ejecutando en el puerto ${port} ` ); });
+
 
 // 404 handler
 app.use((req, res) => {
