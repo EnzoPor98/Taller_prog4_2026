@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function cargarPanel() {
   try {
     const respuesta = await fetch(
-      "http://localhost:3000/src/pages/empleadoMunicipal/Incidencias",
+      "http://localhost:3000/api/incidencias",
     );
     const { incidencias } = await respuesta.json();
 
@@ -43,7 +43,7 @@ async function cargarPanel() {
 async function cargarTabla() {
   try {
     const respuesta = await fetch(
-      "http://localhost:3000/src/pages/empleadoMunicipal/Incidencias",
+      "http://localhost:3000/api/incidencias",
     );
     const { incidencias } = await respuesta.json();
 

@@ -4,13 +4,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function cargarTabla() {
   try {
-    const respuesta = await fetch(
-      "http://localhost:3000/src/pages/empleadoMunicipal/Articulos",
-    );
+    const respuesta = await fetch(`http://localhost:3000/api/articulos`);
     const { articulos } = await respuesta.json();
 
     const tbody = document.getElementById("bodyTable");
     tbody.textContent = "";
+
     for (let art of articulos) {
       const atributos_art = [
         art.id_articulo,
