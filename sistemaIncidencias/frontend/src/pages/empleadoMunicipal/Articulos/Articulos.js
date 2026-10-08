@@ -10,8 +10,6 @@ async function cargarTabla() {
     const tbody = document.getElementById("bodyTable");
     tbody.textContent = "";
 
-    console.log(articulos);
-
     for (let art of articulos) {
       const atributos_art = [
         art.id_articulo,

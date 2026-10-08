@@ -38,8 +38,10 @@ app.get("/api/articulos", async (req, res) => {
     const sql = "SELECT * FROM public.articulos;";
     const { rows } = await pool.query(sql);
 
+    console.log("Articulos obtenidos:", rows);
     res.status(200).json({ articulos: rows });
   } catch (error) {
+    console.log(`Paso algo -> ${error}`);
     res.status(500).json({ error: "Error interno." });
   }
 });
@@ -52,16 +54,21 @@ app.get("/api/articulos/:id", async (req, res) => {
     const { rows } = await pool.query(sql, [id]);
 
     if (rows.length === 0) {
+      console.log(`Articulo con id ${id} no encontrado.`);
       return res.status(404).json({ error: "Articulo no encontrado." });
     }
 
+    console.log(`Articulo con id ${id} obtenido:`, rows[0]);
     res.status(200).json(rows[0]);
   } catch (error) {
+    console.log(`Paso algo -> ${error}`);
     res.status(500).json({ error: "Error interno." });
   }
 });
 
-// BROWSE: LISTA LAS INCIDENCIAS DEL USUARIO.
+// ---------------------------------------------------------------------
+
+// BROWSE: OBTIENE TODAS LAS INCIDENCIAS DEL USUARIO.
 app.get("/api/incidencias", async (req, res) => {
   try {
     const sql = `SELECT 
@@ -72,8 +79,7 @@ app.get("/api/incidencias", async (req, res) => {
                     creado_por = 4;`;
     const { rows } = await pool.query(sql);
 
-    console.log(rows);
-
+    console.log("Incidencias obtenidas:", rows);
     res.status(200).json({ incidencias: rows });
   } catch (error) {
     console.log(`Paso algo -> ${error}`);
@@ -81,31 +87,82 @@ app.get("/api/incidencias", async (req, res) => {
   }
 });
 
-// READ: OBTIENE DATOS DEL USUARIO.
-app.get("/api/perfil", async (req, res) => {
+// EDIT: ACTUALIZA UNA INCIDENCIA:
+app.patch("/api/incidencias/:id", async (req, res) => {
   try {
-    const sql = `SELECT 
-                    id_usuario,
-                    id_area,
-                    nombres,
-                    apellidos,
-                    usuario,
+    const { id } = req.params;
+    const { id_estado } = req.body;
 
-                    rol
-                FROM 
-                    public.usuarios
-                WHERE
-                    id_usuario = 4;`;
-    const { rows } = await pool.query(sql);
+    const sql = `
+            UPDATE 
+              public.incidencias 
+            SET 
+              id_estado = $1
+            WHERE 
+              id_incidencia = $2
+            RETURNING *;`;
 
-    console.log(rows);
+    const values = [id_estado, id];
 
-    res.status(200).json({ usuario: rows });
+    const { rows } = await pool.query(sql, values);
+
+    if (rows.length === 0) {
+      console.log(`Incidencia con id ${id} no encontrada.`);
+      return res.status(404).json({ error: "Incidencia no encontrada" });
+    }
+
+    console.log(`Incidencia con id ${id} actualizada:`, rows[0]);
+    return res.status(200).json({
+      mensaje: "Incidencia actualizada con éxito",
+      incidencia: rows[0],
+    });
+  } catch (error) {
+    console.log(`Paso algo -> ${error}`);
+    res.status(500).json({ error: "Error al actualizar la incidencia" });
+  }
+});
+
+// ADD: CREA UNA NUEVA INCIDENCIA
+app.post("/api/incidencias", async (req, res) => {
+  try {
+    const {
+      id_articulo,
+      id_estado,
+      creado_por,
+      asignado_a,
+      creado,
+      prioridad,
+      descripcion_pedido,
+      descripcion_resolucion,
+    } = req.body;
+
+    const sql = `INSERT INTO 
+                  public.incidencias 
+                  (id_articulo, id_estado, creado_por, asignado_a, creado, prioridad, descripcion_pedido, descripcion_resolucion) 
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`;
+
+    const values = [
+      id_articulo,
+      id_estado,
+      creado_por,
+      asignado_a,
+      creado,
+      prioridad,
+      descripcion_pedido,
+      descripcion_resolucion,
+    ];
+
+    const { rows } = await pool.query(sql, values);
+
+    console.log("Incidencia creada:", rows);
+    res.status(200).json({ incidencias: rows });
   } catch (error) {
     console.log(`Paso algo -> ${error}`);
     res.status(500).json({ error: "Error interno." });
   }
 });
+
+// ---------------------------------------------------------------------
 
 // Rutas de la API
 app.use("/api", apiRouter);
