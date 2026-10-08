@@ -138,11 +138,11 @@ async function renderTabla() {
       <td class="mobile-hide">${formatearFecha(incidencia.creado)}</td>
       <td class="mobile-hide">${incidencia.estado.descripcion}</td>
       <td class="mobile-buttons">
-        <button class="btn btn-sm btn-outline-primary" data-action="ver" data-id="${incidencia.id_incidencia}">
-          <i class="fa fa-eye fa-lg"></i>
+        <button class="btn btn-sm btn-outline-primary" data-action="ver" data-id="${incidencia.id_incidencia}" title="Ver">
+          <i class="bi bi-eye"></i>
         </button>
-        <button class="btn btn-sm btn-outline-danger" data-action="cerrar" data-id="${incidencia.id_incidencia}">
-          <i class="fa fa-lock fa-lg"></i>
+        <button class="btn btn-sm btn-outline-danger" data-action="cerrar" data-id="${incidencia.id_incidencia}" title="Cerrar">
+          <i class="bi bi-lock"></i>
         </button>
       </td>
 

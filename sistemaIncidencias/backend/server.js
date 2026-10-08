@@ -35,66 +35,71 @@ app.get("/healtcheck", (req, res) => {
 // -------------------------------------------------- EMPLEADO MUNICIPAL
 // ---------------------------------------------------------------------
 
+// TODO: El get del controller hace lo mismo y esta completa la respuesta con los joins-
 // BROWSE: OBTIENE TODOS LOS ARTICULOS.
-app.get("/api/articulos", async (req, res) => {
-  try {
-    const sql = "SELECT * FROM public.articulos;";
-    const { rows } = await pool.query(sql);
+// app.get("/api/articulos", async (req, res) => {
+//   try {
+//     const sql = "SELECT * FROM public.articulos;";
+//     const { rows } = await pool.query(sql);
 
-    console.log("Articulos obtenidos:", rows);
-    res.status(200).json({ articulos: rows });
-  } catch (error) {
-    console.log(`Paso algo -> ${error}`);
-    res.status(500).json({ error: "Error interno." });
-  }
-});
+//     console.log("Articulos obtenidos:", rows);
+//     res.status(200).json({ articulos: rows });
+//   } catch (error) {
+//     console.log(`Paso algo -> ${error}`);
+//     res.status(500).json({ error: "Error interno." });
+//   }
+// });
 
 // READ: OBTIENE UN SOLO ARTICULO.
-app.get("/api/articulos/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const sql = "SELECT * FROM public.articulos WHERE id_articulo = $1";
-    const { rows } = await pool.query(sql, [id]);
+// app.get("/api/articulos/:id", async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const sql = "SELECT * FROM public.articulos WHERE id_articulo = $1";
+//     const { rows } = await pool.query(sql, [id]);
 
-    if (rows.length === 0) {
-      console.log(`Articulo con id ${id} no encontrado.`);
-      return res.status(404).json({ error: "Articulo no encontrado." });
-    }
+//     if (rows.length === 0) {
+//       console.log(`Articulo con id ${id} no encontrado.`);
+//       return res.status(404).json({ error: "Articulo no encontrado." });
+//     }
 
-    console.log(`Articulo con id ${id} obtenido:`, rows[0]);
-    res.status(200).json(rows[0]);
-  } catch (error) {
-    console.log(`Paso algo -> ${error}`);
-    res.status(500).json({ error: "Error interno." });
-  }
-});
+//     console.log(`Articulo con id ${id} obtenido:`, rows[0]);
+//     res.status(200).json(rows[0]);
+//   } catch (error) {
+//     console.log(`Paso algo -> ${error}`);
+//     res.status(500).json({ error: "Error interno." });
+//   }
+// });
 
 // ---------------------------------------------------------------------
 
+// TODO: Se comenta pq ya esta el metodo http en el controller. 
+// FIXME: Agregar logica de filtro ahi(CREADO_POR=4)-
 // BROWSE: OBTIENE TODAS LAS INCIDENCIAS DEL USUARIO.
-app.get("/api/incidencias", async (req, res) => {
-  try {
-    const sql = `SELECT 
-                    *
-                FROM 
-                    public.incidencias
-                WHERE
-                    creado_por = 4;`;
-    const { rows } = await pool.query(sql);
+// app.get("/api/incidencias", async (req, res) => {
+//   try {
+//     const sql = `SELECT 
+//                     *
+//                 FROM 
+//                     public.incidencias
+//                 WHERE
+//                     creado_por = 4;`;
+//     const { rows } = await pool.query(sql);
 
-    console.log("Incidencias obtenidas:", rows);
-    res.status(200).json({ incidencias: rows });
-  } catch (error) {
-    console.log(`Paso algo -> ${error}`);
-    res.status(500).json({ error: "Error interno." });
-  }
-});
+//     console.log("Incidencias obtenidas:", rows);
+//     res.status(200).json({ incidencias: rows });
+//   } catch (error) {
+//     console.log(`Paso algo -> ${error}`);
+//     res.status(500).json({ error: "Error interno." });
+//   }
+// });
 
 // EDIT: ACTUALIZA UNA INCIDENCIA:
 app.patch("/api/incidencias/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    console.log("🚀 ~ id:", id)
     const { id_estado } = req.body;
+    console.log("🚀 ~ id_estado:", id_estado)
 
     const sql = `
             UPDATE 
@@ -126,6 +131,7 @@ app.patch("/api/incidencias/:id", async (req, res) => {
 });
 
 // ADD: CREA UNA NUEVA INCIDENCIA
+// FIXME:  Como mejora esto tiene que ir al controller y tener una transaction
 app.post("/api/incidencias", async (req, res) => {
   try {
     const {
