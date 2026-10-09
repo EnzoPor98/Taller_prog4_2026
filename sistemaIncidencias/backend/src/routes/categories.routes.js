@@ -14,9 +14,50 @@ import { validate } from '../middleware/validate.middleware.js';
 const router = Router();
 
 // Definicion de endpoints REST para BREAD/CRUD de categorias
+
+/**
+ * @swagger
+ * /api/categories:
+ *   get:
+ *     summary: Listar todas las categorías activas
+ *     tags: [Categorias]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de categorías
+ *       401:
+ *         description: Token no proporcionado o inválido
+ *       500:
+ *         description: Error interno del servidor
+ */
 router.get('/', verificarToken, getCategories);
 
 
+/**
+ * @swagger
+ * /api/categories/{id}:
+ *   get:
+ *     summary: Obtener una categoría por id
+ *     tags: [Categorias]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Categoría encontrada
+ *       400:
+ *         description: Error de validación
+ *       401:
+ *         description: Token no proporcionado o inválido
+ *       500:
+ *         description: Error interno del servidor
+ */
 router.get('/:id',
     verificarToken,
     [
@@ -28,6 +69,29 @@ router.get('/:id',
     getCategory);
 
 
+/**
+ * @swagger
+ * /api/categories:
+ *   post:
+ *     summary: Crear una nueva categoría
+ *     tags: [Categorias]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           example:
+ *             descripcion: Hardware
+ *             activo: 1
+ *     responses:
+ *       200:
+ *         description: Categoría creada
+ *       400:
+ *         description: Error de validación
+ *       500:
+ *         description: Error interno del servidor
+ */
 router.post('/', verificarToken,
     [
         body('descripcion')
@@ -40,6 +104,35 @@ router.post('/', verificarToken,
     createCategory);
 
 
+/**
+ * @swagger
+ * /api/categories/{id}:
+ *   put:
+ *     summary: Actualizar una categoría existente
+ *     tags: [Categorias]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           example:
+ *             descripcion: Hardware
+ *             activo: 1
+ *     responses:
+ *       200:
+ *         description: Categoría actualizada
+ *       400:
+ *         description: Error de validación
+ *       500:
+ *         description: Error interno del servidor
+ */
 router.put('/:id',
     verificarToken,
     [
@@ -56,6 +149,28 @@ router.put('/:id',
     updateCategory);
 
 
+/**
+ * @swagger
+ * /api/categories/{id}:
+ *   delete:
+ *     summary: Eliminar (baja lógica) una categoría
+ *     tags: [Categorias]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Categoría eliminada
+ *       400:
+ *         description: Error de validación
+ *       500:
+ *         description: Error interno del servidor
+ */
 router.delete('/:id',
     verificarToken,
     [

@@ -126,6 +126,9 @@ async function renderTabla() {
     }
     
     // <td>${incidencia.asignado_a.nombres} ${incidencia.asignado_a.apellidos}</td>
+
+    // NOTA: Se controla el disabled con resuela(asi esta en el dump original de la base), y resuelta. 
+    // Para nada optimo y suceptible a errores
     tbody.innerHTML = incidencias.map((incidencia) => {
         return `
     <tr>
@@ -138,17 +141,19 @@ async function renderTabla() {
       <td class="mobile-hide">${formatearFecha(incidencia.creado)}</td>
       <td class="mobile-hide">${incidencia.estado.descripcion}</td>
       <td class="mobile-buttons">
-        <button class="btn btn-sm btn-outline-primary" data-action="ver" data-id="${incidencia.id_incidencia}">
-          <i class="fa fa-eye fa-lg"></i>
+        <button class="btn btn-sm btn-outline-primary" data-action="ver" data-id="${incidencia.id_incidencia}" title="Ver">
+          <i class="bi bi-eye"></i>
         </button>
-        <button class="btn btn-sm btn-outline-danger" data-action="cerrar" data-id="${incidencia.id_incidencia}">
-          <i class="fa fa-lock fa-lg"></i>
+        <button class="btn btn-sm btn-outline-danger" data-action="cerrar" data-id="${incidencia.id_incidencia}" 
+        ${["Resuelta", "Resuela"].includes(incidencia.estado.descripcion) ? "disabled" : ""}
+        title="Cerrar">
+          <i class="bi bi-lock"></i>
         </button>
       </td>
-
     </tr>
   `;
     }).join('');
+
 }
 
 tbody.addEventListener('click', (e) => {

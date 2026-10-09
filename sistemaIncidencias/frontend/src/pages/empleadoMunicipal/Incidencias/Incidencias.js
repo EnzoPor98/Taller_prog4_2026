@@ -1,20 +1,32 @@
+const token = localStorage.getItem('token');
+const user = JSON.parse(localStorage.getItem('usuario'));
+
+
 document.addEventListener("DOMContentLoaded", () => {
   cargarTabla();
 });
 
 async function cargarTabla() {
   try {
-    const respuesta = await fetch("http://localhost:3000/api/incidencias");
-    const { incidencias } = await respuesta.json();
+    const respuesta = await fetch("http://localhost:3000/api/incidencias", {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    const incidencias = await respuesta.json();
 
     const tbody = document.getElementById("bodyTable");
     tbody.textContent = "";
     for (let inc of incidencias) {
+      const asignadoA = inc.asignado_a?.nombres + ' ' + inc.asignado_a?.apellidos
+      const articulo = inc.articulo?.descripcion
+      const estado = inc.estado?.descripcion
+      console.log("🚀 ~ cargarTabla ~ inc:", inc)
       const atributos_inc = [
         inc.id_incidencia,
-        inc.id_articulo,
-        inc.id_estado,
-        inc.asignado_a,
+        articulo,
+        estado,
+        asignadoA,
         inc.creado,
         inc.prioridad,
         inc.descripcion_pedido,
@@ -29,7 +41,7 @@ async function cargarTabla() {
         fila.appendChild(columna);
       }
 
-      if (atributos_inc[2] === 1) {
+      if (inc?.estado?.id_estado === 1) {
         const columnaAcciones = document.createElement("td");
         const boton = document.createElement("button");
         boton.id = "botonFinalizar";
@@ -85,6 +97,11 @@ document
 
       const respuesta = await fetch(
         `http://localhost:3000/api/articulos/${idArticulo}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       const articulo = await respuesta.json();
@@ -134,8 +151,9 @@ const nuevaIncidencia = document
       const nuevaIncidencia = {
         id_articulo: articuloIncidencia,
         id_estado: 1,
-        creado_por: 4,
-        asignado_a: 0,
+        creado_por: user.id_usuario,
+        asignado_a: 4, //Aca hay que ver logica en lo del director que asigna las incidencias.(estren@correo.com es empleado de sist). 
+                        //Hasta que se haga la pantalla del director todo se asigna a ese usuario.
         creado: new Date().toISOString(),
         prioridad: 3,
         descripcion_pedido: pedido,
@@ -146,6 +164,7 @@ const nuevaIncidencia = document
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(nuevaIncidencia),
       });
@@ -175,6 +194,7 @@ document
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ id_estado: 4 }),
         },

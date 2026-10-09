@@ -14,7 +14,12 @@ function goToMenu() {
 async function getAreas() {
     let areas = [];
     try {
-        const response = await fetch(`${BACKEND_URL}/areas`);
+        const response = await fetch(`${BACKEND_URL}/areas`,{
+             headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
@@ -30,7 +35,12 @@ async function getAreas() {
 async function getCategorias() {
     let categorias = [];
     try {
-        const response = await fetch(`${BACKEND_URL}/categories`);
+        const response = await fetch(`${BACKEND_URL}/categories`,{
+             headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
@@ -256,11 +266,11 @@ async function renderTabla() {
                 : '<span class="badge bg-secondary">Inactiva</span>'}
           </td>
           <td class="mobile-buttons">
-            <button class="btn btn-sm btn-outline-primary" data-action="editar" data-idx="${art.id_articulo}">
-              <i class="fa fa-edit"></i>
+            <button class="btn btn-sm btn-outline-primary" data-action="editar" data-idx="${art.id_articulo}" title="Editar">
+              <i class="bi bi-pencil-square"></i>
             </button>
-            <button class="btn btn-sm btn-outline-danger" data-action="eliminar" data-idx="${art.id_articulo}">
-              <i class="fa fa-trash"></i>
+            <button class="btn btn-sm btn-outline-danger" data-action="eliminar" data-idx="${art.id_articulo}" title="Eliminar">
+              <i class="bi bi-trash"></i>
             </button>
           </td>
         </tr>
