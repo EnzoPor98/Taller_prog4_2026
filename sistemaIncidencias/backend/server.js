@@ -94,82 +94,82 @@ app.get("/healtcheck", (req, res) => {
 // });
 
 // EDIT: ACTUALIZA UNA INCIDENCIA:
-app.patch("/api/incidencias/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log("🚀 ~ id:", id)
-    const { id_estado } = req.body;
-    console.log("🚀 ~ id_estado:", id_estado)
+// app.patch("/api/incidencias/:id", async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     console.log("🚀 ~ id:", id)
+//     const { id_estado } = req.body;
+//     console.log("🚀 ~ id_estado:", id_estado)
 
-    const sql = `
-            UPDATE 
-              public.incidencias 
-            SET 
-              id_estado = $1
-            WHERE 
-              id_incidencia = $2
-            RETURNING *;`;
+//     const sql = `
+//             UPDATE 
+//               public.incidencias 
+//             SET 
+//               id_estado = $1
+//             WHERE 
+//               id_incidencia = $2
+//             RETURNING *;`;
 
-    const values = [id_estado, id];
+//     const values = [id_estado, id];
 
-    const { rows } = await pool.query(sql, values);
+//     const { rows } = await pool.query(sql, values);
 
-    if (rows.length === 0) {
-      console.log(`Incidencia con id ${id} no encontrada.`);
-      return res.status(404).json({ error: "Incidencia no encontrada" });
-    }
+//     if (rows.length === 0) {
+//       console.log(`Incidencia con id ${id} no encontrada.`);
+//       return res.status(404).json({ error: "Incidencia no encontrada" });
+//     }
 
-    console.log(`Incidencia con id ${id} actualizada:`, rows[0]);
-    return res.status(200).json({
-      mensaje: "Incidencia actualizada con éxito",
-      incidencia: rows[0],
-    });
-  } catch (error) {
-    console.log(`Paso algo -> ${error}`);
-    res.status(500).json({ error: "Error al actualizar la incidencia" });
-  }
-});
+//     console.log(`Incidencia con id ${id} actualizada:`, rows[0]);
+//     return res.status(200).json({
+//       mensaje: "Incidencia actualizada con éxito",
+//       incidencia: rows[0],
+//     });
+//   } catch (error) {
+//     console.log(`Paso algo -> ${error}`);
+//     res.status(500).json({ error: "Error al actualizar la incidencia" });
+//   }
+// });
 
 // ADD: CREA UNA NUEVA INCIDENCIA
+// Trasladamos al controller el callback
 // FIXME:  Como mejora esto tiene que ir al controller y tener una transaction
-app.post("/api/incidencias", async (req, res) => {
-  try {
-    const {
-      id_articulo,
-      id_estado,
-      creado_por,
-      asignado_a,
-      creado,
-      prioridad,
-      descripcion_pedido,
-      descripcion_resolucion,
-    } = req.body;
+// app.post("/api/incidencias", async (req, res) => {
+//   try {
+//     const {
+//       id_articulo,
+//       id_estado,
+//       creado_por,
+//       asignado_a,
+//       creado,
+//       prioridad,
+//       descripcion_pedido,
+//       descripcion_resolucion,
+//     } = req.body;
 
-    const sql = `INSERT INTO 
-                  public.incidencias 
-                  (id_articulo, id_estado, creado_por, asignado_a, creado, prioridad, descripcion_pedido, descripcion_resolucion) 
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`;
+//     const sql = `INSERT INTO 
+//                   public.incidencias 
+//                   (id_articulo, id_estado, creado_por, asignado_a, creado, prioridad, descripcion_pedido, descripcion_resolucion) 
+//                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`;
 
-    const values = [
-      id_articulo,
-      id_estado,
-      creado_por,
-      asignado_a,
-      creado,
-      prioridad,
-      descripcion_pedido,
-      descripcion_resolucion,
-    ];
+//     const values = [
+//       id_articulo,
+//       id_estado,
+//       creado_por,
+//       asignado_a,
+//       creado,
+//       prioridad,
+//       descripcion_pedido,
+//       descripcion_resolucion,
+//     ];
 
-    const { rows } = await pool.query(sql, values);
+//     const { rows } = await pool.query(sql, values);
 
-    console.log("Incidencia creada:", rows);
-    res.status(200).json({ incidencias: rows });
-  } catch (error) {
-    console.log(`Paso algo -> ${error}`);
-    res.status(500).json({ error: "Error interno." });
-  }
-});
+//     res.status(200).json({ incidencias: rows });
+//   } catch (error) {
+//     console.log(`Paso algo -> ${error}`);
+//     res.status(500).json({ error: "Error interno." });
+//   }
+// });
 
 // ---------------------------------------------------------------------
 
