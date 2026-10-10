@@ -21,7 +21,6 @@ async function cargarTabla() {
       const asignadoA = inc.asignado_a?.nombres + ' ' + inc.asignado_a?.apellidos
       const articulo = inc.articulo?.descripcion
       const estado = inc.estado?.descripcion
-      console.log("🚀 ~ cargarTabla ~ inc:", inc)
       const atributos_inc = [
         inc.id_incidencia,
         articulo,

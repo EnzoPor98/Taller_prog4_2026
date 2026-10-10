@@ -66,7 +66,6 @@ async function cerrarIncidencia(id) {
     }
 }
 async function verIncidencia(id) {
-    console.log('Ver Incidencia:', id);
     try {
         const response = await fetch(`${BACKEND_URL}/${id}`, {
             method: 'GET',
@@ -77,7 +76,6 @@ async function verIncidencia(id) {
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const inc = await response.json();
-        console.log(inc);
 
         // Popular el modal
         document.getElementById('viewModalTitle').textContent = `Detalle de Incidencia #${inc.id_incidencia}`;
