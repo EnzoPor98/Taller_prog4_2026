@@ -103,7 +103,24 @@ function abrirModalCrear() {
 }
 
 async function abrirModalEditar(idArticulo) {
-    const art = articulos.find(art => art.id_articulo == idArticulo);
+    // READ: pedimos el artículo puntual al backend (consume la API).
+    let art = null;
+    try {
+        const response = await fetch(`${BACKEND_URL}/articulos/${idArticulo}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        art = await response.json();
+    } catch (error) {
+        console.error('Ocurrio un error al recuperar el articulo', error);
+        return;
+    }
+
     document.getElementById('createModalTitle').textContent = 'Editar Artículo';
 
     // Esperamos a que los <select> se pueblen antes de setear los valores
@@ -112,8 +129,8 @@ async function abrirModalEditar(idArticulo) {
 
     // Cargamos los valores actuales del artículo
     document.getElementById('descripcion').value = art.descripcion;
-    document.getElementById('categoria').value = art.categoria?.id_categoria;
-    document.getElementById('area').value = art.area?.id_area;
+    document.getElementById('categoria').value = art.categoria?.id_categoria ?? art.id_categoria;
+    document.getElementById('area').value = art.area?.id_area ?? art.id_area;
     document.getElementById('flexCheckChecked').checked = art.activo;
 
     modal.dataset.modo = 'editar';
@@ -220,7 +237,6 @@ async function guardarArticulo(e) {
             alert('Categoria ACTUALIZADA correctamente')
 
         } catch (error) {
-            console.log("🚀 ~ guardarArticulo ~ error:", error)
             alert
                 ('Ocurrio error al actualizar el articulo')
         }
