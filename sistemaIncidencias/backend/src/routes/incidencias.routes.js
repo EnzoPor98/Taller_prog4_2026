@@ -15,7 +15,7 @@ router.get('/', verificarToken, getIncidencias);
 router.get('/:id', verificarToken, getIncidencia);
 router.patch('/:id', verificarToken, updateIncidencia);
 router.post('/', verificarToken, createIncidencia);
-
+//Definir el delete de momento cerrar o finalizar actualizan estados pero no se "borran incidencias" de la base de datos
 
 
 export default router;
