@@ -1,5 +1,5 @@
-const token = localStorage.getItem('token');
-const user = JSON.parse(localStorage.getItem('usuario'));
+const token = sessionStorage.getItem('token');
+const user = JSON.parse(sessionStorage.getItem('usuario'));
 
 
 document.addEventListener("DOMContentLoaded", () => {

@@ -81,8 +81,8 @@
         }
 
         // Guardamos el token y los datos del usuario para usarlos en otras páginas
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("usuario", JSON.stringify(data.usuario));
+        sessionStorage.setItem("token", data.token);
+        sessionStorage.setItem("usuario", JSON.stringify(data.usuario));
 
 
         switch (data.usuario.rol) {
