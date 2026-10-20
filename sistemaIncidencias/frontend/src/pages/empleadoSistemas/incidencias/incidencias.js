@@ -66,7 +66,6 @@ async function cerrarIncidencia(id) {
     }
 }
 async function verIncidencia(id) {
-    console.log('Ver Incidencia:', id);
     try {
         const response = await fetch(`${BACKEND_URL}/${id}`, {
             method: 'GET',
@@ -77,7 +76,6 @@ async function verIncidencia(id) {
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const inc = await response.json();
-        console.log(inc);
 
         // Popular el modal
         document.getElementById('viewModalTitle').textContent = `Detalle de Incidencia #${inc.id_incidencia}`;
@@ -124,7 +122,11 @@ async function renderTabla() {
     } catch (error) {
         console.error('Ocurrio un error al recuperar las categorias')
     }
+    
+    // <td>${incidencia.asignado_a.nombres} ${incidencia.asignado_a.apellidos}</td>
 
+    // NOTA: Se controla el disabled con resuela(asi esta en el dump original de la base), y resuelta. 
+    // Para nada optimo y suceptible a errores
     tbody.innerHTML = incidencias.map((incidencia) => {
         return `
     <tr>
@@ -134,21 +136,22 @@ async function renderTabla() {
       </td>
       <td>${incidencia.descripcion_pedido}</td>
       <td>${incidencia.creador.nombres} ${incidencia.creador.apellidos}</td>
-      <td>${incidencia.asignado_a.nombres} ${incidencia.asignado_a.apellidos}</td>
-      <td>${formatearFecha(incidencia.creado)}</td>
-      <td>${incidencia.estado.descripcion}</td>
-      <td>
-        <button class="btn btn-sm btn-outline-primary" data-action="ver" data-id="${incidencia.id_incidencia}">
-          <i class="fa fa-eye fa-lg"></i>
+      <td class="mobile-hide">${formatearFecha(incidencia.creado)}</td>
+      <td class="mobile-hide">${incidencia.estado.descripcion}</td>
+      <td class="mobile-buttons">
+        <button class="btn btn-sm btn-outline-primary" data-action="ver" data-id="${incidencia.id_incidencia}" title="Ver">
+          <i class="bi bi-eye"></i>
         </button>
-        <button class="btn btn-sm btn-outline-danger" data-action="cerrar" data-id="${incidencia.id_incidencia}">
-          <i class="fa fa-lock fa-lg"></i>
+        <button class="btn btn-sm btn-outline-danger" data-action="cerrar" data-id="${incidencia.id_incidencia}" 
+        ${["Resuelta", "Resuela"].includes(incidencia.estado.descripcion) ? "disabled" : ""}
+        title="Cerrar">
+          <i class="bi bi-lock"></i>
         </button>
       </td>
-
     </tr>
   `;
     }).join('');
+
 }
 
 tbody.addEventListener('click', (e) => {

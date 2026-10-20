@@ -9,6 +9,14 @@
   async function loadFooter() {
     const placeholder = document.getElementById(PLACEHOLDER_ID);
     try {
+      if (!document.querySelector('link[data-footer-css]')) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = '/src/components/footer/footer.css';
+        link.setAttribute('data-footer-css', 'true');
+        document.head.appendChild(link);
+      }
+
       const res = await fetch(FOOTER_URL, { cache: "no-store" });
 
       if (!res.ok) {
@@ -17,16 +25,14 @@
 
       placeholder.innerHTML = await res.text();
 
-          // 2. AHORA SÍ el elemento existe en el DOM, procedemos a buscarlo y actualizarlo
+      // 2. AHORA SÍ el elemento existe en el DOM, procedemos a buscarlo y actualizarlo
       const yearSpan = document.getElementById('year');
-      console.log("🚀 ~ loadFooter ~ yearSpan:", yearSpan);
-      
+
       if (yearSpan) {
-          yearSpan.textContent = new Date().getFullYear(); 
-          console.log("🚀 ~ loadFooter ~ yearSpan.textContent:", yearSpan.textContent);
+          yearSpan.textContent = new Date().getFullYear();
       }
     } catch (err) {
-      console.error("navbar.js: no se pudo cargar el navbar ->", err);
+      console.error("footer.js: no se pudo cargar el footer ->", err);
     }
   }
   document.addEventListener("DOMContentLoaded", loadFooter);

@@ -4,7 +4,8 @@ import { verificarToken } from '../middleware/auth.middleware.js';
 import {
 getIncidencias,
 getIncidencia,
-updateIncidencia
+updateIncidencia,
+createIncidencia
 } from '../controllers/incidencias.controller.js';
 
 const router = Router();
@@ -13,6 +14,8 @@ const router = Router();
 router.get('/', verificarToken, getIncidencias);
 router.get('/:id', verificarToken, getIncidencia);
 router.patch('/:id', verificarToken, updateIncidencia);
+router.post('/', verificarToken, createIncidencia);
+
 
 
 export default router;

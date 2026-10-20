@@ -1,4 +1,6 @@
 const BACKEND_URL = 'http://localhost:3000/api/categories';
+const token = localStorage.getItem('token');
+
 const { Modal } = window.bootstrap;
 
 
@@ -21,21 +23,24 @@ function abrirModalCrear() {
 
 // Abre el modal con los datos de la fila cargados, para editar
 async function abrirModalEditar(idx) {
-  let cat
+  let categoria= null;
   try {
-    const response = await fetch(`${BACKEND_URL}/${idx}`);
-
+    const response = await fetch(`${BACKEND_URL}/${idx}`,{
+       headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     if (!response.ok) {
       throw new Error(`Error HTTP: ${response.status}`);
     }
-    cat = await response.json();
+    categoria = await response.json();
   } catch (error) {
     console.error('Ocurrio un error al recuperar las categorias')
   }
 
   document.getElementById('createModalTitle').textContent = 'Editar Categoria';
-  document.getElementById('descripcion').value = cat[0].descripcion;
-  document.getElementById('flexCheckChecked').checked = cat[0].activo;
+  document.getElementById('descripcion').value = categoria[0].descripcion;
+  document.getElementById('flexCheckChecked').checked = categoria[0].activo;
 
   modal.dataset.modo = 'editar';
   modal.dataset.idx = idx;
@@ -49,7 +54,11 @@ async function eliminarCategoria(categoriaId) {
   if (!confirm(`¿Eliminar la categoría?`)) return;
   try {
     const respuesta = await fetch(`${BACKEND_URL}/${categoriaId}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
     });
 
     if (!respuesta.ok) {
@@ -90,7 +99,10 @@ async function guardarCategoria(e) {
     try {
       const respuesta = await fetch(`${BACKEND_URL}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(categoria)
       });
 
@@ -111,7 +123,10 @@ async function guardarCategoria(e) {
     try {
       const respuesta = await fetch(`${BACKEND_URL}/${idx}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(categoria)
       });
 
@@ -136,7 +151,11 @@ async function guardarCategoria(e) {
 async function renderTabla() {
   let categorias = [];
   try {
-    const response = await fetch(`${BACKEND_URL}`);
+    const response = await fetch(`${BACKEND_URL}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
 
     if (!response.ok) {
       throw new Error(`Error HTTP: ${response.status}`);
@@ -157,11 +176,11 @@ async function renderTabla() {
         : '<span class="badge bg-secondary">Inactiva</span>'}
       </td>
       <td>
-        <button class="btn btn-sm btn-outline-primary" onclick="abrirModalEditar(${cat.id_categoria})">
-          <i class="fa fa-edit"></i>
+        <button class="btn btn-sm btn-outline-primary" onclick="abrirModalEditar(${cat.id_categoria})" title="Editar">
+          <i class="bi bi-pencil-square"></i>
         </button>
-        <button class="btn btn-sm btn-outline-danger" onclick="eliminarCategoria(${cat.id_categoria})">
-          <i class="fa fa-trash"></i>
+        <button class="btn btn-sm btn-outline-danger" onclick="eliminarCategoria(${cat.id_categoria})" title="Eliminar">
+          <i class="bi bi-trash"></i>
         </button>
       </td>
     </tr>

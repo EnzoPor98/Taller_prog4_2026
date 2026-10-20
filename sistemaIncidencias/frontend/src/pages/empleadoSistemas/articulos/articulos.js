@@ -14,7 +14,12 @@ function goToMenu() {
 async function getAreas() {
     let areas = [];
     try {
-        const response = await fetch(`${BACKEND_URL}/areas`);
+        const response = await fetch(`${BACKEND_URL}/areas`,{
+             headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
@@ -30,7 +35,12 @@ async function getAreas() {
 async function getCategorias() {
     let categorias = [];
     try {
-        const response = await fetch(`${BACKEND_URL}/categories`);
+        const response = await fetch(`${BACKEND_URL}/categories`,{
+             headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
@@ -93,7 +103,24 @@ function abrirModalCrear() {
 }
 
 async function abrirModalEditar(idArticulo) {
-    const art = articulos.find(art => art.id_articulo == idArticulo);
+    // READ: pedimos el artículo puntual al backend (consume la API).
+    let art = null;
+    try {
+        const response = await fetch(`${BACKEND_URL}/articulos/${idArticulo}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        art = await response.json();
+    } catch (error) {
+        console.error('Ocurrio un error al recuperar el articulo', error);
+        return;
+    }
+
     document.getElementById('createModalTitle').textContent = 'Editar Artículo';
 
     // Esperamos a que los <select> se pueblen antes de setear los valores
@@ -102,8 +129,8 @@ async function abrirModalEditar(idArticulo) {
 
     // Cargamos los valores actuales del artículo
     document.getElementById('descripcion').value = art.descripcion;
-    document.getElementById('categoria').value = art.categoria?.id_categoria;
-    document.getElementById('area').value = art.area?.id_area;
+    document.getElementById('categoria').value = art.categoria?.id_categoria ?? art.id_categoria;
+    document.getElementById('area').value = art.area?.id_area ?? art.id_area;
     document.getElementById('flexCheckChecked').checked = art.activo;
 
     modal.dataset.modo = 'editar';
@@ -219,7 +246,6 @@ if (archivo) {
             alert('Categoria ACTUALIZADA correctamente')
 
         } catch (error) {
-            console.log("🚀 ~ guardarArticulo ~ error:", error)
             alert
                 ('Ocurrio error al actualizar el articulo')
         }
@@ -264,12 +290,12 @@ async function renderTabla() {
                 ? '<span class="badge bg-success">Activa</span>'
                 : '<span class="badge bg-secondary">Inactiva</span>'}
           </td>
-          <td>
-            <button class="btn btn-sm btn-outline-primary" data-action="editar" data-idx="${art.id_articulo}">
-              <i class="fa fa-edit"></i>
+          <td class="mobile-buttons">
+            <button class="btn btn-sm btn-outline-primary" data-action="editar" data-idx="${art.id_articulo}" title="Editar">
+              <i class="bi bi-pencil-square"></i>
             </button>
-            <button class="btn btn-sm btn-outline-danger" data-action="eliminar" data-idx="${art.id_articulo}">
-              <i class="fa fa-trash"></i>
+            <button class="btn btn-sm btn-outline-danger" data-action="eliminar" data-idx="${art.id_articulo}" title="Eliminar">
+              <i class="bi bi-trash"></i>
             </button>
           </td>
         </tr>
