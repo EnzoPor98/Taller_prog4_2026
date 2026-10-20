@@ -10,6 +10,7 @@ import {
 } from '../controllers/articulos.controller.js';
 import { verificarToken } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validate.middleware.js';
+import { upload } from '../middleware/upload.middleware.js';
 
 const router = Router();
 
@@ -90,6 +91,7 @@ router.get('/:id', verificarToken,
  *         description: Error interno del servidor
  */
 router.post('/', verificarToken,
+    upload.single('archivo'),
     [
         body('areaId')
             .notEmpty().withMessage('Area obligatoria')
@@ -102,7 +104,6 @@ router.post('/', verificarToken,
             .isString().withMessage('Descripcion debe ser texto'),
     ],
     validate,
-    upload.single('archivo'),
     createArticulo);
 
 /**

@@ -337,6 +337,13 @@ inputArchivo.addEventListener('change', () => {
     preview.style.display = 'block';
 });
 
+modal.addEventListener('hidden.bs.modal', () => {
+    document.getElementById('articulo-form').reset();
+    if (preview.src.startsWith('blob:')) URL.revokeObjectURL(preview.src);
+    preview.src = '';
+    preview.style.display = 'none';
+});
+
 window.abrirModalCrear = abrirModalCrear;
 window.abrirModalEditar = abrirModalEditar;
 window.eliminarArticulo = eliminarArticulo;
