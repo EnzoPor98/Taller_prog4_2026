@@ -1,5 +1,5 @@
 const BACKEND_URL = 'http://localhost:3000/api/incidencias';
-const token = localStorage.getItem('token');
+const token = sessionStorage.getItem('token');
 // Bootstrap viene expuesto en window.bootstrap desde /src/main.js
 // (cargado como módulo, así que se garantiza antes que este script).
 const { Modal } = window.bootstrap;

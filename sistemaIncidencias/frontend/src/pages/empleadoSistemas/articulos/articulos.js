@@ -1,6 +1,6 @@
 // Lista de áreas (podría venir de un backend en el futuro)
 const BACKEND_URL = 'http://localhost:3000/api';
-const token = localStorage.getItem('token');
+const token = sessionStorage.getItem('token');
 
 // Bootstrap viene expuesto en window.bootstrap desde /src/main.js
 // (cargado como módulo, así que se garantiza antes que este script).
@@ -31,7 +31,6 @@ async function getAreas() {
     return areas;
 }
 
-// Categorías desde localStorage (las que el módulo de categorías ya guardó)
 async function getCategorias() {
     let categorias = [];
     try {
@@ -230,7 +229,7 @@ if (archivo) {
     } else {
         const idArticulo = modal.dataset.idx;
         try {
-            const token = localStorage.getItem('token');
+            const token = sessionStorage.getItem('token');
             const respuesta = await fetch(`${BACKEND_URL}/articulos/${idArticulo}`, {
                 method: 'PATCH',
                 headers: {

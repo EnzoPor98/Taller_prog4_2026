@@ -1,5 +1,5 @@
 import pool from '../../config/db.js';
-
+import { enviarMail } from '../services/mail.service.js';
 const getIncidencias = async (req, res) => {
     try {
         const idUsuario = req.usuario.id;
@@ -104,18 +104,17 @@ const updateIncidencia = async (req, res) => {
     const id_incidencia = req.params.id;
     try {
         const status = finalizada ? 3 : (id_estado ?? null);
-        const queryUpdate = `
-  UPDATE incidencias
-  SET
-    id_estado = $1,
-    descripcion_resolucion = $2
-  WHERE id_incidencia = $3
-  RETURNING *;
-`;
+        const queryUpdate = `UPDATE incidencias SET
+                id_estado = $1,
+                descripcion_resolucion = $2
+                WHERE id_incidencia = $3
+                RETURNING *;
+        `;
         const values = [
             status, descripcion_resolucion, id_incidencia
         ]
-        const result = await pool.query(queryUpdate, values);
+        
+        await pool.query(queryUpdate, values);
 
         const query = `
         INSERT INTO incidencias_estados (id_incidencia,id_estado, fecha_hora_estado)
@@ -125,12 +124,29 @@ const updateIncidencia = async (req, res) => {
         await pool.query(query, [Number(id_incidencia), Number(status), new Date().toISOString()]);
 
 
+        // Aca inyectar el envio de emails
+        if (finalizada) {
+            await enviarMail({
+                to: 'barretocristian7@gmail.com',
+                subject: 'Incidencia finalizada',
+                template: 'incidencia-finalizada',
+                data: {
+                    nombre: 'Cristian',
+                    id: 123,
+                    articulo: 'Monitor Samsung',
+                    descripcion: 'Falla de funcionamiento',
+                    area: 'Sistemas',
+                    finalizadoPor: 'Juan Pérez'
+                }
+            });
+        }
+
         return res.status(200).json({ mensaje: 'Categoría actualizada con éxito' });
 
 
     } catch (error) {
-        console.log("🚀 ~ deleteCategory ~ error:", error)
-        return res.status(500).json({ mensaje: 'Ocurrio un error al actualizar la categoria' });
+        console.log("Ocurrio un error al actualizar la incidencia", error)
+        return res.status(500).json({ mensaje: 'Ocurrio un error al actualizar la incidencia' });
 
     }
 
