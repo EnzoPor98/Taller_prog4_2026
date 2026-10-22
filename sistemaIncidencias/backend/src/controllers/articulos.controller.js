@@ -1,5 +1,6 @@
 
 import pool from '../../config/db.js';
+import { supabase, bucket } from '../../config/supabase.js';
 
 const getArticulos = async (req, res) => {
     // ejemplo de respuesta a un get
@@ -55,6 +56,9 @@ const createArticulo = async (req, res) => {
     const {
         areaId, categoriaId, descripcion, activo
     } = req.body;
+
+    const archivo = req.file;
+
     if (!descripcion) {
         return res.status(500).json({ mensaje: 'Descripcion obligatoria' });
     }
@@ -63,22 +67,76 @@ const createArticulo = async (req, res) => {
     }
 
 
+    const client = await pool.connect();
+    let rutaSubida = null;
+
     try {
+        await client.query('BEGIN');
+
         const query = `
         INSERT INTO articulos (id_area, id_categoria, descripcion,activo)
         VALUES ($1, $2, $3, $4)
         RETURNING *;
         `;
-        const values = [Number(areaId), Number(categoriaId), descripcion, Number(activo)];
-        const result = await pool.query(query, values);
+        const activoNumber = activo === 'true' ? 1 : 0;
+        const values = [Number(areaId), Number(categoriaId), descripcion, activoNumber];
+        let result = await client.query(query, values);
 
+        if (archivo) {
+            const nombre = archivo.originalname
+            const tipo = archivo.mimetype
+            const tamanio = archivo.size
+            const fecha_creacion = new Date();
+            // memoryStorage no genera path: todos los archivos van a la carpeta articulos/ del bucket.
+            // El timestamp evita choques de nombre (upsert: false falla si el archivo ya existe)
+            const ruta = `articulos/${Date.now()}-${nombre}`;
+
+            const { error } = await supabase.storage
+                .from(bucket)
+                .upload(ruta, archivo.buffer, {
+                    contentType: tipo,
+                    upsert: false
+                });
+
+            if (error) {
+                console.error(error);
+                await client.query('ROLLBACK');
+                return res.status(500).json({
+                    mensaje: 'No se pudo subir el archivo'
+                });
+            }
+            rutaSubida = ruta;
+
+            const queryArchivo = ` 
+                INSERT INTO archivos (nombre, tipo, tamanio,contenido,fecha_creacion)
+                    VALUES ($1, $2, $3, $4,$5)
+                    RETURNING *;`;
+
+            const dataArchivo = [nombre, tipo, tamanio, ruta, fecha_creacion];
+            let archivoCreado = await client.query(queryArchivo, dataArchivo);
+
+            const queryArchivoArticulo = ` 
+            INSERT INTO articulos_archivos (id_articulo, id_archivo)
+                VALUES ($1, $2)
+                RETURNING *;`;
+
+            const archivoId = archivoCreado.rows[0].id_archivo
+            const articuloId = result.rows[0].id_articulo
+
+            const relation = [articuloId, archivoId];
+            await client.query(queryArchivoArticulo, relation);
+        }
+
+        await client.query('COMMIT');
         return res.status(200).json({ mensaje: 'Articulo con éxito' });
     } catch (error) {
         console.log("🚀 ~ createArticulo ~ error:", error)
+        await client.query('ROLLBACK');
+
         return res.status(500).json({ mensaje: 'Ocurrio un error en la creacion del articulo' });
+    } finally {
+        client.release();
     }
-
-
 };
 
 const updateArticulo = async (req, res) => {
@@ -110,7 +168,7 @@ const updateArticulo = async (req, res) => {
                         `;
 
 
-        const values = [Number(areaId), Number(categoriaId), descripcion, Number(activo) , Number(id)];
+        const values = [Number(areaId), Number(categoriaId), descripcion, Number(activo), Number(id)];
 
         const result = await pool.query(query, values);
 
