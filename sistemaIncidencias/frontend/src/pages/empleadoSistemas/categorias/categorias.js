@@ -1,4 +1,4 @@
-const BACKEND_URL = 'http://localhost:3000/api/categories';
+const BACKEND_URL = 'http://localhost:3000/api/categorias';
 const token = sessionStorage.getItem('token');
 
 const { Modal } = window.bootstrap;

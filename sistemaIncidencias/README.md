@@ -78,7 +78,7 @@ Las rutas principales cuelgan de `/api`:
 - `/auth` → registro y login (devuelve JWT)
 - `/areas`
 - `/articulos`
-- `/categories`
+- `/categorias`
 - `/incidencias`
 
 ### 3. Frontend
@@ -112,7 +112,7 @@ El sistema maneja 3 roles:
 | GET    | `/api/incidencias`    | Listar incidencias        |
 | POST   | `/api/incidencias`    | Crear incidencia          |
 | GET    | `/api/articulos`      | Listar artículos          |
-| GET    | `/api/categories`     | Listar categorías         |
+| GET    | `/api/categorias`     | Listar categorías         |
 | GET    | `/api/areas`          | Listar áreas              |
 
 ---

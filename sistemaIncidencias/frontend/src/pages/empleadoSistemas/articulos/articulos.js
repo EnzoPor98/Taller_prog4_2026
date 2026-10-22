@@ -34,7 +34,7 @@ async function getAreas() {
 async function getCategorias() {
     let categorias = [];
     try {
-        const response = await fetch(`${BACKEND_URL}/categories`,{
+        const response = await fetch(`${BACKEND_URL}/categorias`,{
              headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
