@@ -317,31 +317,41 @@ document.getElementById('articulo-form').addEventListener('submit', guardarArtic
 
 const inputArchivo = document.getElementById('formFile');
 const preview = document.getElementById('preview');
+const previewOverlay = document.getElementById('preview-overlay');
+const previewAmpliada = document.getElementById('preview-ampliada');
+
+function limpiarPreview() {
+    if (preview.src.startsWith('blob:')) URL.revokeObjectURL(preview.src);
+    preview.removeAttribute('src');
+    preview.hidden = true;
+    previewOverlay.hidden = true;
+}
 
 inputArchivo.addEventListener('change', () => {
     const archivo = inputArchivo.files[0];
+    limpiarPreview();
 
-    if (!archivo) {
-        preview.style.display = 'none';
-        preview.src = '';
-        return;
-    }
-
-    if (!archivo.type.startsWith('image/')) {
-        preview.style.display = 'none';
-        preview.src = '';
-        return;
-    }
+    // Sin archivo o no es imagen: no se muestra la vista previa
+    if (!archivo || !archivo.type.startsWith('image/')) return;
 
     preview.src = URL.createObjectURL(archivo);
-    preview.style.display = 'block';
+    preview.hidden = false;
+});
+
+// Al tocar la miniatura se muestra la imagen ampliada
+preview.addEventListener('click', () => {
+    previewAmpliada.src = preview.src;
+    previewOverlay.hidden = false;
+});
+
+// Cualquier click sobre la imagen ampliada la cierra
+previewOverlay.addEventListener('click', () => {
+    previewOverlay.hidden = true;
 });
 
 modal.addEventListener('hidden.bs.modal', () => {
     document.getElementById('articulo-form').reset();
-    if (preview.src.startsWith('blob:')) URL.revokeObjectURL(preview.src);
-    preview.src = '';
-    preview.style.display = 'none';
+    limpiarPreview();
 });
 
 window.abrirModalCrear = abrirModalCrear;
