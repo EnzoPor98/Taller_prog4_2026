@@ -2,12 +2,12 @@ import { Router } from 'express';
 import { param, body } from 'express-validator';
 
 import {
-    getCategories,
-    getCategory,
-    createCategory,
-    updateCategory,
-    deleteCategory
-} from '../controllers/categories.controller.js';
+    getCategorias,
+    getCategoria,
+    createCategoria,
+    updateCategoria,
+    deleteCategoria
+} from '../controllers/categorias.controller.js';
 import { verificarToken } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validate.middleware.js';
 
@@ -17,7 +17,7 @@ const router = Router();
 
 /**
  * @swagger
- * /api/categories:
+ * /api/categorias:
  *   get:
  *     summary: Listar todas las categorías activas
  *     tags: [Categorias]
@@ -31,12 +31,12 @@ const router = Router();
  *       500:
  *         description: Error interno del servidor
  */
-router.get('/', verificarToken, getCategories);
+router.get('/', verificarToken, getCategorias);
 
 
 /**
  * @swagger
- * /api/categories/{id}:
+ * /api/categorias/{id}:
  *   get:
  *     summary: Obtener una categoría por id
  *     tags: [Categorias]
@@ -66,12 +66,12 @@ router.get('/:id',
             .isInt().withMessage('ID debe ser numérico'),
     ],
     validate,
-    getCategory);
+    getCategoria);
 
 
 /**
  * @swagger
- * /api/categories:
+ * /api/categorias:
  *   post:
  *     summary: Crear una nueva categoría
  *     tags: [Categorias]
@@ -101,12 +101,12 @@ router.post('/', verificarToken,
             .notEmpty().withMessage('Se debe indicar el estado de la categoria')
     ],
     validate,
-    createCategory);
+    createCategoria);
 
 
 /**
  * @swagger
- * /api/categories/{id}:
+ * /api/categorias/{id}:
  *   put:
  *     summary: Actualizar una categoría existente
  *     tags: [Categorias]
@@ -146,12 +146,12 @@ router.put('/:id',
             .notEmpty().withMessage('Se debe indicar el estado de la categoria')
     ],
     validate,
-    updateCategory);
+    updateCategoria);
 
 
 /**
  * @swagger
- * /api/categories/{id}:
+ * /api/categorias/{id}:
  *   delete:
  *     summary: Eliminar (baja lógica) una categoría
  *     tags: [Categorias]
@@ -179,6 +179,6 @@ router.delete('/:id',
             .isInt().withMessage('ID debe ser numérico'),
     ],
     validate,
-    deleteCategory);
+    deleteCategoria);
 
 export default router;

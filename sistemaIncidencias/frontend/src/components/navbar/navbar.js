@@ -1,8 +1,8 @@
-const usuario = JSON.parse(localStorage.getItem("usuario"));
+const usuario = JSON.parse(sessionStorage.getItem("usuario"));
 
 function logout() {
-  localStorage.removeItem("token");
-  localStorage.removeItem("usuario");
+  sessionStorage.removeItem("token");
+  sessionStorage.removeItem("usuario");
   window.location.href = "/index.html";
 }
 

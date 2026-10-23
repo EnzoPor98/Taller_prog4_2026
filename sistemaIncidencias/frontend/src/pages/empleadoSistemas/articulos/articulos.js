@@ -1,6 +1,6 @@
 // Lista de áreas (podría venir de un backend en el futuro)
 const BACKEND_URL = 'http://localhost:3000/api';
-const token = localStorage.getItem('token');
+const token = sessionStorage.getItem('token');
 
 // Bootstrap viene expuesto en window.bootstrap desde /src/main.js
 // (cargado como módulo, así que se garantiza antes que este script).
@@ -31,11 +31,10 @@ async function getAreas() {
     return areas;
 }
 
-// Categorías desde localStorage (las que el módulo de categorías ya guardó)
 async function getCategorias() {
     let categorias = [];
     try {
-        const response = await fetch(`${BACKEND_URL}/categories`,{
+        const response = await fetch(`${BACKEND_URL}/categorias`,{
              headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -179,6 +178,20 @@ async function guardarArticulo(e) {
     const areaId = document.getElementById('area').value;
     const activo = document.getElementById('flexCheckChecked').checked;
 
+const formData = new FormData();
+
+formData.append('descripcion', descripcion);
+formData.append('areaId', areaId);
+formData.append('categoriaId', categoriaId);
+formData.append('activo', activo);
+
+
+const archivo = document.getElementById('formFile').files[0];
+
+if (archivo) {
+    formData.append('archivo', archivo);
+}
+
     if (!descripcion) {
         alert('La descripción no puede estar vacía');
         return;
@@ -190,12 +203,7 @@ async function guardarArticulo(e) {
 
     // Guardamos el objeto entero (categoría y área) para que la tabla
     // pueda mostrar la descripción sin tener que volver a buscarla
-    const articulo = {
-        areaId,
-        categoriaId,
-        descripcion,
-        activo
-    }
+  
 
 
     if (modal.dataset.modo === 'crear') {
@@ -203,10 +211,10 @@ async function guardarArticulo(e) {
             const respuesta = await fetch(`${BACKEND_URL}/articulos`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    // 'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(articulo)
+                body: formData
             });
 
             if (!respuesta.ok) {
@@ -221,7 +229,7 @@ async function guardarArticulo(e) {
     } else {
         const idArticulo = modal.dataset.idx;
         try {
-            const token = localStorage.getItem('token');
+            const token = sessionStorage.getItem('token');
             const respuesta = await fetch(`${BACKEND_URL}/articulos/${idArticulo}`, {
                 method: 'PATCH',
                 headers: {
@@ -305,6 +313,35 @@ tbody.addEventListener('click', (e) => {
 
 document.getElementById('articulo-form').addEventListener('submit', guardarArticulo);
 
+
+const inputArchivo = document.getElementById('formFile');
+const preview = document.getElementById('preview');
+
+inputArchivo.addEventListener('change', () => {
+    const archivo = inputArchivo.files[0];
+
+    if (!archivo) {
+        preview.style.display = 'none';
+        preview.src = '';
+        return;
+    }
+
+    if (!archivo.type.startsWith('image/')) {
+        preview.style.display = 'none';
+        preview.src = '';
+        return;
+    }
+
+    preview.src = URL.createObjectURL(archivo);
+    preview.style.display = 'block';
+});
+
+modal.addEventListener('hidden.bs.modal', () => {
+    document.getElementById('articulo-form').reset();
+    if (preview.src.startsWith('blob:')) URL.revokeObjectURL(preview.src);
+    preview.src = '';
+    preview.style.display = 'none';
+});
 
 window.abrirModalCrear = abrirModalCrear;
 window.abrirModalEditar = abrirModalEditar;
