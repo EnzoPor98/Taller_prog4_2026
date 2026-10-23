@@ -21,6 +21,7 @@
       rel="stylesheet"
       href="../../../styles/empleadoMunicipal/Incidencias.css"
     />
+    <link rel="stylesheet" href="../../../styles/empleadoMunicipal/Nav.css" />
     <!-- SCRIPTS -->
     <script src="Incidencias.js" defer></script>
   </head>
@@ -29,79 +30,48 @@
       <div id="navbar-placeholder"></div>
     </header>
     <main>
-      <h1>Mis Incidencias</h1>
-      <article>
-        <div class="m-2">
-          <a href="../Inicio/Inicio.html" class="btn btn-secondary">← Volver a Inicio</a>
-        </div>
-        <form class="d-flex" role="search">
-          <h3>Filtros de busqueda</h3>
-          <div class="filtro-palabra">
-            <input
-              class="form-control me-2"
-              type="search"
-              placeholder="Search"
-              aria-label="Search"
-            />
-          </div>
-          <div
-            class="btn-group"
-            role="group"
-            aria-label="Button group with nested dropdown"
-          >
-            <button type="button" class="btn btn-primary">Articulo</button>
-            <button type="button" class="btn btn-primary">Fecha</button>
-
-            <div class="btn-group" role="group">
-              <button
-                type="button"
-                class="btn btn-primary dropdown-toggle"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Estados
-              </button>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Pendientes</a></li>
-                <li><a class="dropdown-item" href="#">En Proceso</a></li>
-                <li><a class="dropdown-item" href="#">Finalizadas</a></li>
-              </ul>
-            </div>
-          </div>
-        </form>
+      <article class="nav">
+        <a href="../Inicio/Inicio.html" class="btn btn-outline-dark">INICIO</a>
+        <a href="../Articulos/Articulos.html" class="btn btn-outline-dark"
+          >ARTICULOS</a
+        >
+        <a href="../Perfil/Perfil.html" class="btn btn-outline-dark">PERFIL</a>
       </article>
-      <article class="table-responsive">
-        <!-- BOTON MODAL -->
-        <button type="button" class="btn btn-danger" id="btnCrearIncidencia">
-          CREAR NUEVA INCIDENCIA
-        </button>
-        <table class="table table-bordered table-striped">
-          <thead class="table-info">
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">ARTICULO</th>
-              <th scope="col">ESTADO</th>
-              <th scope="col">ASIGNADO</th>
-              <th scope="col">FECHA</th>
-              <th scope="col">PRIORIDAD</th>
-              <th scope="col">PEDIDO</th>
-              <th scope="col">SOLUCION</th>
-              <th scope="col">ACCION</th>
-            </tr>
-          </thead>
-          <tbody id="bodyTable">
-            <!-- CONTENIDO -->
-          </tbody>
-        </table>
+      <article class="filtros">
+        <span>FILTRO</span>
+        <input class="form-control me-2" type="search" />
+        <button class="btn btn-primary" type="submit">BUSCAR</button>
+      </article>
+      <article class="tabla">
+        <div class="d-flex justify-content-between align-items-center">
+          <h3>Mis Incidencias</h3>
+          <button type="button" class="btn btn-danger" id="btnReportar">
+            REPORTAR
+          </button>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped border-dark">
+            <thead class="table-info">
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">ARTICULO</th>
+                <th scope="col">ESTADO</th>
+                <th scope="col">ASIGNADO</th>
+                <th scope="col">FECHA</th>
+                <th scope="col">PRIORIDAD</th>
+                <th scope="col">PEDIDO</th>
+                <th scope="col">SOLUCION</th>
+                <th scope="col">ACCION</th>
+              </tr>
+            </thead>
+            <tbody id="bodyTable">
+              <!-- CONTENIDO -->
+            </tbody>
+          </table>
+        </div>
       </article>
       <!-- MODAL -->
-      <div
-        class="modal fade"
-        id="modal"
-        tabindex="-1"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
+      <div class="modal fade" id="modal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
           <div class="modal-content">
             <div class="modal-header">
@@ -117,41 +87,31 @@
             </div>
             <div class="modal-body">
               <div class="container text-center">
-                <div class="row div-buscador">
-                  <div class="col">
-                    <span>ID del Articulo</span>
-                  </div>
-                  <div class="col">
-                    <input
-                      id="articuloInput"
-                      class="form-control"
-                      type="number"
-                    />
-                  </div>
-                  <div class="col">
-                    <button
-                      id="buscarArticulo"
-                      class="btn btn-primary"
-                      type="button"
-                    >
-                      Buscar
-                    </button>
-                  </div>
+                <div id="div-articulo">
+                  <span>Articulo:</span>
+                  <select id="articuloInput" class="form-select">
+                    <!-- LISTA DE ARTICULOS -->
+                    <option selected disabled>Cargando...</option>
+                  </select>
+                  <button
+                    id="buscarArticulo"
+                    class="btn btn-primary"
+                    type="button"
+                  >
+                    Buscar
+                  </button>
                 </div>
-                <div class="row" id="div-articulo" hidden>
-                  <!-- DATOS DEL ARTICULO A REPORTAR -->
+                <div id="div-pedido">
+                  <span>Descripcion del pedido</span>
+                  <textarea
+                    id="pedidoInput"
+                    class="form-control"
+                    maxlength="250"
+                    placeholder="Escribe hasta 250 caracteres."
+                  ></textarea>
                 </div>
-                <div class="row div-pedido">
-                  <div class="col">
-                    <span>Descripcion del pedido</span>
-                    <textarea
-                      id="pedidoInput"
-                      class="form-control"
-                      maxlength="250"
-                      placeholder="Escribe hasta 250 caracteres"
-                      disabled
-                    ></textarea>
-                  </div>
+                <div id="div-incidencia" class="alert alert-warning" hidden>
+                  <!-- INFO DE INCIDENCIA -->
                 </div>
               </div>
               <div class="modal-footer">
@@ -160,15 +120,26 @@
                   type="button"
                   class="btn btn-secondary"
                 >
-                  Reinciar
+                  Reiniciar
+                </button>
+                <button id="btnContinuar" type="button" class="btn btn-success">
+                  Continuar
                 </button>
                 <button
-                  id="btnReportar"
+                  id="btnVolver"
+                  type="button"
+                  class="btn btn-secondary"
+                  hidden
+                >
+                  Volver
+                </button>
+                <button
+                  id="btnConfirmar"
                   type="button"
                   class="btn btn-success"
-                  disabled
+                  hidden
                 >
-                  Continuar
+                  Confirmar
                 </button>
               </div>
             </div>

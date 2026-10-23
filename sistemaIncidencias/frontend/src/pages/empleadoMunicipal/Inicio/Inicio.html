@@ -14,7 +14,11 @@
     <link rel="stylesheet" href="/src/components/navbar/navbar.css" />
     <script src="/src/components/navbar/navbar.js" defer></script>
     <!-- ESTILOS -->
-    <link rel="stylesheet" href="../../../styles/empleadoMunicipal/Inicio.css" />
+    <link
+      rel="stylesheet"
+      href="../../../styles/empleadoMunicipal/Inicio.css"
+    />
+    <link rel="stylesheet" href="../../../styles/empleadoMunicipal/Nav.css" />
     <!-- SCRIPTS -->
     <script src="Inicio.js" defer></script>
   </head>
@@ -23,8 +27,17 @@
       <div id="navbar-placeholder"></div>
     </header>
     <main>
+      <article class="nav">
+        <a href="../Articulos/Articulos.html" class="btn btn-outline-dark"
+          >ARTICULOS</a
+        >
+        <a href="../Incidencias/Incidencias.html" class="btn btn-outline-dark"
+          >INCIDENCIAS</a
+        >
+        <a href="../Perfil/Perfil.html" class="btn btn-outline-dark">PERFIL</a>
+      </article>
       <article class="incidencias">
-        <h3>Panel de Incidencias</h3>
+        <h1>Panel de Incidencias</h1>
         <div class="contenedor-alertas">
           <div
             id="cuadro_pendientes"
@@ -37,29 +50,28 @@
             role="alert"
           ></div>
         </div>
-        <div class="m-2">
-          <a href="../Incidencias/Incidencias.html" class="btn btn-primary">Gestion de incidencias.</a>
-        </div>
       </article>
-      <article class="table-responsive">
+      <article class="tabla">
         <h2>Mis Ultimas Incidencias</h2>
-        <table class="table table-bordered table-striped">
-          <thead class="table-info">
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">ARTICULO</th>
-              <th scope="col">ESTADO</th>
-              <th scope="col">ASIGNADO</th>
-              <th scope="col">FECHA</th>
-              <th scope="col">PRIORIDAD</th>
-              <th scope="col">PEDIDO</th>
-              <th scope="col">SOLUCION</th>
-            </tr>
-          </thead>
-          <tbody id="bodyTable">
-            <!-- CONTENIDO -->
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped border-dark">
+            <thead class="table-info">
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">ARTICULO</th>
+                <th scope="col">ESTADO</th>
+                <th scope="col">ASIGNADO</th>
+                <th scope="col">FECHA</th>
+                <th scope="col">PRIORIDAD</th>
+                <th scope="col">PEDIDO</th>
+                <th scope="col">SOLUCION</th>
+              </tr>
+            </thead>
+            <tbody id="bodyTable">
+              <!-- CONTENIDO -->
+            </tbody>
+          </table>
+        </div>
       </article>
     </main>
     <footer></footer>

@@ -29,6 +29,9 @@ footer {
   margin: auto;
   margin-bottom: 1rem;
   margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .alert {
@@ -37,44 +40,51 @@ footer {
 }
 
 .tabla {
-  padding: 0 0.5rem;
+  border: 1px solid black;
+  border-radius: 25px;
+  padding: 1rem;
 }
 
 .table thead {
   text-align: center;
 }
 
-/* Mobile */
-@media (max-width: 465px) {
-  .incidencias {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 300px;
-  }
-}
-
 /* Tablet */
-@media (min-width: 466px) and (max-width: 768px) {
-  .incidencias {
-    width: 450px;
+@media (min-width: 540px) and (max-width: 850px) {
+  .nav {
+    width: 500px;
   }
+
+  .incidencias {
+    width: 500px;
+  }
+
   .contenedor-alertas {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    align-items: center;
+    flex-direction: row;
+  }
+
+  .alert {
+    margin: 0 1rem 1rem 1rem;
   }
 }
 
 /* Desktop */
-@media (min-width: 769px) {
+@media (min-width: 851px) {
+  .nav {
+    width: 500px;
+  }
+
   .incidencias {
     width: 750px;
   }
 
   .contenedor-alertas {
     display: flex;
-    justify-content: space-around;
+    flex-direction: row;
+  }
+
+  .alert {
+    margin: 0 3rem 1rem 3rem;
   }
 }

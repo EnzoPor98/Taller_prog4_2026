@@ -14,7 +14,11 @@
     <link rel="stylesheet" href="/src/components/navbar/navbar.css" />
     <script src="/src/components/navbar/navbar.js" defer></script>
     <!-- ESTILOS -->
-    <link rel="stylesheet" href="../../styles/empleadoMunicipal/Perfil.css" />
+    <link
+      rel="stylesheet"
+      href="../../../styles/empleadoMunicipal/Perfil.css"
+    />
+    <link rel="stylesheet" href="../../../styles/empleadoMunicipal/Nav.css" />
     <!-- SCRIPTS -->
     <script src="Perfil.js" defer></script>
   </head>
@@ -23,70 +27,61 @@
       <div id="navbar-placeholder"></div>
     </header>
     <main>
-      <h1>Perfil de Usuario</h1>
-      <form id="formulario" action="" method="post">
-        <h2>Datos de Usuario</h2>
-        <div class="info">
-          <label for="identificador"># ID:</label>
-          <input
-            id="identificador"
-            class="form-control"
-            type="text"
-            aria-label="Disabled input example"
-            disabled
-            readonly
-          />
-        </div>
-        <div class="info">
-          <label for="nombres">Nombres:</label>
-          <input
-            id="nombres"
-            class="form-control"
-            type="text"
-            aria-label="default input example"
-          />
-        </div>
-        <div class="info">
-          <label for="apellidos">Apellidos:</label>
-          <input
-            id="apellidos"
-            class="form-control"
-            type="text"
-            aria-label="default input example"
-          />
-        </div>
-        <div class="info">
-          <label for="area">Area:</label>
-          <input
-            id="area"
-            class="form-control"
-            type="text"
-            aria-label="Disabled input example"
-            disabled
-            readonly
-          />
-        </div>
-        <div class="info">
-          <label for="rol">Rol:</label>
-          <input
-            id="rol"
-            class="form-control"
-            type="text"
-            aria-label="Disabled input example"
-            disabled
-            readonly
-          />
-        </div>
-        <div class="user">
-          <h2>Datos de Cuenta</h2>
+      <article class="nav">
+        <a href="../Inicio/Inicio.html" class="btn btn-outline-dark">INICIO</a>
+        <a href="../Articulos/Articulos.html" class="btn btn-outline-dark"
+          >ARTICULOS</a
+        >
+        <a href="../Incidencias/Incidencias.html" class="btn btn-outline-dark"
+          >INCIDENCIAS</a
+        >
+      </article>
+      <article class="formulario">
+        <h1>Perfil de Usuario</h1>
+        <form id="formulario">
+          <h3>Datos de Usuario</h3>
+          <div class="info">
+            <label for="identificador"># ID:</label>
+            <input
+              id="identificador"
+              class="form-control"
+              type="text"
+              disabled
+              readonly
+            />
+          </div>
+          <div class="info">
+            <label for="nombres">Nombres:</label>
+            <input id="nombres" class="form-control" type="text" />
+          </div>
+          <div class="info">
+            <label for="apellidos">Apellidos:</label>
+            <input id="apellidos" class="form-control" type="text" />
+          </div>
+          <div class="info">
+            <label for="area">Area:</label>
+            <input
+              id="area"
+              class="form-control"
+              type="text"
+              disabled
+              readonly
+            />
+          </div>
+          <div class="info">
+            <label for="rol">Rol:</label>
+            <input
+              id="rol"
+              class="form-control"
+              type="text"
+              disabled
+              readonly
+            />
+          </div>
+          <h3>Datos de Cuenta</h3>
           <div class="info">
             <label for="usuario">Usuario:</label>
-            <input
-              id="usuario"
-              class="form-control"
-              type="email"
-              aria-label="default input example"
-            />
+            <input id="usuario" class="form-control" type="email" />
           </div>
           <div class="info">
             <label for="contrasenia_actual">Contraseña actual:</label>
@@ -94,7 +89,6 @@
               id="contrasenia_actual"
               class="form-control"
               type="password"
-              aria-label="default input example"
             />
           </div>
           <div class="info">
@@ -103,21 +97,15 @@
               id="contrasenia_nueva"
               class="form-control"
               type="password"
-              aria-label="default input example"
             />
           </div>
           <div class="info">
             <label for="confirmar">Confirmar Contraseña:</label>
-            <input
-              id="confirmar"
-              class="form-control"
-              type="password"
-              aria-label="default input example"
-            />
+            <input id="confirmar" class="form-control" type="password" />
           </div>
-        </div>
-        <button class="btn btn-success" type="submit">Guardar Cambios</button>
-      </form>
+          <button class="btn btn-success" type="submit">GUARDAR CAMBIOS</button>
+        </form>
+      </article>
     </main>
     <footer></footer>
   </body>

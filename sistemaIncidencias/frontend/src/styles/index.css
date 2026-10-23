@@ -11,31 +11,31 @@ body {
   min-height: 100vh;
 }
 
-header{
-    width: 100vw;
-    text-align: center;
-    background-color: #2C5C80;
+header {
+  width: 100vw;
+  text-align: center;
+  background-color: #2c5c80;
 }
 
 main {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    width: 100%;
-} 
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  width: 100%;
+}
 article h1 {
-    text-align: center;
-    margin: 10px 0;
+  text-align: center;
+  margin: 10px 0;
 }
 
 article p {
-    text-align: center;
-    margin: 10px 0;
+  text-align: center;
+  margin: 10px 0;
 }
 
 /* El form usa los estilos de Bootstrap; aquí solo lo dejamos ocupar todo el ancho de la card */
 form {
-    width: 100%;
+  width: 100%;
 }
 
 footer {
@@ -49,8 +49,8 @@ footer {
   margin-bottom: 3rem;
 }
 .card {
-    border: none !important;
-    box-shadow: none !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 /* Mobile */
 @media (max-width: 450px) {
@@ -59,15 +59,15 @@ footer {
     text-align: center;
   }
 
-    #loginForm{
-        display: flex;
-        flex-direction: column;
-        width: 300px;
-        padding: 2rem 1rem;
-        border: 1px solid black;
-        border-radius: 5px;
-        margin: 0 auto;
-    }
+  #loginForm {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    padding: 2rem 1rem;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin: 0 auto;
+  }
 
   #loginButton {
     background-color: #2c5c80;
@@ -87,15 +87,15 @@ footer {
     text-align: center;
   }
 
-    #loginForm{
-        display: flex;
-        flex-direction: column;
-        width: 400px;
-        padding: 3rem 2rem;
-        border: 1px solid black;
-        border-radius: 5px;
-        margin: 0 auto;
-    }
+  #loginForm {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    padding: 3rem 2rem;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin: 0 auto;
+  }
 
   #loginButton {
     background-color: #2c5c80;
@@ -116,15 +116,15 @@ footer {
     margin-bottom: 1rem;
   }
 
-    #loginForm{
-        display: flex;
-        flex-direction: column;
-        width: 450px;
-        padding: 2rem;
-        border: 1px solid black;
-        border-radius: 5px;
-        margin: 0 auto;
-    }
+  #loginForm {
+    display: flex;
+    flex-direction: column;
+    width: 450px;
+    padding: 2rem;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin: 0 auto;
+  }
 
   #loginButton {
     background-color: #2c5c80;

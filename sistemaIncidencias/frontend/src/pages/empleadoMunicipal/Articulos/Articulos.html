@@ -18,6 +18,7 @@
       rel="stylesheet"
       href="../../../styles/empleadoMunicipal/Articulos.css"
     />
+    <link rel="stylesheet" href="../../../styles/empleadoMunicipal/Nav.css" />
     <!-- SCRIPTS -->
     <script src="Articulos.js" defer></script>
   </head>
@@ -26,68 +27,37 @@
       <div id="navbar-placeholder"></div>
     </header>
     <main>
-      <h1>Lista de Articulos</h1>
-      <article class="container-fluid">
-        <form class="d-flex" role="search">
-          <h3>Filtros de busqueda</h3>
-          <div class="filtro-palabra">
-            <input
-              class="form-control me-2"
-              type="search"
-              placeholder="Search"
-              aria-label="Search"
-            />
-          </div>
-          <div
-            class="btn-group"
-            role="group"
-            aria-label="Button group with nested dropdown"
-          >
-            <button type="button" class="btn btn-primary">Descripcion</button>
-            <div class="btn-group" role="group">
-              <button
-                type="button"
-                class="btn btn-primary dropdown-toggle"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Area
-              </button>
-              <ul class="dropdown-menu">
-                <!-- AREAS -->
-              </ul>
-            </div>
-            <div class="btn-group" role="group">
-              <button
-                type="button"
-                class="btn btn-primary dropdown-toggle"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Categoria
-              </button>
-              <ul class="dropdown-menu">
-                <!-- CATEGORIAS -->
-              </ul>
-            </div>
-          </div>
-        </form>
+      <article class="nav">
+        <a href="../Inicio/Inicio.html" class="btn btn-outline-dark">INICIO</a>
+        <a href="../Incidencias/Incidencias.html" class="btn btn-outline-dark"
+          >INCIDENCIAS</a
+        >
+        <a href="../Perfil/Perfil.html" class="btn btn-outline-dark">PERFIL</a>
       </article>
-      <article class="table-responsive">
-        <table class="table table-striped table-bordered">
-          <thead class="table-info">
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">AREA</th>
-              <th scope="col">CATEGORIA</th>
-              <th scope="col">DESCRIPCION</th>
-              <th scope="col">ACTIVO</th>
-            </tr>
-          </thead>
-          <tbody id="bodyTable">
-            <!-- CONTENIDO -->
-          </tbody>
-        </table>
+      <article class="filtros">
+        <span>FILTRO</span>
+        <input class="form-control me-2" type="search" />
+        <button class="btn btn-primary" type="submit">BUSCAR</button>
+      </article>
+      <article class="tabla">
+        <h3>Lista de Articulos</h3>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered border-dark">
+            <thead class="table-info">
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">AREA</th>
+                <th scope="col">CATEGORIA</th>
+                <th scope="col">DESCRIPCION</th>
+                <th scope="col">ACTIVO</th>
+                <th scope="col">ACCIONES</th>
+              </tr>
+            </thead>
+            <tbody id="bodyTable">
+              <!-- CONTENIDO -->
+            </tbody>
+          </table>
+        </div>
       </article>
     </main>
     <footer></footer>

@@ -1,4 +1,4 @@
-const token = localStorage.getItem('token');
+const token = localStorage.getItem("token");
 
 document.addEventListener("DOMContentLoaded", () => {
   cargarTabla();
@@ -11,7 +11,7 @@ async function cargarTabla() {
         Authorization: `Bearer ${token}`,
       },
     });
-    const  articulos  = await respuesta.json();
+    const articulos = await respuesta.json();
 
     const tbody = document.getElementById("bodyTable");
     tbody.textContent = "";
@@ -27,10 +27,24 @@ async function cargarTabla() {
 
       const fila = document.createElement("tr");
 
+      let contador = 0;
       for (let atr of atributos_art) {
         const columna = document.createElement("td");
         columna.textContent = atr;
         fila.appendChild(columna);
+
+        contador++;
+        if (contador === atributos_art.length) {
+          const columnaAcciones = document.createElement("td");
+
+          const botonEditar = document.createElement("button");
+          botonEditar.textContent = "REPORTAR";
+          botonEditar.classList.add("btn", "btn-warning");
+          botonEditar.id = "botonReportar";
+
+          columnaAcciones.appendChild(botonEditar);
+          fila.appendChild(columnaAcciones);
+        }
       }
 
       tbody.appendChild(fila);
@@ -39,3 +53,20 @@ async function cargarTabla() {
     console.error("Error al conectar con el backend:", error);
   }
 }
+
+// REPORTAR INCIDENCIA
+document
+  .getElementById("bodyTable")
+  .addEventListener("click", async (event) => {
+    if (event.target.id != "botonReportar") {
+      return;
+    }
+
+    const fila = event.target.closest("tr");
+    const columna = fila.querySelectorAll("td");
+    const articulo = [columna[0].innerText, columna[3].innerText];
+
+    localStorage.setItem("articuloIncidencia", articulo);
+
+    window.location.href = "../Incidencias/Incidencias.html";
+  });

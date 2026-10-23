@@ -22,63 +22,48 @@ footer {
   background-color: #2c5c80;
 }
 
-form {
-  margin-top: 1rem;
+.formulario {
   border: 1px solid black;
   border-radius: 25px;
   padding: 1rem;
+  margin: 1rem 0;
 }
 
-form input {
-  text-align: center;
+.formulario h3 {
+  border-top: 1px dashed black;
+  padding-top: 1rem;
 }
 
 .info {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: space-around;
-  margin: 0.5rem 0;
+  margin-bottom: 1rem;
 }
 
-.info label {
-  margin-right: 1rem;
+.info input {
+  width: 200px;
+  text-align: center;
 }
 
-.user {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px dashed black;
-}
-
-button {
-  margin-top: 1rem;
-}
-
-/* Mobile */
-@media (max-width: 450px) {
-  .info input {
-    width: 200px;
-  }
-}
-
-/* Tablet */
-@media (min-width: 451px) and (max-width: 768px) {
-  main {
-    margin: auto;
-  }
-
-  .info input {
-    width: 200px;
+@media (min-width: 440px) and (max-width: 549px) {
+  .info {
+    padding: 0 2rem;
   }
 }
 
 /* Desktop */
-@media (min-width: 769px) {
-  main {
-    margin: auto;
+@media (min-width: 550px) {
+  .nav {
+    width: 500px;
   }
 
-  .info input {
-    width: 400px;
+  .formulario {
+    width: 500px;
+    margin: 1rem auto;
+  }
+
+  .info {
+    padding: 0 3rem;
   }
 }
