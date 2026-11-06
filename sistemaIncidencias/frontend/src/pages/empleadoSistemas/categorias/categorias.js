@@ -1,4 +1,4 @@
-const BACKEND_URL = 'import.meta.env.VITE_API_URL/api/categorias';
+const BACKEND_URL = `${import.meta.env.VITE_API_URL}/api/categorias`;
 const token = sessionStorage.getItem('token');
 
 const { Modal } = window.bootstrap;

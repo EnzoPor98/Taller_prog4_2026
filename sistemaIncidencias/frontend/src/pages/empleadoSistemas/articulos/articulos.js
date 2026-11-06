@@ -1,5 +1,5 @@
 // Lista de áreas (podría venir de un backend en el futuro)
-const BACKEND_URL = 'import.meta.env.VITE_API_URL/api';
+const API_URL = `${import.meta.env.VITE_API_URL}/api`;
 const token = sessionStorage.getItem('token');
 
 // Bootstrap viene expuesto en window.bootstrap desde /src/main.js
@@ -14,7 +14,7 @@ function goToMenu() {
 async function getAreas() {
     let areas = [];
     try {
-        const response = await fetch(`${BACKEND_URL}/areas`,{
+        const response = await fetch(`${API_URL}/areas`,{
              headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
