@@ -2,7 +2,7 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-
+import pool from './config/db.js';
 import apiRouter from './src/routes/index.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './swagger.js';
@@ -27,6 +27,31 @@ app.get('/healthcheck', (req, res) => {
     res.json({
         mensaje: '¡El servidor está funcionando correctamente!'
     });
+});
+app.get('/db-check', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT
+                NOW() AS fecha,
+                current_database() AS base_datos,
+                current_user AS usuario
+        `);
+
+        res.json({
+            conectado: true,
+            mensaje: 'Conexión exitosa con Supabase',
+            datos: result.rows[0]
+        });
+
+    } catch (error) {
+        console.error('Error de conexión:', error);
+
+        res.status(500).json({
+            conectado: false,
+            mensaje: 'Error al conectar con PostgreSQL',
+            error: error.message
+        });
+    }
 });
 
 // Rutas
