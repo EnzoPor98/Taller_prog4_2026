@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function cargarTabla() {
   try {
-    const respuesta = await fetch("http://localhost:3000/api/incidencias", {
+    const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/incidencias`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -95,7 +95,7 @@ document
       const idArticulo = Number(document.getElementById("articuloInput").value);
 
       const respuesta = await fetch(
-        `http://localhost:3000/api/articulos/${idArticulo}`,
+        `${import.meta.env.VITE_API_URL}/api/articulos/${idArticulo}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -159,7 +159,7 @@ const nuevaIncidencia = document
         descripcion_resolucion: "",
       };
 
-      const respuesta = await fetch("http://localhost:3000/api/incidencias", {
+      const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/incidencias`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -188,7 +188,7 @@ document
 
     try {
       const respuesta = await fetch(
-        `http://localhost:3000/api/incidencias/${idIncidencia}`,
+        `${import.meta.env.VITE_API_URL}/api/incidencias/${idIncidencia}`,
         {
           method: "PATCH",
           headers: {

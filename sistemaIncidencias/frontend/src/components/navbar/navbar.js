@@ -1,3 +1,6 @@
+import navbarHtml from "./navbar.html?raw";
+import logoUrl from "../../assets/logoMunicipalidad.png";
+
 const usuario = JSON.parse(sessionStorage.getItem("usuario"));
 
 function logout() {
@@ -5,12 +8,12 @@ function logout() {
   sessionStorage.removeItem("usuario");
   window.location.href = "/index.html";
 }
+window.logout = logout;
 
 (function () {
   // Ruta ABSOLUTA desde la raíz del proyecto (funciona sin importar
   // desde qué página/nivel de carpetas se cargue este script).
-  const NAVBAR_URL = "/src/components/navbar/navbar.html";
-  const PLACEHOLDER_ID = "navbar-placeholder";
+    const PLACEHOLDER_ID = "navbar-placeholder";
 
   function loadDataUser() {
     if (!usuario.nombres || !usuario.apellidos) return;
@@ -29,13 +32,9 @@ function logout() {
   async function loadNavbar() {
     const placeholder = document.getElementById(PLACEHOLDER_ID);
     try {
-      const res = await fetch(NAVBAR_URL, { cache: "no-store" });
-
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status} al pedir ${NAVBAR_URL}`);
-      }
-
-      placeholder.innerHTML = await res.text();
+      placeholder.innerHTML = navbarHtml;
+      const logo = placeholder.querySelector(".logo");
+      if (logo) logo.src = logoUrl;
       loadDataUser();
 
     } catch (err) {
