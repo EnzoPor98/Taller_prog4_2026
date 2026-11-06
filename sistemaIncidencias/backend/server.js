@@ -1,59 +1,49 @@
+
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+
 import apiRouter from './src/routes/index.js';
-import pool from './config/db.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './swagger.js';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+
 app.use(
-  morgan((tokens, req, res) => {
-    const timestamp = new Date().toISOString();
-    const method = tokens.method(req, res);
-    const endpoint = tokens.url(req, res);
-    const status = tokens.status(req, res);
-    const responseTime = tokens["response-time"](req, res);
+    morgan((tokens, req, res) => {
+        const timestamp = new Date().toISOString();
 
-    return `${timestamp} [TFI-PROG-4] ${method} ${endpoint} ${status} ${responseTime} ms`;
-  }),
+        return `${timestamp} [TFI-PROG-4] ${tokens.method(req, res)} ${tokens.url(req, res)} ${tokens.status(req, res)} ${tokens['response-time'](req, res)} ms`;
+    })
 );
-app.use(express.static("public"));
 
-// Ruta raíz de prueba
-app.get("/healtcheck", (req, res) => {
-  res.json({ mensaje: "¡El servidor está funcionando correctamente!" });
+// Healthcheck
+app.get('/healthcheck', (req, res) => {
+    res.json({
+        mensaje: '¡El servidor está funcionando correctamente!'
+    });
 });
 
-// Rutas de la API
-app.use("/api", apiRouter);
-app.use ('/api-docs', 
-  swaggerUi.serve , 
-  swaggerUi.setup (swaggerSpec)
-); // Aquí van las rutas de tu aplicación... app.listen (port, () => { console.log ( ` El servidor se está ejecutando en el puerto ${port} ` ); });
+// Rutas
+app.use('/api', apiRouter);
 
+app.use(
+    '/api-docs',
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerSpec)
+);
 
-// 404 handler
+// 404
 app.use((req, res) => {
-  res.status(404).json({ error: `Cannot GET ${req.originalUrl}` });
+    res.status(404).json({
+        error: `Cannot GET ${req.originalUrl}`
+    });
 });
 
-// Iniciar el servidor
-try {
-  await pool.query("SELECT 1"); // Si responde está conectado
-  console.log("Conexión exitosa a la base de datos ✅");
-
-  app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
-  });
-} catch (error) {
-  console.error("❌ Error al conectar con la base de datos");
-  console.error(error.message);
-  process.exit(1);
-}
+// Exportar aplicación para Vercel
+export default app;
