@@ -1,5 +1,5 @@
 // Lista de áreas (podría venir de un backend en el futuro)
-const BACKEND_URL = 'http://localhost:3000/api';
+const BACKEND_URL = 'import.meta.env.VITE_API_URL/api';
 const token = sessionStorage.getItem('token');
 
 // Bootstrap viene expuesto en window.bootstrap desde /src/main.js

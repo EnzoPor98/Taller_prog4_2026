@@ -69,9 +69,9 @@ npm install
 npm run dev
 ```
 
-Levanta el servidor en `http://localhost:3000` (configurable con la variable `PORT`).
+Levanta el servidor en `import.meta.env.VITE_API_URL` (configurable con la variable `PORT`).
 
-La API está documentada en **Swagger** en `http://localhost:3000/api-docs`.
+La API está documentada en **Swagger** en `import.meta.env.VITE_API_URL/api-docs`.
 
 Las rutas principales cuelgan de `/api`:
 

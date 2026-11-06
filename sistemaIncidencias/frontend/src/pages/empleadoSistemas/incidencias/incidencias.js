@@ -1,4 +1,4 @@
-const BACKEND_URL = 'http://localhost:3000/api/incidencias';
+const BACKEND_URL = 'import.meta.env.VITE_API_URL/api/incidencias';
 const token = sessionStorage.getItem('token');
 // Bootstrap viene expuesto en window.bootstrap desde /src/main.js
 // (cargado como módulo, así que se garantiza antes que este script).
