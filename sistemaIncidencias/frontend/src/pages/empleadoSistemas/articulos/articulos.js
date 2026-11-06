@@ -34,7 +34,7 @@ async function getAreas() {
 async function getCategorias() {
     let categorias = [];
     try {
-        const response = await fetch(`${BACKEND_URL}/categorias`,{
+        const response = await fetch(`${API_URL}/categorias`,{
              headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -105,7 +105,7 @@ async function abrirModalEditar(idArticulo) {
     // READ: pedimos el artículo puntual al backend (consume la API).
     let art = null;
     try {
-        const response = await fetch(`${BACKEND_URL}/articulos/${idArticulo}`, {
+        const response = await fetch(`${API_URL}/articulos/${idArticulo}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -146,7 +146,7 @@ async function eliminarArticulo(idArticulo) {
     if (!confirm(`¿Eliminar el artículo "${art.descripcion}"?`)) return;
 
     try {
-        const respuesta = await fetch(`${BACKEND_URL}/articulos/${idArticulo}`, {
+        const respuesta = await fetch(`${API_URL}/articulos/${idArticulo}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -208,7 +208,7 @@ if (archivo) {
 
     if (modal.dataset.modo === 'crear') {
         try {
-            const respuesta = await fetch(`${BACKEND_URL}/articulos`, {
+            const respuesta = await fetch(`${API_URL}/articulos`, {
                 method: 'POST',
                 headers: {
                     // 'Content-Type': 'application/json',
@@ -230,7 +230,7 @@ if (archivo) {
         const idArticulo = modal.dataset.idx;
         try {
             const token = sessionStorage.getItem('token');
-            const respuesta = await fetch(`${BACKEND_URL}/articulos/${idArticulo}`, {
+            const respuesta = await fetch(`${API_URL}/articulos/${idArticulo}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -260,7 +260,7 @@ if (archivo) {
 // ----------------------------------------------------
 async function renderTabla() {
     try {
-        const response = await fetch(`${BACKEND_URL}/articulos`,
+        const response = await fetch(`${API_URL}/articulos`,
             {
                 headers: {
                     'Content-Type': 'application/json',
