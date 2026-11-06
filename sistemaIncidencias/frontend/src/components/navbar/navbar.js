@@ -1,4 +1,5 @@
 import navbarHtml from "./navbar.html?raw";
+import logoUrl from "../../assets/logoMunicipalidad.png";
 
 const usuario = JSON.parse(sessionStorage.getItem("usuario"));
 
@@ -32,6 +33,8 @@ window.logout = logout;
     const placeholder = document.getElementById(PLACEHOLDER_ID);
     try {
       placeholder.innerHTML = navbarHtml;
+      const logo = placeholder.querySelector(".logo");
+      if (logo) logo.src = logoUrl;
       loadDataUser();
 
     } catch (err) {
