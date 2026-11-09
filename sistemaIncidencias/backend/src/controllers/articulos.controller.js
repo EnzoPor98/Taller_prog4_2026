@@ -211,9 +211,9 @@ export default class ArticulosController {
     this.articulos = new ArticulosService();
   }
 
-  buscarTodos = async (req, res) => {
+  getArticulos = async (req, res) => {
     try {
-      const rows = await this.articulos.buscarTodos();
+      const rows = await this.articulos.getArticulos();
 
       return res.status(200).json({ articulos: rows });
     } catch (error) {
@@ -226,10 +226,10 @@ export default class ArticulosController {
     }
   };
 
-  buscarPorId = async (req, res) => {
+  getArticulo = async (req, res) => {
     try {
       const { id } = req.params;
-      const rows = await this.articulos.buscarPorId(id);
+      const rows = await this.articulos.getArticulo(id);
 
       if (rows === null || rows.length === 0) {
         return res.status(404).json({ mensaje: "Artículo no encontrado" });
@@ -246,10 +246,10 @@ export default class ArticulosController {
     }
   };
 
-  crear = async (req, res) => {
+  createArticulo = async (req, res) => {
     try {
       const articulo = req.body;
-      const rows = await this.articulos.crear(articulo);
+      const rows = await this.articulos.createArticulo(articulo);
 
       if (rows === null || rows.length === 0) {
         return res
@@ -270,7 +270,7 @@ export default class ArticulosController {
     }
   };
 
-  actualizar = async (req, res) => {
+  updateArticulo = async (req, res) => {
     try {
       const articulo = {
         id: req.params.id,
@@ -279,7 +279,7 @@ export default class ArticulosController {
         descripcion: req.body.descripcion,
       };
 
-      const rows = await this.articulos.actualizar(articulo);
+      const rows = await this.articulos.updateArticulo(articulo);
 
       if (rows === null || rows.length === 0) {
         return res.status(404).json({ mensaje: "Artículo no encontrado" });
@@ -297,10 +297,10 @@ export default class ArticulosController {
     }
   };
 
-  eliminar = async (req, res) => {
+  deleteArticulo = async (req, res) => {
     try {
       const { id } = req.params;
-      const rows = await this.articulos.eliminar(id);
+      const rows = await this.articulos.deleteArticulo(id);
 
       if (rows === null || rows.length === 0) {
         return res.status(404).json({ mensaje: "Artículo no encontrado" });

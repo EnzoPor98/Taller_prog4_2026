@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import { param, body } from 'express-validator';
+import { Router } from "express";
+//import { param, body } from "express-validator";
 
 // import {
 //     getArticulos,
@@ -8,19 +8,40 @@ import { param, body } from 'express-validator';
 //     updateArticulo,
 //     deleteArticulo
 // } from '../controllers/articulos.controller.js';
-import { verificarToken } from '../middleware/auth.middleware.js';
-import { validate } from '../middleware/validate.middleware.js';
-import { upload } from '../middleware/upload.middleware.js';
+import { verificarToken } from "../middleware/auth.middleware.js";
+//import { validate } from "../middleware/validate.middleware.js";
+import { upload } from "../middleware/upload.middleware.js";
+//-------------------------------------------------------------------------
+import articulosController from "../controllers/articulos.controller.js";
+import {
+  validarId,
+  validarArticulo,
+} from "../middleware/articulos.validator.js";
 
-import articulosController from '../controllers/articulos.controller.js';
 const router = Router();
 const controlador = new articulosController();
 
-router.get('/', verificarToken, controlador.buscarTodos);
-router.get('/:id', verificarToken, controlador.buscarPorId);
-router.post('/', verificarToken, upload.single('archivo'), controlador.crear);
-router.patch('/:id', verificarToken, controlador.actualizar);
-router.delete('/:id', verificarToken, controlador.eliminar);
+router.get("/", verificarToken, controlador.getArticulos);
+
+router.get("/:id", verificarToken, validarId, controlador.getArticulo);
+
+router.post(
+  "/",
+  verificarToken,
+  upload.single("archivo"),
+  validarArticulo,
+  controlador.createArticulo,
+);
+
+router.patch(
+  "/:id",
+  verificarToken,
+  validarId,
+  validarArticulo,
+  controlador.updateArticulo,
+);
+
+router.delete("/:id", verificarToken, validarId, controlador.deleteArticulo);
 
 /**
  * @swagger

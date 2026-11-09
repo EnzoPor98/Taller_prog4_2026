@@ -5,23 +5,23 @@ export default class ArticulosService {
     this.articulos = new articulosRepository();
   }
 
-  buscarTodos() {
-    return this.articulos.buscarTodos();
+  getArticulos() {
+    return this.articulos.getArticulos();
   }
 
-  buscarPorId(id) {
-    return this.articulos.buscarPorId(id);
+  getArticulo(id) {
+    return this.articulos.getArticulo(id);
   }
 
-  crear(articulo) {
-    return this.articulos.crear(articulo);
+  createArticulo(articulo) {
+    return this.articulos.createArticulo(articulo);
   }
 
-  actualizar(articulo) {
-    return this.articulos.actualizar(articulo);
+  updateArticulo(articulo) {
+    return this.articulos.updateArticulo(articulo);
   }
 
-  eliminar(id) {
-    return this.articulos.eliminar(id);
+  deleteArticulo(id) {
+    return this.articulos.deleteArticulo(id);
   }
 }
