@@ -48,6 +48,8 @@
   </footer>
   <script type="module" src="./src/main.js"></script>
   <script type="module">
+    import { INICIO_POR_ROL } from "./src/utils/roles.js";
+
     const API_URL = import.meta.env.VITE_API_URL;
 
     const form = document.getElementById("loginForm");
@@ -82,19 +84,12 @@
         sessionStorage.setItem("usuario", JSON.stringify(data.usuario));
 
 
-        switch (data.usuario.rol) {
-          case 3:
-            window.location.href = "/src/pages/empleadoSistemas/empleadoSistemas.html";
-            break;
-          case 2:
-            window.location.href = "/src/pages/empleadoMunicipal/Inicio/Inicio.html";
-            break;
-          case 1:
-           window.location.href = "/src/pages/directorSistemas/Dashboard/Inicio.html";
-            break;
-          default:
-            alert("Rol no reconocido.");
+        const inicio = INICIO_POR_ROL[data.usuario.rol_nombre];
+        if (!inicio) {
+          alert("Rol no reconocido.");
+          return;
         }
+        window.location.href = inicio;
       } catch (error) {
         alert("No se pudo conectar con el servidor.");
       }
