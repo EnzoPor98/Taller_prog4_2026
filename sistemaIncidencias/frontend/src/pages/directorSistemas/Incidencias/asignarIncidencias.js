@@ -1,5 +1,5 @@
 const token = sessionStorage.getItem('token');
-
+const API_URL = `${import.meta.env.VITE_API_URL}/api`;
 document.addEventListener("DOMContentLoaded", () => {
   cargarTabla();
 });
@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function cargarTabla() {
   try {
 
-    const resIncidencias = await fetch("http://localhost:3000/api/incidencias", {
+    const resIncidencias = await fetch(`${API_URL}/incidencias`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -17,7 +17,7 @@ async function cargarTabla() {
 
     // 2. Traemos la lista de empleados de sistemas para el select
     // (Asegurate de que exista un endpoint similar a este)
-    const resEmpleados = await fetch("http://localhost:3000/api/empleados-sistemas", {
+    const resEmpleados = await fetch(`${API_URL}/empleados-sistemas`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -100,7 +100,7 @@ async function asignarEmpleado(idIncidencia, idEmpleado) {
   }
 
   try {
-    await fetch(`http://localhost:3000/api/incidencias/${idIncidencia}/asignar`, {
+    await fetch(`${API_URL}/incidencias/${idIncidencia}/asignar`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ async function cancelarIncidencia(idIncidencia) {
   if (!confirmacion) return;
 
   try {
-    await fetch(`http://localhost:3000/api/incidencias/${idIncidencia}/cancelar`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/api/incidencias/${idIncidencia}/cancelar`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

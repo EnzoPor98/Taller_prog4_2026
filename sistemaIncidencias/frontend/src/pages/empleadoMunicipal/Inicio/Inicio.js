@@ -7,9 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function cargarPanel() {
   try {
-    const respuesta = await fetch("http://localhost:3000/api/incidencias", {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const respuesta = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/incidencias`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
     });
     const incidencias = await respuesta.json();
@@ -44,9 +47,12 @@ async function cargarPanel() {
 
 async function cargarTabla() {
   try {
-    const respuesta = await fetch("http://localhost:3000/api/incidencias", {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const respuesta = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/incidencias`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
     });
     const incidencias = await respuesta.json();

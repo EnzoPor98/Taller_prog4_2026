@@ -11,9 +11,10 @@ const register = async (req, res) => {
         await client.query('BEGIN');
 
         const existeQuery = `SELECT id_usuario FROM usuarios WHERE usuario = $1;`;
-        const existe = await pool.query(existeQuery, [usuario]);
+        const existe = await client.query(existeQuery, [usuario]);
 
         if (existe.rows.length > 0) {
+            await client.query('ROLLBACK');
             return res.status(500).json({ mensaje: 'El usuario ya existe' });
         }
 
@@ -31,7 +32,7 @@ const register = async (req, res) => {
             " ",//Forzar, lo ideal seria tener un avatar, o que permita null
             Number(rol),
             1];
-        const result = await pool.query(query, values);
+        const result = await client.query(query, values);
 
         await client.query('COMMIT');
 

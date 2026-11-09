@@ -1,12 +1,12 @@
 const token = sessionStorage.getItem('token');
-
+const API_URL = `${import.meta.env.VITE_API_URL}/api`;
 document.addEventListener("DOMContentLoaded", () => {
   cargarTabla();
 });
 
 async function cargarTabla() {
   try {
-    const respuesta = await fetch(`http://localhost:3000/api/articulos`, {
+    const respuesta = await fetch(`${API_URL}/articulos`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
