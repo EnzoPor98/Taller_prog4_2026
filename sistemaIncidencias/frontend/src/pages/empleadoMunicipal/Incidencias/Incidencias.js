@@ -35,7 +35,9 @@ async function cargarTabla() {
     tbody.textContent = "";
     for (let inc of incidencias) {
       const asignadoA =
-        inc.asignado_a?.nombres + " " + inc.asignado_a?.apellidos;
+        inc.asignado_a
+        ? inc.asignado_a.nombres + " " + inc.asignado_a.apellidos
+        : "Sin asignar";
       const articulo = inc.articulo?.descripcion;
       const estado = inc.estado?.descripcion;
       const atributos_inc = [
@@ -247,8 +249,6 @@ btnConfirmar.addEventListener("click", async () => {
       id_articulo: articulo,
       id_estado: 1,
       creado_por: user.id_usuario,
-      asignado_a: 4, //Aca hay que ver logica en lo del director que asigna las incidencias.(estren@correo.com es empleado de sist).
-      //Hasta que se haga la pantalla del director todo se asigna a ese usuario.
       creado: new Date().toISOString(),
       prioridad: 3,
       descripcion_pedido: pedido,

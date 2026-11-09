@@ -28,7 +28,7 @@ export default class IncidenciasRepository {
                                 ON inc.id_articulo = art.id_articulo
                             INNER JOIN usuarios user_create
                                 ON inc.creado_por = user_create.id_usuario
-                            INNER JOIN usuarios user_asign
+                            LEFT JOIN usuarios user_asign
                                 ON inc.asignado_a = user_asign.id_usuario
                             INNER JOIN estados estado
                                 ON inc.id_estado = estado.id_estado
@@ -64,7 +64,7 @@ export default class IncidenciasRepository {
                                 ON inc.id_articulo = art.id_articulo
                             INNER JOIN usuarios user_create
                                 ON inc.creado_por = user_create.id_usuario
-                            INNER JOIN usuarios user_asign
+                            LEFT JOIN usuarios user_asign
                                 ON inc.asignado_a = user_asign.id_usuario
                             INNER JOIN estados estado
                                 ON inc.id_estado = estado.id_estado
@@ -74,7 +74,8 @@ export default class IncidenciasRepository {
         return rows;
     };
 
-    createIncidencia = async (incidencia) => {
+    // Recibe el client de la transaccion para que el alta y su historial queden atomicos
+    createIncidencia = async (client, incidencia) => {
         const {
             id_articulo,
             id_estado,
@@ -96,14 +97,14 @@ export default class IncidenciasRepository {
             id_articulo,
             id_estado,
             creado_por,
-            asignado_a,
+            asignado_a ?? null,
             creado,
             prioridad,
             descripcion_pedido,
             descripcion_resolucion,
         ];
 
-        const { rows } = await pool.query(query, values);
+        const { rows } = await client.query(query, values);
         return rows;
     };
 
@@ -264,7 +265,7 @@ export default class IncidenciasRepository {
             FROM incidencias inc
                 INNER JOIN articulos art ON art.id_articulo = inc.id_articulo
                 INNER JOIN estados est ON est.id_estado = inc.id_estado
-                INNER JOIN usuarios asignado ON asignado.id_usuario = inc.asignado_a
+                LEFT JOIN usuarios asignado ON asignado.id_usuario = inc.asignado_a
             WHERE inc.prioridad = $1
                 AND inc.id_estado = ANY($2::int[])
             ORDER BY inc.creado ASC
@@ -300,7 +301,7 @@ export default class IncidenciasRepository {
                 INNER JOIN categorias cat ON cat.id_categoria = art.id_categoria
                 INNER JOIN areas ar ON ar.id_area = art.id_area
                 INNER JOIN usuarios creador ON creador.id_usuario = inc.creado_por
-                INNER JOIN usuarios asignado ON asignado.id_usuario = inc.asignado_a
+                LEFT JOIN usuarios asignado ON asignado.id_usuario = inc.asignado_a
                 INNER JOIN estados est ON est.id_estado = inc.id_estado
             WHERE ($1::date IS NULL OR (inc.creado AT TIME ZONE $4)::date >= $1::date)
                 AND ($2::date IS NULL OR (inc.creado AT TIME ZONE $4)::date <= $2::date)

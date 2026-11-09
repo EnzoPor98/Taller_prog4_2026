@@ -61,7 +61,12 @@ export default class IncidenciasService {
     getIncidencia = (id) => this.incidencias.getIncidencia(id);
 
     createIncidencia = async (incidencia, usuario) => {
-        const rows = await this.incidencias.createIncidencia(incidencia);
+        // El alta y el primer registro del historial van en la misma transaccion
+        const rows = await enTransaccion(async (client) => {
+            const creada = await this.incidencias.createIncidencia(client, incidencia);
+            await this.incidencias.registrarHistorial(client, creada[0].id_incidencia, creada[0].id_estado);
+            return creada;
+        });
 
         // Se avisa en tiempo real para que el Director actualice sus graficos
         emitirEventoEnSalas(EVENTOS.INCIDENCIA_CREADA, {
