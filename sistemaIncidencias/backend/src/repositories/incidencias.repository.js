@@ -1,4 +1,5 @@
 import pool from '../../config/db.js';
+import { ROLES } from '../utils/roles.js';
 
 // Capa de datos de incidencias: solo SQL, sin reglas de negocio.
 // Las funciones que reciben "client" se usan dentro de una transaccion.
@@ -34,10 +35,10 @@ export default class IncidenciasRepository {
                                 ON inc.id_estado = estado.id_estado
                                 `;
         const params = [];
-        if (rol === 3) {
+        if (rol === ROLES.SISTEMAS) {
             params.push(idUsuario);
             query += ` WHERE inc.asignado_a = $1`;
-        } else if (rol === 2) {
+        } else if (rol === ROLES.MUNICIPAL) {
             params.push(idUsuario);
             query += ` WHERE inc.creado_por = $1`;
         }

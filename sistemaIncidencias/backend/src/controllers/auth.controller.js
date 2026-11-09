@@ -50,12 +50,16 @@ const login = async (req, res) => {
     const { usuario, contrasenia } = req.body;
 
     try {
+        // Nunca se devuelve la columna contrasenia
         const query = `
-        SELECT * FROM usuarios
+        SELECT u.id_usuario, u.id_area, u.nombres, u.apellidos, u.usuario, u.avatar, u.rol,
+               r.nombre AS rol_nombre, r.descripcion AS rol_descripcion
+        FROM usuarios u
+        INNER JOIN roles r ON r.id_rol = u.rol
         WHERE
-        activo = 1 AND
-        usuario = $1 AND
-        contrasenia = encode(digest($2, 'sha256'), 'hex');
+        u.activo = 1 AND
+        u.usuario = $1 AND
+        u.contrasenia = encode(digest($2, 'sha256'), 'hex');
         `;
         const values = [usuario, contrasenia];
         const result = await pool.query(query, values);
