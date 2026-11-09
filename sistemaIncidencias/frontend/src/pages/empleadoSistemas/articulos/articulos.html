@@ -84,7 +84,13 @@
                             <label for="formFile" class="form-label">Foto del articulo</label>
                             <input class="form-control" type="file" id="formFile">
                         </div>
-                        <img id="preview" class="image-preview" src="" alt="Vista previa">
+                        <div id="archivo-actual" class="archivo-actual" hidden>
+                            <img id="preview" class="image-preview" alt="Vista previa" title="Click para ampliar" hidden>
+                            <a id="archivo-link" target="_blank" rel="noopener" hidden></a>
+                            <button type="button" id="btn-quitar-archivo" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i> Quitar archivo
+                            </button>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -93,6 +99,11 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Imagen ampliada al tocar la miniatura -->
+    <div id="preview-overlay" class="preview-overlay" hidden>
+        <img id="preview-ampliada" alt="Vista previa ampliada">
     </div>
 
     <script type="module" src="/src/main.js"></script>
