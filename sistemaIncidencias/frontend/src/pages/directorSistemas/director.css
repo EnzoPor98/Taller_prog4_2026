@@ -69,6 +69,45 @@ main {
     white-space: nowrap;
 }
 
+/* Tablet: entre 577px y 991.98px (sm y md de Bootstrap) */
+@media (min-width: 577px) and (max-width: 991.98px) {
+    /* Logo y perfil en la primera fila, links de navegacion en una fila completa debajo */
+    #navbar-placeholder .custom-navbar .container-fluid {
+        flex-wrap: wrap;
+    }
+
+    #navbar-placeholder #navbarNavAltMarkup {
+        order: 3;
+        width: 100%;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    #navbar-placeholder .navbar-nav {
+        justify-content: center;
+        gap: 0.25rem 2rem;
+        margin-left: 0;
+    }
+
+    #navbar-placeholder .logo {
+        width: 170px;
+    }
+
+    /* Tabla de incidencias: botones solo con icono para evitar scroll horizontal */
+    .acciones .texto-boton {
+        display: none;
+    }
+
+    .tabla-incidencias .celda-texto {
+        max-width: 160px;
+    }
+
+    .contenedor-grafico {
+        height: 240px;
+    }
+}
+
 @media (max-width: 576px) {
     #navbar-placeholder .navbar-nav {
         order: 3;
