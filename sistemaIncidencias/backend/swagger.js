@@ -19,6 +19,7 @@ const options = {
       { name: 'Categorias', description: 'Endpoints de categorías' },
       { name: 'Incidencias',description: 'Endpoints de incidencias' },
       { name: 'Auth',       description: 'Endpoints de autenticación' },
+      { name: 'Usuarios',   description: 'Endpoints de usuarios' },
     ],
     components: {
       securitySchemes: {
