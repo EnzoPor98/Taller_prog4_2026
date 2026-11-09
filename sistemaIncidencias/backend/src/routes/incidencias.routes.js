@@ -4,18 +4,10 @@ import { verificarToken, autorizarUsuarios } from '../middleware/auth.middleware
 import { validate } from '../middleware/validate.middleware.js';
 import { ROLES } from '../utils/roles.js';
 
-import {
-getIncidencias,
-getIncidencia,
-updateIncidencia,
-createIncidencia,
-asignarIncidencia,
-cancelarIncidencia,
-getDatosDashboard,
-getInforme
-} from '../controllers/incidencias.controller.js';
+import IncidenciasController from '../controllers/incidencias.controller.js';
 
 const router = Router();
+const controlador = new IncidenciasController();
 
 const validarIdIncidencia = param('id')
     .isInt({ min: 1 }).withMessage('El id de la incidencia debe ser un entero positivo');
@@ -87,7 +79,7 @@ router.get('/datos-dashboard',
     autorizarUsuarios([ROLES.DIRECTOR]),
     [validarFecha('desde'), validarFecha('hasta')],
     validate,
-    getDatosDashboard);
+    controlador.getDatosDashboard);
 
 /**
  * @swagger
@@ -149,13 +141,13 @@ router.get('/informe',
             .isInt({ min: 1, max: 4 }).withMessage('El estado debe ser 1, 2, 3 o 4'),
     ],
     validate,
-    getInforme);
+    controlador.getInforme);
 
 // Definicion de endpoints REST para incidencias
-router.get('/', verificarToken, getIncidencias);
-router.get('/:id', verificarToken, getIncidencia);
-router.patch('/:id', verificarToken, updateIncidencia);
-router.post('/', verificarToken, createIncidencia);
+router.get('/', verificarToken, controlador.getIncidencias);
+router.get('/:id', verificarToken, controlador.getIncidencia);
+router.patch('/:id', verificarToken, controlador.updateIncidencia);
+router.post('/', verificarToken, controlador.createIncidencia);
 //Definir el delete de momento cerrar o finalizar actualizan estados pero no se "borran incidencias" de la base de datos
 
 /**
@@ -205,7 +197,7 @@ router.put('/:id/asignar',
             .isInt({ min: 1 }).withMessage('El empleado a asignar debe ser un entero positivo'),
     ],
     validate,
-    asignarIncidencia);
+    controlador.asignarIncidencia);
 
 /**
  * @swagger
@@ -243,7 +235,7 @@ router.put('/:id/cancelar',
     autorizarUsuarios([ROLES.DIRECTOR, ROLES.MUNICIPAL]),
     [validarIdIncidencia],
     validate,
-    cancelarIncidencia);
+    controlador.cancelarIncidencia);
 
 
 export default router;
