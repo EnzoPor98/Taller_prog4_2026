@@ -65,7 +65,9 @@ async function cargarTabla() {
 
     for (let inc of incidencias) {
       const asignadoA =
-        inc.asignado_a?.nombres + " " + inc.asignado_a?.apellidos;
+        inc.asignado_a
+        ? inc.asignado_a.nombres + " " + inc.asignado_a.apellidos
+        : "Sin asignar";
       const articulo = inc.articulo?.descripcion;
       const estado = inc.estado?.descripcion;
 
