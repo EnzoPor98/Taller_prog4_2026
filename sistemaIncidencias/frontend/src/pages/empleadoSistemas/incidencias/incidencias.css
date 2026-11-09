@@ -1,0 +1,81 @@
+html,
+body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+main {
+    width: 100%;
+    max-width: 100%;
+}
+
+.mobile-only {
+    display: none;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+@media (max-width: 576px) {
+    td .badge {
+        font-size: 0;
+        width: 14px;
+        height: 12px;
+        padding: 0;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+    }
+
+    .mobile-hide {
+        display: none !important;
+    }
+
+    .mobile-buttons {
+        white-space: nowrap;
+    }
+
+    .mobile-buttons button {
+        display: inline-block;
+        margin: 0 2px;
+    }
+
+}
+
+@media (max-width: 760px) {
+    td .badge {
+        font-size: 0;
+        width: 14px;
+        height: 12px;
+        padding: 0;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+    }
+
+    .mobile-hide {
+        display: none !important;
+    }
+
+    .mobile-buttons {
+        white-space: nowrap;
+    }
+
+    .mobile-buttons button {
+        display: inline-block;
+        margin: 0 2px;
+    }
+
+}

@@ -1,0 +1,22 @@
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    flex-shrink: 0;
+    height: 50px;
+    /* background-color: #76cb0d; */
+    background-color: #2C5C80;
+    padding: 1rem;
+}
+
+footer h6 {
+    color: white;
+    margin: 0 auto;
+}
+
+@media (max-width: 576px) {
+    footer h6 {
+        font-size: 0.8rem;
+    }
+}
