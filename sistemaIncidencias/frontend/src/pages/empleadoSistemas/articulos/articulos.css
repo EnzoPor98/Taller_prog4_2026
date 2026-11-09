@@ -10,6 +10,42 @@ body {
     box-sizing: border-box;
 }
 
+/* Miniatura de la foto del articulo */
+.image-preview {
+    display: block;
+    margin: 0 auto;
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    cursor: zoom-in;
+}
+
+.image-preview[hidden],
+.preview-overlay[hidden] {
+    display: none;
+}
+
+/* Imagen ampliada: por encima del modal de Bootstrap (z-index 1055) */
+.preview-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.8);
+    cursor: zoom-out;
+}
+
+.preview-overlay img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 6px;
+}
+
 
 @media (max-width: 576px) {
     td .badge {
