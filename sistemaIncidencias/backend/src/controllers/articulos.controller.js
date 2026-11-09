@@ -215,7 +215,7 @@ export default class ArticulosController {
     try {
       const rows = await this.articulos.getArticulos();
 
-      return res.status(200).json({ articulos: rows });
+      return res.status(200).json(rows);
     } catch (error) {
       console.error("Error al obtener los artículos:", error);
 
@@ -235,7 +235,7 @@ export default class ArticulosController {
         return res.status(404).json({ mensaje: "Artículo no encontrado" });
       }
 
-      return res.status(200).json({ articulo: rows });
+      return res.status(200).json(rows);
     } catch (error) {
       console.error("Error al obtener el artículo:", error);
 
@@ -279,7 +279,11 @@ export default class ArticulosController {
         descripcion: req.body.descripcion,
       };
 
-      const rows = await this.articulos.updateArticulo(articulo);
+      const rows = await this.articulos.updateArticulo({
+      ...req.body,
+      id: req.params.id,
+      file: req.file,
+    });
 
       if (rows === null || rows.length === 0) {
         return res.status(404).json({ mensaje: "Artículo no encontrado" });

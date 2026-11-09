@@ -1,15 +1,5 @@
 import { Router } from "express";
-//import { param, body } from "express-validator";
-
-// import {
-//     getArticulos,
-//     getArticulo,
-//     createArticulo,
-//     updateArticulo,
-//     deleteArticulo
-// } from '../controllers/articulos.controller.js';
 import { verificarToken } from "../middleware/auth.middleware.js";
-//import { validate } from "../middleware/validate.middleware.js";
 import { upload } from "../middleware/upload.middleware.js";
 //-------------------------------------------------------------------------
 import articulosController from "../controllers/articulos.controller.js";
@@ -20,29 +10,6 @@ import {
 
 const router = Router();
 const controlador = new articulosController();
-
-router.get("/", verificarToken, controlador.getArticulos);
-
-router.get("/:id", verificarToken, validarId, controlador.getArticulo);
-
-router.post(
-  "/",
-  verificarToken,
-  upload.single("archivo"),
-  validarArticulo,
-  controlador.createArticulo,
-);
-
-router.patch(
-  "/:id",
-  verificarToken,
-  validarId,
-  validarArticulo,
-  controlador.updateArticulo,
-);
-
-router.delete("/:id", verificarToken, validarId, controlador.deleteArticulo);
-
 /**
  * @swagger
  * /api/articulos:
@@ -59,7 +26,7 @@ router.delete("/:id", verificarToken, validarId, controlador.deleteArticulo);
  *       500:
  *         description: Error interno del servidor
  */
-// router.get('/', verificarToken, getArticulos);
+router.get("/", verificarToken, controlador.getArticulos);
 
 /**
  * @swagger
@@ -83,15 +50,7 @@ router.delete("/:id", verificarToken, validarId, controlador.deleteArticulo);
  *       500:
  *         description: Error interno del servidor
  */
-// router.get('/:id', verificarToken,
-//     [
-//         param('id')
-//             .notEmpty().withMessage('ID obligatorio')
-//             .isInt().withMessage('ID debe ser numérico'),
-//     ],
-//     validate,
-//     getArticulo);
-
+router.get("/:id", verificarToken, validarId, controlador.getArticulo);
 /**
  * @swagger
  * /api/articulos:
@@ -119,22 +78,13 @@ router.delete("/:id", verificarToken, validarId, controlador.deleteArticulo);
  *       500:
  *         description: Error interno del servidor
  */
-// router.post('/', verificarToken,
-//     upload.single('archivo'),
-//     [
-//         body('areaId')
-//             .notEmpty().withMessage('Area obligatoria')
-//             .isInt().withMessage('Area debe ser numérica'),
-//         body('categoriaId')
-//             .notEmpty().withMessage('Categoria obligatoria')
-//             .isInt().withMessage('Categoria debe ser numérica'),
-//         body('descripcion')
-//             .notEmpty().withMessage('Descripcion obligatoria')
-//             .isString().withMessage('Descripcion debe ser texto'),
-//     ],
-//     validate,
-//     createArticulo);
-
+router.post(
+  "/",
+  verificarToken,
+  upload.single("archivo"),
+  validarArticulo,
+  controlador.createArticulo,
+);
 /**
  * @swagger
  * /api/articulos/{id}:
@@ -168,24 +118,14 @@ router.delete("/:id", verificarToken, validarId, controlador.deleteArticulo);
  *       500:
  *         description: Error interno del servidor
  */
-// router.patch('/:id', verificarToken,
-//     [
-//         param('id')
-//             .notEmpty().withMessage('ID obligatorio')
-//             .isInt().withMessage('ID debe ser numérico'),
-//         body('areaId')
-//             .notEmpty().withMessage('Area obligatoria')
-//             .isInt().withMessage('Area debe ser numérica'),
-//         body('categoriaId')
-//             .notEmpty().withMessage('Categoria obligatoria')
-//             .isInt().withMessage('Categoria debe ser numérica'),
-//         body('descripcion')
-//             .notEmpty().withMessage('Descripcion obligatoria')
-//             .isString().withMessage('Descripcion debe ser texto'),
-//     ],
-//     validate,
-//     updateArticulo);
-
+router.patch(
+  "/:id",
+  verificarToken,
+  upload.single("archivo"),
+  validarId,
+  validarArticulo,
+  controlador.updateArticulo,
+);
 /**
  * @swagger
  * /api/articulos/{id}:
@@ -210,13 +150,7 @@ router.delete("/:id", verificarToken, validarId, controlador.deleteArticulo);
  *       500:
  *         description: Error interno del servidor
  */
-// router.delete('/:id', verificarToken,
-//     [
-//         param('id')
-//             .notEmpty().withMessage('ID obligatorio')
-//             .isInt().withMessage('ID debe ser numérico'),
-//     ],
-//     validate,
-//     deleteArticulo);
+router.delete("/:id", verificarToken, validarId, controlador.deleteArticulo);
+
 
 export default router;
