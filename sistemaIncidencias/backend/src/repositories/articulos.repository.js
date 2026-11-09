@@ -1,5 +1,11 @@
 import pool from "../../config/db.js";
 import { supabase, bucket } from '../../config/supabase.js';
+
+// multer decodifica originalname como latin1: lo reinterpretamos como utf8 para recuperar tildes/ñ
+const nombreOriginal = (archivo) => Buffer.from(archivo.originalname, 'latin1').toString('utf8');
+// Supabase Storage rechaza claves con caracteres especiales: dejamos solo ASCII seguro
+const claveSegura = (nombre) =>
+    nombre.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9._-]/g, '_');
 export default class ArticuloRepository {
     ;
 
@@ -42,7 +48,27 @@ export default class ArticuloRepository {
             return null;
         }
 
-        return rows[0];
+        const articulo = rows[0];
+
+        const { rows: archivos } = await pool.query(
+            `SELECT arch.id_archivo, arch.nombre, arch.tipo, arch.contenido AS ruta
+             FROM articulos_archivos aa
+             INNER JOIN archivos arch ON arch.id_archivo = aa.id_archivo
+             WHERE aa.id_articulo = $1
+             LIMIT 1;`,
+            [id]
+        );
+        articulo.archivo = null;
+        if (archivos[0]) {
+            const { id_archivo, nombre, tipo } = archivos[0];
+            let ruta = archivos[0].ruta;
+            if (Buffer.isBuffer(ruta)) ruta = ruta.toString('utf8');
+            const { data, error } = await supabase.storage.from(bucket).createSignedUrl(ruta, 3600);
+            if (error) console.error('No se pudo generar la URL del archivo', error);
+            articulo.archivo = { id_archivo, nombre, tipo, url: data?.signedUrl ?? null };
+        }
+
+        return articulo;
     };
 
     createArticulo = async (articulo) => {
@@ -69,13 +95,13 @@ export default class ArticuloRepository {
             let result = await client.query(query, values);
 
             if (archivo) {
-                const nombre = archivo.originalname
+                const nombre = nombreOriginal(archivo)
                 const tipo = archivo.mimetype
                 const tamanio = archivo.size
                 const fecha_creacion = new Date();
                 // memoryStorage no genera path: todos los archivos van a la carpeta articulos/ del bucket.
                 // El timestamp evita choques de nombre (upsert: false falla si el archivo ya existe)
-                const ruta = `articulos/${Date.now()}-${nombre}`;
+                const ruta = `articulos/${Date.now()}-${claveSegura(nombre)}`;
 
                 const { error } = await supabase.storage
                     .from(bucket)
@@ -139,14 +165,17 @@ export default class ArticuloRepository {
         const getArchivoArticulo = async (db, articuloId) => {
             const query = `
             SELECT arch.id_archivo, arch.nombre, arch.tipo,
-                convert_from(arch.contenido, 'UTF8') AS ruta
+                arch.contenido AS ruta
             FROM articulos_archivos aa
             INNER JOIN archivos arch ON arch.id_archivo = aa.id_archivo
             WHERE aa.id_articulo = $1
             LIMIT 1;
         `;
             const result = await db.query(query, [articuloId]);
-            return result.rows[0] ?? null;
+            const fila = result.rows[0] ?? null;
+            // contenido puede venir como Buffer (bytea) o string (text): normalizamos a string
+            if (fila && Buffer.isBuffer(fila.ruta)) fila.ruta = fila.ruta.toString('utf8');
+            return fila;
         }
 
         const client = await pool.connect();
@@ -185,11 +214,11 @@ export default class ArticuloRepository {
             }
 
             if (archivo) {
-                const nombre = archivo.originalname;
+                const nombre = nombreOriginal(archivo);
                 const tipo = archivo.mimetype;
                 const tamanio = archivo.size;
                 const fecha_creacion = new Date();
-                const ruta = `articulos/${Date.now()}-${nombre}`;
+                const ruta = `articulos/${Date.now()}-${claveSegura(nombre)}`;
 
                 const { error } = await supabase.storage
                     .from(bucket)
