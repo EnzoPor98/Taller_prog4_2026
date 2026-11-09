@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reportes - Director de Sistemas</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="/src/components/navbar/navbar.css" />
+    <link rel="stylesheet" href="/src/pages/directorSistemas/director.css" />
+</head>
+
+<body>
+    <header>
+        <div id="navbar-placeholder"></div>
+    </header>
+
+    <main class="container py-4">
+        <h1 class="h3 mb-1">Reportes</h1>
+        <p class="text-body-secondary">Generación de reportes estadísticos de incidencias en PDF.</p>
+
+        <div id="alertas" aria-live="polite"></div>
+
+        <div class="row g-3">
+            <div class="col-12 col-lg-7">
+                <form id="form-reporte" class="tarjeta-panel" novalidate>
+                    <h2 class="h6 mb-3">Reporte de incidencias</h2>
+
+                    <div class="row g-2">
+                        <div class="col-12 col-sm-6">
+                            <label for="reporte-desde" class="form-label small mb-1">Desde</label>
+                            <input type="date" id="reporte-desde" class="form-control" />
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <label for="reporte-hasta" class="form-label small mb-1">Hasta</label>
+                            <input type="date" id="reporte-hasta" class="form-control" />
+                        </div>
+                        <div class="col-12">
+                            <label for="reporte-estado" class="form-label small mb-1">Estado</label>
+                            <select id="reporte-estado" class="form-select">
+                                <option value="">Todos</option>
+                                <option value="1">Pendiente</option>
+                                <option value="2">En Proceso</option>
+                                <option value="3">Resuelta</option>
+                                <option value="4">Cancelada</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary" id="btn-descargar">
+                            <i class="bi bi-file-earmark-arrow-down me-1" aria-hidden="true"></i>Descargar PDF
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" id="btn-limpiar">Limpiar filtros</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-12 col-lg-5">
+                <div class="tarjeta-panel h-100">
+                    <h2 class="h6">¿Qué incluye?</h2>
+                    <ul class="small text-body-secondary mb-0">
+                        <li>Resumen con totales y porcentajes por estado.</li>
+                        <li>Resumen con totales y porcentajes por prioridad.</li>
+                        <li>Detalle de cada incidencia: artículo, pedido, creador y empleado asignado.</li>
+                        <li>Los filtros son opcionales: sin filtros incluye todas las incidencias.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/components/navbar/navbar.js"></script>
+    <script type="module" src="/src/components/footer/footer.js"></script>
+    <script type="module" src="./Reportes.js"></script>
+</body>
+
+</html>
