@@ -218,11 +218,46 @@ const cancelarIncidencia = async (req, res) => {
     }
 };
 
+// GET /api/incidencias/datos-dashboard?desde=YYYY-MM-DD&hasta=YYYY-MM-DD  (Director)
+const getDatosDashboard = async (req, res) => {
+    try {
+        const { desde, hasta } = req.query;
+        const datos = await incidenciasService.obtenerDatosDashboard({ desde, hasta });
+        return res.status(200).json(datos);
+    } catch (error) {
+        return responderError(res, error, 'Ocurrio un error al obtener los datos del dashboard');
+    }
+};
+
+// GET /api/incidencias/informe?desde=&hasta=&estado=  (Director) -> PDF
+const getInforme = async (req, res) => {
+    try {
+        const { desde, hasta, estado } = req.query;
+        const { pdf, nombreArchivo } = await incidenciasService.generarInforme({
+            desde,
+            hasta,
+            estado: estado ? Number(estado) : undefined,
+            idUsuario: req.usuario.id
+        });
+
+        res.set({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment; filename="${nombreArchivo}"`,
+            'Content-Length': pdf.length
+        });
+        return res.status(200).end(pdf);
+    } catch (error) {
+        return responderError(res, error, 'Ocurrio un error al generar el informe');
+    }
+};
+
 export {
     getIncidencias,
     getIncidencia,
     updateIncidencia,
     createIncidencia,
     asignarIncidencia,
-    cancelarIncidencia
+    cancelarIncidencia,
+    getDatosDashboard,
+    getInforme
 };

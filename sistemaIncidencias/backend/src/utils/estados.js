@@ -5,3 +5,10 @@ export const ESTADOS = Object.freeze({
     RESUELTA: 3,
     CANCELADA: 4
 });
+
+export const NOMBRE_ESTADO = Object.freeze({
+    1: 'Pendiente',
+    2: 'En Proceso',
+    3: 'Resuelta',
+    4: 'Cancelada'
+});

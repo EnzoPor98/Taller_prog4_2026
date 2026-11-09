@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { param, body } from 'express-validator';
+import { param, body, query } from 'express-validator';
 import { verificarToken, autorizarUsuarios } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validate.middleware.js';
 import { ROLES } from '../utils/roles.js';
@@ -10,13 +10,146 @@ getIncidencia,
 updateIncidencia,
 createIncidencia,
 asignarIncidencia,
-cancelarIncidencia
+cancelarIncidencia,
+getDatosDashboard,
+getInforme
 } from '../controllers/incidencias.controller.js';
 
 const router = Router();
 
 const validarIdIncidencia = param('id')
     .isInt({ min: 1 }).withMessage('El id de la incidencia debe ser un entero positivo');
+
+const validarFecha = (campo) => query(campo)
+    .optional()
+    .isISO8601({ strict: true }).withMessage(`"${campo}" debe ser una fecha con formato YYYY-MM-DD`)
+    .isLength({ min: 10, max: 10 }).withMessage(`"${campo}" debe ser una fecha con formato YYYY-MM-DD`);
+
+/**
+ * @swagger
+ * /api/incidencias/datos-dashboard:
+ *   get:
+ *     summary: Datos para el panel del Director
+ *     description: >
+ *       Solo el Director. Devuelve los totales por estado, la cantidad de incidencias creadas por día
+ *       en el rango indicado (por defecto los últimos 30 días) y las incidencias de prioridad Alta
+ *       que siguen Pendientes o En Proceso.
+ *     tags: [Incidencias]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: desde
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date
+ *           example: '2026-11-01'
+ *       - in: query
+ *         name: hasta
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date
+ *           example: '2026-11-30'
+ *     responses:
+ *       200:
+ *         description: Datos del dashboard
+ *         content:
+ *           application/json:
+ *             example:
+ *               total: 2
+ *               porEstado:
+ *                 - { id_estado: 1, estado: Pendiente, total: 0 }
+ *                 - { id_estado: 2, estado: En Proceso, total: 1 }
+ *               porFecha:
+ *                 desde: '2026-11-01'
+ *                 hasta: '2026-11-02'
+ *                 datos:
+ *                   - { fecha: '2026-11-01', total: 0 }
+ *                   - { fecha: '2026-11-02', total: 2 }
+ *               prioritarias:
+ *                 total: 1
+ *                 items:
+ *                   - { id_incidencia: 1, articulo: Mouse sin pilas, estado: En Proceso, asignado_a: Nahuel Montenegro }
+ *       400:
+ *         description: Fechas inválidas o rango mayor a 366 días
+ *       401:
+ *         description: Token no proporcionado
+ *       403:
+ *         description: Token inválido o el usuario no es Director
+ *       500:
+ *         description: Error interno del servidor
+ */
+// Va antes de '/:id' para que Express no interprete "datos-dashboard" como un id
+router.get('/datos-dashboard',
+    verificarToken,
+    autorizarUsuarios([ROLES.DIRECTOR]),
+    [validarFecha('desde'), validarFecha('hasta')],
+    validate,
+    getDatosDashboard);
+
+/**
+ * @swagger
+ * /api/incidencias/informe:
+ *   get:
+ *     summary: Reporte estadístico de incidencias en PDF
+ *     description: >
+ *       Solo el Director. Genera un PDF (plantilla Handlebars + Puppeteer) con el resumen por estado
+ *       y por prioridad y el detalle de las incidencias. Todos los filtros son opcionales.
+ *     tags: [Incidencias]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: desde
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date
+ *       - in: query
+ *         name: hasta
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date
+ *       - in: query
+ *         name: estado
+ *         required: false
+ *         description: 1 = Pendiente, 2 = En Proceso, 3 = Resuelta, 4 = Cancelada
+ *         schema:
+ *           type: integer
+ *           enum: [1, 2, 3, 4]
+ *     responses:
+ *       200:
+ *         description: Archivo PDF
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         description: Filtros inválidos
+ *       401:
+ *         description: Token no proporcionado
+ *       403:
+ *         description: Token inválido o el usuario no es Director
+ *       500:
+ *         description: Error interno del servidor
+ */
+// Tambien va antes de '/:id'
+router.get('/informe',
+    verificarToken,
+    autorizarUsuarios([ROLES.DIRECTOR]),
+    [
+        validarFecha('desde'),
+        validarFecha('hasta'),
+        query('estado')
+            .optional()
+            .isInt({ min: 1, max: 4 }).withMessage('El estado debe ser 1, 2, 3 o 4'),
+    ],
+    validate,
+    getInforme);
 
 // Definicion de endpoints REST para incidencias
 router.get('/', verificarToken, getIncidencias);

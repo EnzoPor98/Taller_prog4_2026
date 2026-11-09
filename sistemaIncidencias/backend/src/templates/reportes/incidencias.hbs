@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de incidencias</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        :root { color-scheme: light; }
+
+        body {
+            margin: 0;
+            background: #ffffff;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 10px;
+            color: #1e293b;
+        }
+
+        .encabezado {
+            background: #2C5C80;
+            color: #ffffff;
+            padding: 16px 20px;
+            border-radius: 6px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .encabezado p {
+            margin: 4px 0 0;
+            color: #cbd5e1;
+        }
+
+        .meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 12px 0;
+            color: #475569;
+        }
+
+        .meta strong { color: #1e293b; }
+
+        h2 {
+            font-size: 12px;
+            margin: 16px 0 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .resumen {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tarjeta {
+            flex: 1;
+            border: 1px solid #e2e8f0;
+            border-left-width: 4px;
+            border-radius: 4px;
+            padding: 8px;
+        }
+
+        .tarjeta .valor {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .tarjeta .detalle { color: #64748b; }
+
+        .borde-total { border-left-color: #2C5C80; }
+        .borde-1 { border-left-color: #f59e0b; }
+        .borde-2 { border-left-color: #0d6efd; }
+        .borde-3 { border-left-color: #16a34a; }
+        .borde-4 { border-left-color: #64748b; }
+        .borde-prioridad-1 { border-left-color: #dc2626; }
+        .borde-prioridad-2 { border-left-color: #f59e0b; }
+        .borde-prioridad-3 { border-left-color: #16a34a; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead { display: table-header-group; }
+
+        th {
+            background: #f1f5f9;
+            text-align: left;
+            padding: 6px;
+            font-size: 9px;
+            text-transform: uppercase;
+            color: #475569;
+        }
+
+        td {
+            padding: 6px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: top;
+        }
+
+        tr { page-break-inside: avoid; }
+
+        .chico { color: #64748b; font-size: 9px; }
+        .nowrap { white-space: nowrap; }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 9px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .estado-1 { background: #fef3c7; color: #92400e; }
+        .estado-2 { background: #dbeafe; color: #1e40af; }
+        .estado-3 { background: #dcfce7; color: #166534; }
+        .estado-4 { background: #e2e8f0; color: #334155; }
+        .prioridad-1 { background: #fee2e2; color: #991b1b; }
+        .prioridad-2 { background: #fef3c7; color: #92400e; }
+        .prioridad-3 { background: #dcfce7; color: #166534; }
+
+        .sin-asignar { color: #94a3b8; font-style: italic; }
+
+        .vacio {
+            text-align: center;
+            padding: 24px;
+            color: #64748b;
+            border: 1px dashed #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="encabezado">
+        <h1>Reporte de incidencias</h1>
+        <p>Sistema de Incidencias · Municipalidad · Área de Sistemas</p>
+    </div>
+
+    <div class="meta">
+        <div>
+            <strong>Período:</strong> {{filtros.periodo}}<br>
+            <strong>Estado:</strong> {{filtros.estado}}
+        </div>
+        <div style="text-align:right">
+            <strong>Generado:</strong> {{generado.fecha}}<br>
+            <strong>Por:</strong> {{generado.por}}
+        </div>
+    </div>
+
+    <h2>Resumen por estado</h2>
+    <div class="resumen">
+        <div class="tarjeta borde-total">
+            <div class="detalle">Total</div>
+            <div class="valor">{{resumen.total}}</div>
+        </div>
+        {{#each resumen.porEstado}}
+        <div class="tarjeta borde-{{id}}">
+            <div class="detalle">{{nombre}}</div>
+            <div class="valor">{{total}}</div>
+            <div class="detalle">{{porcentaje}}%</div>
+        </div>
+        {{/each}}
+    </div>
+
+    <h2>Resumen por prioridad</h2>
+    <div class="resumen">
+        {{#each resumen.porPrioridad}}
+        <div class="tarjeta borde-prioridad-{{id}}">
+            <div class="detalle">Prioridad {{nombre}}</div>
+            <div class="valor">{{total}}</div>
+            <div class="detalle">{{porcentaje}}%</div>
+        </div>
+        {{/each}}
+    </div>
+
+    <h2>Detalle de incidencias</h2>
+    {{#if incidencias.length}}
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Fecha</th>
+                <th>Artículo</th>
+                <th>Pedido</th>
+                <th>Prioridad</th>
+                <th>Estado</th>
+                <th>Creada por</th>
+                <th>Asignada a</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each incidencias}}
+            <tr>
+                <td class="nowrap"><strong>{{id}}</strong></td>
+                <td class="nowrap">{{fecha}}</td>
+                <td>
+                    {{articulo}}
+                    <div class="chico">{{categoria}} · {{area}}</div>
+                </td>
+                <td>{{pedido}}</td>
+                <td><span class="badge prioridad-{{prioridadId}}">{{prioridad}}</span></td>
+                <td><span class="badge estado-{{estadoId}}">{{estado}}</span></td>
+                <td>{{creador}}</td>
+                <td>
+                    {{#if asignado}}{{asignado}}{{else}}<span class="sin-asignar">Sin asignar</span>{{/if}}
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    {{else}}
+    <div class="vacio">No hay incidencias para los filtros seleccionados.</div>
+    {{/if}}
+</body>
+</html>
