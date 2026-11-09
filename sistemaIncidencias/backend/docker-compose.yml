@@ -1,0 +1,11 @@
+
+services:
+  mailpit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: incidencias-mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"

@@ -1,265 +1,138 @@
-import pool from '../../config/db.js';
-import { enviarMail } from '../services/mail.service.js';
-import * as incidenciasService from '../services/incidencias.service.js';
+import IncidenciasService from '../services/incidencias.service.js';
 import { responderError } from '../utils/errores.js';
-const getIncidencias = async (req, res) => {
-    try {
-        const idUsuario = req.usuario.id;
-        // Obtenemos el rol del usuario logueado (1=director, 2=empleado municipal, 3=empleado de sistemas)
-        const rolQuery = `SELECT rol FROM usuarios WHERE id_usuario = $1;`;
-        const rolResult = await pool.query(rolQuery, [idUsuario]);
-        const rol = rolResult.rows[0]?.rol;
+import { ESTADOS } from '../utils/estados.js';
 
-        let query = `SELECT
-                            inc.id_incidencia,
-                            inc.prioridad,
-                            inc.creado,
-                            inc.descripcion_pedido,
-                            inc.descripcion_resolucion,
-                            row_to_json(art) AS articulo,
-                            row_to_json(user_create) AS creador,
-                            row_to_json(user_asign) AS asignado_a,
-                            row_to_json(estado) AS estado
-                        FROM incidencias inc
-                            INNER JOIN articulos art
-                                ON inc.id_articulo = art.id_articulo
-                            INNER JOIN usuarios user_create
-                                ON inc.creado_por = user_create.id_usuario
-                            INNER JOIN usuarios user_asign
-                                ON inc.asignado_a = user_asign.id_usuario
-                            INNER JOIN estados estado
-                                ON inc.id_estado = estado.id_estado
-
-                                `;
-        const params = [];
-        if (rol === 3) {
-            // Empleado de sistemas: ve las incidencias asignadas a su cargo
-            params.push(idUsuario);
-            query += ` WHERE inc.asignado_a = $1`;
-        } else if (rol === 2) {
-            // Empleado municipal: ve las incidencias creadas por él
-            params.push(idUsuario);
-            query += ` WHERE inc.creado_por = $1`;
-        }
-
-        query += ` ORDER BY inc.creado ASC`;
-
-        const result = await pool.query(query, params);
-        const incidencias = result.rows;
-        return res.status(200).json(incidencias);
-    } catch (error) {
-        console.log("🚀 ~ getIncidencias ~ error:", error)
-        return res.status(500).json({ mensaje: 'Ocurrio un error al recuperar las incicencias' });
+export default class IncidenciasController {
+    constructor() {
+        this.incidencias = new IncidenciasService();
     }
 
-};
-
-const getIncidencia = async (req, res) => {
-    //Agregar manejo de errores 
-    const { id } = req.params; //Solo para ejemplo lo que recibimos en el id es el index desde el front
-
-    try {
-        if (!id) {
-            return res.status(500).json({ mensaje: 'Se requiere el id de la categoria' });
+    getIncidencias = async (req, res) => {
+        try {
+            const incidencias = await this.incidencias.getIncidencias(req.usuario.id);
+            return res.status(200).json(incidencias);
+        } catch (error) {
+            console.log("🚀 ~ getIncidencias ~ error:", error)
+            return res.status(500).json({ mensaje: 'Ocurrio un error al recuperar las incicencias' });
         }
+    };
 
-        let query = `SELECT 
-                            inc.id_incidencia,
-                            inc.prioridad, 
-                            inc.creado, 
-                            inc.descripcion_pedido,
-                            inc.descripcion_resolucion,
-                            row_to_json(art) AS articulo,
-                            row_to_json(user_create) AS creador,
-                            row_to_json(user_asign) AS asignado_a,
-                            row_to_json(estado) AS estado
-                        FROM incidencias inc
-                            INNER JOIN articulos art
-                                ON inc.id_articulo = art.id_articulo
-                            INNER JOIN usuarios user_create
-                                ON inc.creado_por = user_create.id_usuario
-                            INNER JOIN usuarios user_asign
-                                ON inc.asignado_a = user_asign.id_usuario
-                            INNER JOIN estados estado
-                                ON inc.id_estado = estado.id_estado
-                                WHERE inc.id_incidencia = $1
-                                ORDER BY inc.creado ASC`;
+    getIncidencia = async (req, res) => {
+        const { id } = req.params;
 
+        try {
+            if (!id) {
+                return res.status(500).json({ mensaje: 'Se requiere el id de la categoria' });
+            }
 
-        const result = await pool.query(query, [id]);
-        const incidencia = result.rows;
-        return res.status(200).json(incidencia.length == 1 ? incidencia[0] : incidencia);
-    } catch (error) {
-        console.log("🚀 ~ createArticulo ~ error:", error)
-        return res.status(500).json({ mensaje: 'Ocurrio un error al recuperar la categoria' });
-    }
+            const incidencia = await this.incidencias.getIncidencia(id);
+            return res.status(200).json(incidencia.length == 1 ? incidencia[0] : incidencia);
+        } catch (error) {
+            console.log("🚀 ~ getIncidencia ~ error:", error)
+            return res.status(500).json({ mensaje: 'Ocurrio un error al recuperar la categoria' });
+        }
+    };
 
-};
+    updateIncidencia = async (req, res) => {
+        const {
+            finalizada,
+            descripcion_resolucion,
+            id_estado
+        } = req.body;
 
-const updateIncidencia = async (req, res) => {
-    const {
-        finalizada,
-        descripcion_resolucion,
-        id_estado
-    } = req.body;
+        const id_incidencia = Number(req.params.id);
 
-    const id_incidencia = req.params.id;
-    try {
-        const status = finalizada ? 3 : (id_estado ?? null);
-        const queryUpdate = `UPDATE incidencias SET
-                id_estado = $1,
-                descripcion_resolucion = $2
-                WHERE id_incidencia = $3
-                RETURNING *;
-        `;
-        const values = [
-            status, descripcion_resolucion, id_incidencia
-        ]
-        
-        await pool.query(queryUpdate, values);
+        try {
+            // "finalizada: true" es la forma que usa el frontend para cerrar una incidencia.
+            const status = finalizada ? ESTADOS.RESUELTA : Number(id_estado);
 
-        const query = `
-        INSERT INTO incidencias_estados (id_incidencia,id_estado, fecha_hora_estado)
-        VALUES ($1, $2, $3)
-        RETURNING *;
-        `;
-        await pool.query(query, [Number(id_incidencia), Number(status), new Date().toISOString()]);
+            // El servicio actualiza la incidencia, registra el historial, avisa por socket
+            // y, si se finalizo, le manda un mail al creador (sin que un fallo del mail rompa la operacion).
+            const { incidencia, notificado } = await this.incidencias.actualizarIncidencia(
+                id_incidencia,
+                { id_estado: status, descripcion_resolucion },
+                req.usuario
+            );
 
-
-        // Aca inyectar el envio de emails
-        if (finalizada) {
-            await enviarMail({
-                to: 'barretocristian7@gmail.com',
-                subject: 'Incidencia finalizada',
-                template: 'incidencia-finalizada',
-                data: {
-                    nombre: 'Cristian',
-                    id: 123,
-                    articulo: 'Monitor Samsung',
-                    descripcion: 'Falla de funcionamiento',
-                    area: 'Sistemas',
-                    finalizadoPor: 'Juan Pérez'
-                }
+            return res.status(200).json({
+                mensaje: 'Incidencia actualizada con éxito',
+                incidencia,
+                notificado
             });
+        } catch (error) {
+            console.log("Ocurrio un error al actualizar la incidencia", error)
+            return responderError(res, error, 'Ocurrio un error al actualizar la incidencia');
         }
+    };
 
-        return res.status(200).json({ mensaje: 'Categoría actualizada con éxito' });
+    createIncidencia = async (req, res) => {
+        try {
+            const rows = await this.incidencias.createIncidencia(req.body, req.usuario);
+            res.status(200).json({ incidencias: rows });
+        } catch (error) {
+            console.log(`Paso algo -> ${error}`);
+            res.status(500).json({ error: "Error interno." });
+        }
+    };
 
+    // PUT /api/incidencias/:id/asignar  (Director)
+    asignarIncidencia = async (req, res) => {
+        try {
+            const incidencia = await this.incidencias.asignarIncidencia(
+                Number(req.params.id),
+                Number(req.body.asignado_a)
+            );
+            return res.status(200).json({ mensaje: 'Incidencia asignada con éxito', incidencia });
+        } catch (error) {
+            return responderError(res, error, 'Ocurrio un error al asignar la incidencia');
+        }
+    };
 
-    } catch (error) {
-        console.log("Ocurrio un error al actualizar la incidencia", error)
-        return res.status(500).json({ mensaje: 'Ocurrio un error al actualizar la incidencia' });
+    // PUT /api/incidencias/:id/cancelar  (Director o Empleado municipal creador)
+    cancelarIncidencia = async (req, res) => {
+        try {
+            const { incidencia, notificado } = await this.incidencias.cancelarIncidencia(
+                Number(req.params.id),
+                req.usuario
+            );
+            return res.status(200).json({ mensaje: 'Incidencia cancelada con éxito', incidencia, notificado });
+        } catch (error) {
+            return responderError(res, error, 'Ocurrio un error al cancelar la incidencia');
+        }
+    };
 
-    }
+    // GET /api/incidencias/datos-dashboard?desde=YYYY-MM-DD&hasta=YYYY-MM-DD  (Director)
+    getDatosDashboard = async (req, res) => {
+        try {
+            const { desde, hasta } = req.query;
+            const datos = await this.incidencias.obtenerDatosDashboard({ desde, hasta });
+            return res.status(200).json(datos);
+        } catch (error) {
+            return responderError(res, error, 'Ocurrio un error al obtener los datos del dashboard');
+        }
+    };
 
+    // GET /api/incidencias/informe?desde=&hasta=&estado=  (Director) -> PDF
+    getInforme = async (req, res) => {
+        try {
+            const { desde, hasta, estado } = req.query;
+            const { pdf, nombreArchivo } = await this.incidencias.generarInforme({
+                desde,
+                hasta,
+                estado: estado ? Number(estado) : undefined,
+                idUsuario: req.usuario.id
+            });
+
+            res.set({
+                'Content-Type': 'application/pdf',
+                'Content-Disposition': `attachment; filename="${nombreArchivo}"`,
+                'Content-Length': pdf.length,
+                // Permite que el frontend (otro origen) lea el nombre del archivo
+                'Access-Control-Expose-Headers': 'Content-Disposition'
+            });
+            return res.status(200).end(pdf);
+        } catch (error) {
+            return responderError(res, error, 'Ocurrio un error al generar el informe');
+        }
+    };
 }
-//TODO: Agregar transacciones a los create y updates.
-const createIncidencia = async(req, res) =>{
-    const {
-      id_articulo,
-      id_estado,
-      creado_por,
-      asignado_a,
-      creado,
-      prioridad,
-      descripcion_pedido,
-      descripcion_resolucion,
-    } = req.body;
- try {
-
-    const sql = `INSERT INTO 
-                  public.incidencias 
-                  (id_articulo, id_estado, creado_por, asignado_a, creado, prioridad, descripcion_pedido, descripcion_resolucion) 
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`;
-
-    const values = [
-      id_articulo,
-      id_estado,
-      creado_por,
-      asignado_a,
-      creado,
-      prioridad,
-      descripcion_pedido,
-      descripcion_resolucion,
-    ];
-
-    const { rows } = await pool.query(sql, values);
-
-    res.status(200).json({ incidencias: rows });
-  } catch (error) {
-    console.log(`Paso algo -> ${error}`);
-    res.status(500).json({ error: "Error interno." });
-  }
-}
-
-// PUT /api/incidencias/:id/asignar  (Director)
-const asignarIncidencia = async (req, res) => {
-    try {
-        const incidencia = await incidenciasService.asignarIncidencia(
-            Number(req.params.id),
-            Number(req.body.asignado_a)
-        );
-        return res.status(200).json({ mensaje: 'Incidencia asignada con éxito', incidencia });
-    } catch (error) {
-        return responderError(res, error, 'Ocurrio un error al asignar la incidencia');
-    }
-};
-
-// PUT /api/incidencias/:id/cancelar  (Director o Empleado municipal creador)
-const cancelarIncidencia = async (req, res) => {
-    try {
-        const { incidencia, notificado } = await incidenciasService.cancelarIncidencia(
-            Number(req.params.id),
-            req.usuario
-        );
-        return res.status(200).json({ mensaje: 'Incidencia cancelada con éxito', incidencia, notificado });
-    } catch (error) {
-        return responderError(res, error, 'Ocurrio un error al cancelar la incidencia');
-    }
-};
-
-// GET /api/incidencias/datos-dashboard?desde=YYYY-MM-DD&hasta=YYYY-MM-DD  (Director)
-const getDatosDashboard = async (req, res) => {
-    try {
-        const { desde, hasta } = req.query;
-        const datos = await incidenciasService.obtenerDatosDashboard({ desde, hasta });
-        return res.status(200).json(datos);
-    } catch (error) {
-        return responderError(res, error, 'Ocurrio un error al obtener los datos del dashboard');
-    }
-};
-
-// GET /api/incidencias/informe?desde=&hasta=&estado=  (Director) -> PDF
-const getInforme = async (req, res) => {
-    try {
-        const { desde, hasta, estado } = req.query;
-        const { pdf, nombreArchivo } = await incidenciasService.generarInforme({
-            desde,
-            hasta,
-            estado: estado ? Number(estado) : undefined,
-            idUsuario: req.usuario.id
-        });
-
-        res.set({
-            'Content-Type': 'application/pdf',
-            'Content-Disposition': `attachment; filename="${nombreArchivo}"`,
-            'Content-Length': pdf.length,
-            // Permite que el frontend (otro origen) lea el nombre del archivo
-            'Access-Control-Expose-Headers': 'Content-Disposition'
-        });
-        return res.status(200).end(pdf);
-    } catch (error) {
-        return responderError(res, error, 'Ocurrio un error al generar el informe');
-    }
-};
-
-export {
-    getIncidencias,
-    getIncidencia,
-    updateIncidencia,
-    createIncidencia,
-    asignarIncidencia,
-    cancelarIncidencia,
-    getDatosDashboard,
-    getInforme
-};

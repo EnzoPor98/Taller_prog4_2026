@@ -14,7 +14,7 @@ Tiene dos partes:
 | Capa       | Tecnología                                    |
 | ---------- | --------------------------------------------- |
 | Backend    | Node.js, Express, `pg`, `jsonwebtoken`, `express-validator`, Morgan, Multer, Swagger |
-| Reportes y mails | Handlebars (plantillas), Puppeteer (PDF), Resend (mails) |
+| Reportes y mails | Handlebars (plantillas), Puppeteer (PDF), Nodemailer (mails, SMTP) |
 | Frontend   | Vite, Bootstrap, Bootstrap Icons, Chart.js     |
 | Base datos | PostgreSQL (local o Supabase)                 |
 
@@ -147,4 +147,4 @@ Estados de una incidencia: `1` Pendiente → `2` En Proceso (al asignarla) → `
 - Los endpoints de `/api/*` (salvo `/auth/login` y `/auth/register`) requieren token JWT en el header `Authorization: Bearer <token>`.
 - El token incluye el rol del usuario y el middleware `autorizarUsuarios([...])` controla qué roles pueden usar cada ruta. Si se inició sesión con una versión anterior, hay que volver a loguearse.
 - Asignar y cancelar se ejecutan en una transacción (`BEGIN`/`COMMIT`) y bloquean la incidencia con `SELECT ... FOR UPDATE`; el mail se envía después del `COMMIT`.
-- Con la cuenta de prueba de Resend (`onboarding@resend.dev`) los mails solo llegan a la casilla dueña de la cuenta. Si el envío falla, la operación se guarda igual y la respuesta indica `notificado: false`.
+- Los mails se envían por SMTP con Nodemailer (variables `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`). En desarrollo se usa Mailpit: `docker compose up -d` en `backend/` y los mails se ven en http://localhost:8025 (SMTP en `localhost:1025`, sin usuario). Si el envío falla, la operación se guarda igual y la respuesta indica `notificado: false`.
