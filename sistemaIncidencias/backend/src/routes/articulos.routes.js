@@ -1,18 +1,26 @@
 import { Router } from 'express';
 import { param, body } from 'express-validator';
 
-import {
-    getArticulos,
-    getArticulo,
-    createArticulo,
-    updateArticulo,
-    deleteArticulo
-} from '../controllers/articulos.controller.js';
+// import {
+//     getArticulos,
+//     getArticulo,
+//     createArticulo,
+//     updateArticulo,
+//     deleteArticulo
+// } from '../controllers/articulos.controller.js';
 import { verificarToken } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validate.middleware.js';
 import { upload } from '../middleware/upload.middleware.js';
 
+import articulosController from '../controllers/articulos.controller.js';
 const router = Router();
+const controlador = new articulosController();
+
+router.get('/', verificarToken, controlador.buscarTodos);
+router.get('/:id', verificarToken, controlador.buscarPorId);
+router.post('/', verificarToken, upload.single('archivo'), controlador.crear);
+router.patch('/:id', verificarToken, controlador.actualizar);
+router.delete('/:id', verificarToken, controlador.eliminar);
 
 /**
  * @swagger
@@ -30,7 +38,7 @@ const router = Router();
  *       500:
  *         description: Error interno del servidor
  */
-router.get('/', verificarToken, getArticulos);
+// router.get('/', verificarToken, getArticulos);
 
 /**
  * @swagger
@@ -54,14 +62,14 @@ router.get('/', verificarToken, getArticulos);
  *       500:
  *         description: Error interno del servidor
  */
-router.get('/:id', verificarToken,
-    [
-        param('id')
-            .notEmpty().withMessage('ID obligatorio')
-            .isInt().withMessage('ID debe ser numérico'),
-    ],
-    validate,
-    getArticulo);
+// router.get('/:id', verificarToken,
+//     [
+//         param('id')
+//             .notEmpty().withMessage('ID obligatorio')
+//             .isInt().withMessage('ID debe ser numérico'),
+//     ],
+//     validate,
+//     getArticulo);
 
 /**
  * @swagger
@@ -90,21 +98,21 @@ router.get('/:id', verificarToken,
  *       500:
  *         description: Error interno del servidor
  */
-router.post('/', verificarToken,
-    upload.single('archivo'),
-    [
-        body('areaId')
-            .notEmpty().withMessage('Area obligatoria')
-            .isInt().withMessage('Area debe ser numérica'),
-        body('categoriaId')
-            .notEmpty().withMessage('Categoria obligatoria')
-            .isInt().withMessage('Categoria debe ser numérica'),
-        body('descripcion')
-            .notEmpty().withMessage('Descripcion obligatoria')
-            .isString().withMessage('Descripcion debe ser texto'),
-    ],
-    validate,
-    createArticulo);
+// router.post('/', verificarToken,
+//     upload.single('archivo'),
+//     [
+//         body('areaId')
+//             .notEmpty().withMessage('Area obligatoria')
+//             .isInt().withMessage('Area debe ser numérica'),
+//         body('categoriaId')
+//             .notEmpty().withMessage('Categoria obligatoria')
+//             .isInt().withMessage('Categoria debe ser numérica'),
+//         body('descripcion')
+//             .notEmpty().withMessage('Descripcion obligatoria')
+//             .isString().withMessage('Descripcion debe ser texto'),
+//     ],
+//     validate,
+//     createArticulo);
 
 /**
  * @swagger
@@ -139,23 +147,23 @@ router.post('/', verificarToken,
  *       500:
  *         description: Error interno del servidor
  */
-router.patch('/:id', verificarToken,
-    [
-        param('id')
-            .notEmpty().withMessage('ID obligatorio')
-            .isInt().withMessage('ID debe ser numérico'),
-        body('areaId')
-            .notEmpty().withMessage('Area obligatoria')
-            .isInt().withMessage('Area debe ser numérica'),
-        body('categoriaId')
-            .notEmpty().withMessage('Categoria obligatoria')
-            .isInt().withMessage('Categoria debe ser numérica'),
-        body('descripcion')
-            .notEmpty().withMessage('Descripcion obligatoria')
-            .isString().withMessage('Descripcion debe ser texto'),
-    ],
-    validate,
-    updateArticulo);
+// router.patch('/:id', verificarToken,
+//     [
+//         param('id')
+//             .notEmpty().withMessage('ID obligatorio')
+//             .isInt().withMessage('ID debe ser numérico'),
+//         body('areaId')
+//             .notEmpty().withMessage('Area obligatoria')
+//             .isInt().withMessage('Area debe ser numérica'),
+//         body('categoriaId')
+//             .notEmpty().withMessage('Categoria obligatoria')
+//             .isInt().withMessage('Categoria debe ser numérica'),
+//         body('descripcion')
+//             .notEmpty().withMessage('Descripcion obligatoria')
+//             .isString().withMessage('Descripcion debe ser texto'),
+//     ],
+//     validate,
+//     updateArticulo);
 
 /**
  * @swagger
@@ -181,13 +189,13 @@ router.patch('/:id', verificarToken,
  *       500:
  *         description: Error interno del servidor
  */
-router.delete('/:id', verificarToken,
-    [
-        param('id')
-            .notEmpty().withMessage('ID obligatorio')
-            .isInt().withMessage('ID debe ser numérico'),
-    ],
-    validate,
-    deleteArticulo);
+// router.delete('/:id', verificarToken,
+//     [
+//         param('id')
+//             .notEmpty().withMessage('ID obligatorio')
+//             .isInt().withMessage('ID debe ser numérico'),
+//     ],
+//     validate,
+//     deleteArticulo);
 
 export default router;
