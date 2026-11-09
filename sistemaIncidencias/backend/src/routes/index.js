@@ -6,6 +6,7 @@ import articulosRoutes from './articulos.routes.js';
 import areasRoutes from './areas.routes.js';
 import incidenciasRoutes from './incidencias.routes.js';
 import mailRoutes from './mail.routes.js';
+import usuariosRoutes from './usuarios.routes.js';
 
 
 
@@ -20,6 +21,7 @@ router.use('/mail', mailRoutes);
 router.use('/articulos', articulosRoutes);
 router.use('/categorias', categoriasRoutes);
 router.use('/incidencias', incidenciasRoutes);
+router.use('/usuarios', usuariosRoutes);
 
 
 

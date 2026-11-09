@@ -1,5 +1,7 @@
 import pool from '../../config/db.js';
 import { enviarMail } from '../services/mail.service.js';
+import * as incidenciasService from '../services/incidencias.service.js';
+import { responderError } from '../utils/errores.js';
 const getIncidencias = async (req, res) => {
     try {
         const idUsuario = req.usuario.id;
@@ -190,9 +192,37 @@ const createIncidencia = async(req, res) =>{
   }
 }
 
+// PUT /api/incidencias/:id/asignar  (Director)
+const asignarIncidencia = async (req, res) => {
+    try {
+        const incidencia = await incidenciasService.asignarIncidencia(
+            Number(req.params.id),
+            Number(req.body.asignado_a)
+        );
+        return res.status(200).json({ mensaje: 'Incidencia asignada con éxito', incidencia });
+    } catch (error) {
+        return responderError(res, error, 'Ocurrio un error al asignar la incidencia');
+    }
+};
+
+// PUT /api/incidencias/:id/cancelar  (Director o Empleado municipal creador)
+const cancelarIncidencia = async (req, res) => {
+    try {
+        const { incidencia, notificado } = await incidenciasService.cancelarIncidencia(
+            Number(req.params.id),
+            req.usuario
+        );
+        return res.status(200).json({ mensaje: 'Incidencia cancelada con éxito', incidencia, notificado });
+    } catch (error) {
+        return responderError(res, error, 'Ocurrio un error al cancelar la incidencia');
+    }
+};
+
 export {
     getIncidencias,
     getIncidencia,
     updateIncidencia,
-    createIncidencia
+    createIncidencia,
+    asignarIncidencia,
+    cancelarIncidencia
 };

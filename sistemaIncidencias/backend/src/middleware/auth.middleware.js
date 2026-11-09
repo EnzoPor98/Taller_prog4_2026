@@ -18,3 +18,16 @@ export const verificarToken = (req, res, next) => {
         next();
     });
 };
+
+// Usar despues de verificarToken. Ej: autorizarUsuarios([ROLES.DIRECTOR])
+export const autorizarUsuarios = (rolesPermitidos = []) => {
+    return (req, res, next) => {
+        const rol = req.usuario?.rol;
+
+        if (!rolesPermitidos.includes(rol)) {
+            return res.status(403).json({ mensaje: 'Acceso denegado' });
+        }
+
+        next();
+    };
+};
