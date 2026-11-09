@@ -136,7 +136,8 @@ document
   } catch (error) {
     console.error("Error al conectar con el backend:", error);
   }
-}
+  })
+
 
 // CREAR INCIDENCIA
 const nuevaIncidencia = document

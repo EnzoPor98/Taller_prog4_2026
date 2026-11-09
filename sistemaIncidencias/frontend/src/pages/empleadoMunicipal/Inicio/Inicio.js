@@ -14,7 +14,7 @@ async function cargarPanel() {
           Authorization: `Bearer ${token}`,
         },
       },
-    });
+    );
     const incidencias = await respuesta.json();
 
     if (!incidencias) return;
@@ -54,7 +54,7 @@ async function cargarTabla() {
           Authorization: `Bearer ${token}`,
         },
       },
-    });
+    );
     const incidencias = await respuesta.json();
 
     if (!incidencias) return;
