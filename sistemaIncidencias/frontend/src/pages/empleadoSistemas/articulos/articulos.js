@@ -65,26 +65,33 @@ let articulos = []
 const tbody = document.getElementById('articulos-tbody');
 const modal = document.getElementById('createModal');
 
+function crearOpcion(value, texto) {
+    const opt = document.createElement('option');
+    opt.value = value;
+    opt.textContent = texto;
+    return opt;
+}
+
+function reiniciarSelect(select, textoPlaceholder) {
+    const placeholder = crearOpcion('', textoPlaceholder);
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    select.replaceChildren(placeholder);
+}
+
 function poblarSelectCategorias() {
     const select = document.getElementById('categoria');
-    // Dejamos solo la primera opción vacía
-    select.innerHTML = '<option value="" disabled selected>Selecciona una categoría</option>';
+    reiniciarSelect(select, 'Selecciona una categoría');
     categorias.forEach(cat => {
-        const opt = document.createElement('option');
-        opt.value = cat.id_categoria;
-        opt.textContent = cat.descripcion;
-        select.appendChild(opt);
+        select.appendChild(crearOpcion(cat.id_categoria, cat.descripcion));
     });
 }
 
 function poblarSelectAreas() {
     const select = document.getElementById('area');
-    select.innerHTML = '<option value="" disabled selected>Selecciona un área</option>';
+    reiniciarSelect(select, 'Selecciona un área');
     areas.forEach(a => {
-        const opt = document.createElement('option');
-        opt.value = a.id_area;
-        opt.textContent = a.descripcion;
-        select.appendChild(opt);
+        select.appendChild(crearOpcion(a.id_area, a.descripcion));
     });
 }
 
@@ -132,6 +139,10 @@ async function abrirModalEditar(idArticulo) {
     document.getElementById('area').value = art.area?.id_area ?? art.id_area;
     document.getElementById('flexCheckChecked').checked = art.activo;
 
+    // Mostramos el archivo que ya tiene el artículo (si tiene)
+    limpiarPreview();
+    if (art.archivo) mostrarArchivo(art.archivo);
+
     modal.dataset.modo = 'editar';
     modal.dataset.idx = idArticulo;
     new Modal(modal).show();
@@ -159,7 +170,7 @@ async function eliminarArticulo(idArticulo) {
             throw new Error(`Error en la petición: ${respuesta.status}`);
         }
 
-        const resultado = await respuesta.json();
+        await respuesta.json();
 
         alert('Articulo eliminado con éxito');
 
@@ -220,29 +231,32 @@ if (archivo) {
             if (!respuesta.ok) {
                 throw new Error(`Error en la petición: ${respuesta.status}`);
             }
-            alert('Categoria creada correctamente')
+            alert('Articulo creado correctamente')
 
         } catch (error) {
             alert
-                ('Ocurrio un error al guardar la categoria')
+                ('Ocurrio un error al guardar el articulo')
         }
     } else {
         const idArticulo = modal.dataset.idx;
+        // Solo pedimos borrar si el usuario quitó el archivo y no eligió uno nuevo
+        // (si eligió uno nuevo, el backend ya reemplaza el anterior)
+        if (eliminarArchivoActual && !archivo) {
+            formData.append('eliminarArchivo', 'true');
+        }
         try {
-            const token = sessionStorage.getItem('token');
             const respuesta = await fetch(`${API_URL}/articulos/${idArticulo}`, {
                 method: 'PATCH',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(articulo)
+                body: formData
             });
 
             if (!respuesta.ok) {
                 throw new Error(`Error en la petición: ${respuesta.status}`);
             }
-            alert('Categoria ACTUALIZADA correctamente')
+            alert('Articulo ACTUALIZADO correctamente')
 
         } catch (error) {
             alert
@@ -276,30 +290,59 @@ async function renderTabla() {
     } catch (error) {
         console.error('Ocurrio un error al recuperar las categorias')
     }
-    tbody.innerHTML = articulos.map((art, idx) => {
-        // Soporta ambas formas: objeto entero (nuevo) o solo id (viejo)
-        return `
-        <tr>
-          <th scope="row">${art.id_articulo}</th>
-          <td>${art?.area?.descripcion}</td>
-          <td>${art?.categoria?.descripcion}</td>
-          <td>${art.descripcion}</td>
-          <td>
-            ${art.activo
-                ? '<span class="badge bg-success">Activa</span>'
-                : '<span class="badge bg-secondary">Inactiva</span>'}
-          </td>
-          <td class="mobile-buttons">
-            <button class="btn btn-sm btn-outline-primary" data-action="editar" data-idx="${art.id_articulo}" title="Editar">
-              <i class="bi bi-pencil-square"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-danger" data-action="eliminar" data-idx="${art.id_articulo}" title="Eliminar">
-              <i class="bi bi-trash"></i>
-            </button>
-          </td>
-        </tr>
-      `;
-    }).join('');
+    // Vaciamos la tabla y armamos cada fila con nodos (textContent no interpreta HTML)
+    tbody.replaceChildren();
+    articulos.forEach(art => tbody.appendChild(crearFilaArticulo(art)));
+}
+
+function crearCelda(texto, tag = 'td') {
+    const celda = document.createElement(tag);
+    celda.textContent = texto ?? '';
+    return celda;
+}
+
+function crearBotonAccion(accion, idArticulo, claseBtn, icono, titulo) {
+    const btn = document.createElement('button');
+    btn.className = `btn btn-sm ${claseBtn}`;
+    btn.dataset.action = accion;
+    btn.dataset.idx = idArticulo;
+    btn.title = titulo;
+
+    const i = document.createElement('i');
+    i.className = `bi ${icono}`;
+    btn.appendChild(i);
+    return btn;
+}
+
+function crearFilaArticulo(art) {
+    const tr = document.createElement('tr');
+
+    const th = crearCelda(art.id_articulo, 'th');
+    th.scope = 'row';
+
+    const tdEstado = document.createElement('td');
+    const badge = document.createElement('span');
+    badge.className = `badge ${art.activo ? 'bg-success' : 'bg-secondary'}`;
+    badge.textContent = art.activo ? 'Activa' : 'Inactiva';
+    tdEstado.appendChild(badge);
+
+    const tdAcciones = document.createElement('td');
+    tdAcciones.className = 'mobile-buttons';
+    tdAcciones.append(
+        crearBotonAccion('editar', art.id_articulo, 'btn-outline-primary', 'bi-pencil-square', 'Editar'),
+        ' ',
+        crearBotonAccion('eliminar', art.id_articulo, 'btn-outline-danger', 'bi-trash', 'Eliminar')
+    );
+
+    tr.append(
+        th,
+        crearCelda(art?.area?.descripcion),
+        crearCelda(art?.categoria?.descripcion),
+        crearCelda(art.descripcion),
+        tdEstado,
+        tdAcciones
+    );
+    return tr;
 }
 
 // Click de las filas
@@ -318,23 +361,56 @@ const inputArchivo = document.getElementById('formFile');
 const preview = document.getElementById('preview');
 const previewOverlay = document.getElementById('preview-overlay');
 const previewAmpliada = document.getElementById('preview-ampliada');
+const archivoActual = document.getElementById('archivo-actual');
+const archivoLink = document.getElementById('archivo-link');
+const btnQuitarArchivo = document.getElementById('btn-quitar-archivo');
+
+// true cuando el usuario quitó el archivo que ya tenía el artículo
+let eliminarArchivoActual = false;
 
 function limpiarPreview() {
     if (preview.src.startsWith('blob:')) URL.revokeObjectURL(preview.src);
     preview.removeAttribute('src');
     preview.hidden = true;
+    archivoLink.removeAttribute('href');
+    archivoLink.textContent = '';
+    archivoLink.hidden = true;
+    archivoActual.hidden = true;
     previewOverlay.hidden = true;
+}
+
+// Muestra miniatura si es imagen, o un link con el nombre si es otro tipo (ej. PDF)
+function mostrarArchivo({ url, tipo, nombre }) {
+    if (tipo?.startsWith('image/') && url) {
+        preview.src = url;
+        preview.hidden = false;
+    } else {
+        archivoLink.textContent = nombre ?? 'Ver archivo';
+        if (url) archivoLink.href = url;
+        archivoLink.hidden = false;
+    }
+    archivoActual.hidden = false;
 }
 
 inputArchivo.addEventListener('change', () => {
     const archivo = inputArchivo.files[0];
     limpiarPreview();
+    if (!archivo) return;
 
-    // Sin archivo o no es imagen: no se muestra la vista previa
-    if (!archivo || !archivo.type.startsWith('image/')) return;
+    // El archivo nuevo reemplaza al actual
+    eliminarArchivoActual = true;
+    mostrarArchivo({
+        url: archivo.type.startsWith('image/') ? URL.createObjectURL(archivo) : null,
+        tipo: archivo.type,
+        nombre: archivo.name
+    });
+});
 
-    preview.src = URL.createObjectURL(archivo);
-    preview.hidden = false;
+// Quita el archivo: tanto el recién elegido como el que ya estaba guardado
+btnQuitarArchivo.addEventListener('click', () => {
+    inputArchivo.value = '';
+    limpiarPreview();
+    eliminarArchivoActual = true;
 });
 
 // Al tocar la miniatura se muestra la imagen ampliada
@@ -351,6 +427,7 @@ previewOverlay.addEventListener('click', () => {
 modal.addEventListener('hidden.bs.modal', () => {
     document.getElementById('articulo-form').reset();
     limpiarPreview();
+    eliminarArchivoActual = false;
 });
 
 window.abrirModalCrear = abrirModalCrear;

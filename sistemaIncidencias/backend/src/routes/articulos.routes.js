@@ -123,12 +123,25 @@ router.post('/', verificarToken,
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
- *           example:
- *             areaId: 1
- *             categoriaId: 2
- *             descripcion: Notebook Dell Latitude
- *             activo: 1
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               areaId:
+ *                 type: integer
+ *               categoriaId:
+ *                 type: integer
+ *               descripcion:
+ *                 type: string
+ *               activo:
+ *                 type: boolean
+ *               archivo:
+ *                 type: string
+ *                 format: binary
+ *                 description: Nuevo archivo. Reemplaza al actual si existe.
+ *               eliminarArchivo:
+ *                 type: boolean
+ *                 description: true para quitar el archivo actual sin subir otro.
  *     responses:
  *       200:
  *         description: Artículo actualizado
@@ -140,6 +153,7 @@ router.post('/', verificarToken,
  *         description: Error interno del servidor
  */
 router.patch('/:id', verificarToken,
+    upload.single('archivo'),
     [
         param('id')
             .notEmpty().withMessage('ID obligatorio')
