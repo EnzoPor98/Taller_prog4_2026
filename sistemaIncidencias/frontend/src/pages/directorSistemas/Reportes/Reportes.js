@@ -1,59 +1,51 @@
-let listaIncidenciasParaPDF = [];
+import { apiDescargar, mostrarAlerta } from '../director.js';
 
-document.addEventListener("DOMContentLoaded", () => {
-  cargarTabla();
-  
-  
-  document.getElementById("btn-generar-reporte").addEventListener("click", descargarPDF);
-});
+const form = document.getElementById('form-reporte');
+const inputDesde = document.getElementById('reporte-desde');
+const inputHasta = document.getElementById('reporte-hasta');
+const selectEstado = document.getElementById('reporte-estado');
+const btnDescargar = document.getElementById('btn-descargar');
+const btnLimpiar = document.getElementById('btn-limpiar');
+const alertas = document.getElementById('alertas');
 
-async function cargarTabla() {
-  try {
-    const resIncidencias = await fetch(`${import.meta.env.VITE_API_URL}/api/incidencias`);
-    const { incidencias } = await resIncidencias.json();
-    
-    
-    listaIncidenciasParaPDF = incidencias;
+const TEXTO_BOTON = btnDescargar.innerHTML;
 
+form.addEventListener('submit', async (evento) => {
+  evento.preventDefault();
 
-    function descargarPDF() {
-  
-  if (listaIncidenciasParaPDF.length === 0) {
-    alert("No hay incidencias para generar el reporte.");
+  const desde = inputDesde.value;
+  const hasta = inputHasta.value;
+  const estado = selectEstado.value;
+
+  if (desde && hasta && desde > hasta) {
+    mostrarAlerta(alertas, 'La fecha "desde" no puede ser posterior a "hasta".', 'warning');
+    inputDesde.focus();
     return;
   }
 
-  
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+  const params = new URLSearchParams();
+  if (desde) params.set('desde', desde);
+  if (hasta) params.set('hasta', hasta);
+  if (estado) params.set('estado', estado);
+  const consulta = params.toString() ? `?${params}` : '';
 
-  
-  doc.text("Reporte de Incidencias - Director de Sistemas", 14, 15);
+  // Generar el PDF tarda alrededor de un segundo: se deshabilita el boton mientras tanto
+  btnDescargar.disabled = true;
+  btnDescargar.textContent = 'Generando PDF…';
+  alertas.replaceChildren();
 
-  
-  const columnas = ["ID", "Artículo", "Estado", "Asignado A", "Prioridad"];
-  
-  
-  const filas = listaIncidenciasParaPDF.map(inc => [
-    inc.id_incidencia,
-    inc.id_articulo,
-    inc.estado ? inc.estado.toUpperCase() : "SIN ESTADO",
-    inc.asignado_a ? inc.asignado_a : "Sin asignar",
-    inc.prioridad ? inc.prioridad : "N/A"
-  ]);
+  try {
+    const nombre = await apiDescargar(`/incidencias/informe${consulta}`, 'reporte-incidencias.pdf');
+    mostrarAlerta(alertas, `Reporte descargado: ${nombre}`);
+  } catch (error) {
+    mostrarAlerta(alertas, error.message, 'danger');
+  } finally {
+    btnDescargar.disabled = false;
+    btnDescargar.innerHTML = TEXTO_BOTON;
+  }
+});
 
-  
-  doc.autoTable({
-    head: [columnas],
-    body: filas,
-    startY: 25, 
-    theme: 'grid',
-    headStyles: { fillColor: [13, 110, 253] } 
-  });
-
-  
-  doc.save("Reporte_Incidencias_Sistemas.pdf");
-}
-  
-
-
+btnLimpiar.addEventListener('click', () => {
+  form.reset();
+  alertas.replaceChildren();
+});

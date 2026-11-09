@@ -47,6 +47,12 @@ main {
     padding: 1rem;
 }
 
+/* Chart.js necesita un contenedor con alto definido para ser responsive */
+.contenedor-grafico {
+    position: relative;
+    height: 260px;
+}
+
 .tabla-incidencias td,
 .tabla-incidencias th {
     vertical-align: middle;

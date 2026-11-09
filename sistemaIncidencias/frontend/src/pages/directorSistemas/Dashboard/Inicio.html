@@ -21,9 +21,14 @@
                 <h1 class="h3 mb-1">Panel de incidencias</h1>
                 <p class="text-body-secondary mb-0">Resumen general del estado de las incidencias.</p>
             </div>
-            <a class="btn btn-primary" href="/src/pages/directorSistemas/Incidencias/asignarIncidencias.html">
-                <i class="bi bi-list-check me-1" aria-hidden="true"></i>Gestionar incidencias
-            </a>
+            <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-outline-primary" href="/src/pages/directorSistemas/Reportes/Reportes.html">
+                    <i class="bi bi-file-earmark-pdf me-1" aria-hidden="true"></i>Reporte PDF
+                </a>
+                <a class="btn btn-primary" href="/src/pages/directorSistemas/Incidencias/asignarIncidencias.html">
+                    <i class="bi bi-list-check me-1" aria-hidden="true"></i>Gestionar incidencias
+                </a>
+            </div>
         </div>
 
         <div id="alertas" aria-live="polite"></div>
@@ -61,7 +66,9 @@
             <div class="col-12 col-lg-5">
                 <div class="tarjeta-panel h-100">
                     <h2 class="h6">Incidencias por estado</h2>
-                    <canvas id="grafico-estados" aria-label="Gráfico de incidencias por estado" role="img"></canvas>
+                    <div class="contenedor-grafico">
+                        <canvas id="grafico-estados" aria-label="Gráfico de incidencias por estado" role="img"></canvas>
+                    </div>
                 </div>
             </div>
 
@@ -82,7 +89,10 @@
                             <button type="submit" class="btn btn-sm btn-outline-primary">Filtrar</button>
                         </form>
                     </div>
-                    <canvas id="grafico-fechas" aria-label="Gráfico de incidencias por fecha" role="img"></canvas>
+                    <div class="contenedor-grafico">
+                        <canvas id="grafico-fechas" aria-label="Gráfico de incidencias por fecha" role="img"></canvas>
+                    </div>
+                    <p class="small text-body-secondary mb-0 mt-2" id="resumen-fechas"></p>
                 </div>
             </div>
 
@@ -96,7 +106,7 @@
                         </h2>
                     </div>
                     <ul class="list-group list-group-flush" id="lista-prioritarias">
-                        <li class="list-group-item text-body-secondary">Próximamente.</li>
+                        <li class="list-group-item text-body-secondary">Cargando…</li>
                     </ul>
                 </div>
             </div>
@@ -108,8 +118,7 @@
     <script type="module" src="/src/main.js"></script>
     <script type="module" src="/src/components/navbar/navbar.js"></script>
     <script type="module" src="/src/components/footer/footer.js"></script>
-    <!-- Por ahora solo proteccion por rol + navegacion; la logica del dashboard va en el Dia 2 -->
-    <script type="module" src="/src/pages/directorSistemas/director.js"></script>
+    <script type="module" src="./Inicio.js"></script>
 </body>
 
 </html>

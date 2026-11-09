@@ -243,7 +243,9 @@ const getInforme = async (req, res) => {
         res.set({
             'Content-Type': 'application/pdf',
             'Content-Disposition': `attachment; filename="${nombreArchivo}"`,
-            'Content-Length': pdf.length
+            'Content-Length': pdf.length,
+            // Permite que el frontend (otro origen) lea el nombre del archivo
+            'Access-Control-Expose-Headers': 'Content-Disposition'
         });
         return res.status(200).end(pdf);
     } catch (error) {

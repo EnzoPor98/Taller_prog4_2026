@@ -89,6 +89,41 @@ export async function apiFetch(ruta, opciones = {}) {
     return datos;
 }
 
+// Descarga un archivo (por ejemplo el PDF del informe) enviando el token.
+// Como la descarga necesita el header Authorization, no alcanza con un <a href>:
+// se pide con fetch, se arma un Blob y se dispara la descarga con un link temporal.
+export async function apiDescargar(ruta, nombrePorDefecto = 'archivo') {
+    const respuesta = await fetch(`${API_URL}${ruta}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!respuesta.ok) {
+        const esJson = respuesta.headers.get('content-type')?.includes('application/json');
+        const datos = esJson ? await respuesta.json() : null;
+        if (respuesta.status === 401 || datos?.mensaje === 'Token inválido o expirado') {
+            cerrarSesion();
+            throw new Error('La sesión expiró. Volvé a iniciar sesión.');
+        }
+        throw new Error(datos?.mensaje || `Error HTTP ${respuesta.status}`);
+    }
+
+    // El nombre viene en Content-Disposition: attachment; filename="..."
+    const disposicion = respuesta.headers.get('content-disposition') ?? '';
+    const nombre = disposicion.match(/filename="?([^"]+)"?/)?.[1] ?? nombrePorDefecto;
+
+    const blob = await respuesta.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = nombre;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+
+    return nombre;
+}
+
 // ---------------------------------------------------------------------
 // Helpers de interfaz
 // ---------------------------------------------------------------------
