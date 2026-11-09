@@ -6,6 +6,7 @@ import {
   formatearFecha,
   mostrarAlerta
 } from '../director.js';
+import { EVENTOS, escucharEvento } from '../../../socket/socket-client.js';
 
 // Mismos colores que los badges de Bootstrap usados en el resto de las pantallas
 const COLOR_ESTADO = {
@@ -40,7 +41,9 @@ let graficoFechas = null;
 // Carga de datos
 // ---------------------------------------------------------------------
 
-async function cargarDashboard({ desde, hasta } = {}) {
+// "silencioso" sirve para los refrescos automaticos por socket:
+// no borra ni muestra alertas, solo actualiza los graficos en el lugar.
+async function cargarDashboard({ desde, hasta, silencioso = false } = {}) {
   const params = new URLSearchParams();
   if (desde) params.set('desde', desde);
   if (hasta) params.set('hasta', hasta);
@@ -53,7 +56,9 @@ async function cargarDashboard({ desde, hasta } = {}) {
     renderizarGraficoFechas(datos.porFecha);
     renderizarPrioritarias(datos.prioritarias);
   } catch (error) {
-    mostrarAlerta(alertas, error.message, 'danger');
+    if (!silencioso) {
+      mostrarAlerta(alertas, error.message, 'danger');
+    }
   }
 }
 
@@ -201,5 +206,30 @@ formFechas.addEventListener('submit', (evento) => {
   alertas.replaceChildren();
   cargarDashboard({ desde, hasta });
 });
+
+// ---------------------------------------------------------------------
+// Tiempo real: los graficos se actualan solos cuando una incidencia
+// se crea, se actualiza, se finaliza, se asigna o se cancela.
+// ---------------------------------------------------------------------
+
+const eventosIncidencia = [
+  EVENTOS.INCIDENCIA_CREADA,
+  EVENTOS.INCIDENCIA_ACTUALIZADA,
+  EVENTOS.INCIDENCIA_FINALIZADA,
+  EVENTOS.INCIDENCIA_ASIGNADA,
+  EVENTOS.INCIDENCIA_CANCELADA
+];
+
+// Se recarga usando el mismo rango de fechas que esta mostrando el panel,
+// para no pisar el filtro elegido por el usuario.
+const refrescarPorEvento = () => {
+  const desde = inputDesde.value;
+  const hasta = inputHasta.value;
+  cargarDashboard({ desde, hasta, silencioso: true });
+};
+
+for (const evento of eventosIncidencia) {
+  escucharEvento(evento, refrescarPorEvento);
+}
 
 cargarDashboard();

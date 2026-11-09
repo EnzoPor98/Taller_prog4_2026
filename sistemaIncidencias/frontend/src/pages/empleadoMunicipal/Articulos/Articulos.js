@@ -38,7 +38,7 @@ async function cargarTabla() {
           const columnaAcciones = document.createElement("td");
 
           const botonEditar = document.createElement("button");
-          botonEditar.textContent = "REPORTAR";
+          botonEditar.textContent = "Crear Incidencia";
           botonEditar.classList.add("btn", "btn-warning");
           botonEditar.id = "botonReportar";
 

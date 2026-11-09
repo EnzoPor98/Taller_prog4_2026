@@ -15,6 +15,7 @@ import {
     formatearFechaHora
 } from '../utils/fechas.js';
 import { generarPdf } from './reportes.service.js';
+import { EVENTOS, SALAS_TODAS, emitirEventoEnSalas, emitirEventoAUsuario } from '../socket/socket.js';
 
 // Capa de servicio: reglas de negocio y manejo de transacciones.
 
@@ -36,33 +37,62 @@ const enTransaccion = async (operacion) => {
 
 // Asigna la incidencia a un empleado de sistemas y la pasa a "En Proceso".
 // Se permite reasignar mientras siga en proceso.
-export const asignarIncidencia = (idIncidencia, idEmpleado) => enTransaccion(async (client) => {
-    const incidencia = await incidenciasData.obtenerParaActualizar(client, idIncidencia);
-    if (!incidencia) {
-        throw new ErrorHttp(404, 'Incidencia no encontrada');
-    }
+export const asignarIncidencia = async (idIncidencia, idEmpleado) => {
+    const actualizada = await enTransaccion(async (client) => {
+        const incidencia = await incidenciasData.obtenerParaActualizar(client, idIncidencia);
+        if (!incidencia) {
+            throw new ErrorHttp(404, 'Incidencia no encontrada');
+        }
 
-    const asignable = [ESTADOS.PENDIENTE, ESTADOS.EN_PROCESO].includes(incidencia.id_estado);
-    if (!asignable) {
-        throw new ErrorHttp(409, 'Solo se pueden asignar incidencias pendientes o en proceso');
-    }
+        const asignable = [ESTADOS.PENDIENTE, ESTADOS.EN_PROCESO].includes(incidencia.id_estado);
+        if (!asignable) {
+            throw new ErrorHttp(409, 'Solo se pueden asignar incidencias pendientes o en proceso');
+        }
 
-    const empleado = await usuariosData.obtenerActivoPorId(client, idEmpleado);
-    if (!empleado || empleado.rol !== ROLES.SISTEMAS) {
-        throw new ErrorHttp(400, 'El usuario indicado no es un empleado activo del área de sistemas');
-    }
+        const empleado = await usuariosData.obtenerActivoPorId(client, idEmpleado);
+        if (!empleado || empleado.rol !== ROLES.SISTEMAS) {
+            throw new ErrorHttp(400, 'El usuario indicado no es un empleado activo del área de sistemas');
+        }
 
-    const actualizada = await incidenciasData.actualizarAsignacion(
-        client, idIncidencia, idEmpleado, ESTADOS.EN_PROCESO
-    );
+        const modificada = await incidenciasData.actualizarAsignacion(
+            client, idIncidencia, idEmpleado, ESTADOS.EN_PROCESO
+        );
 
-    // Solo se registra en el historial si el estado cambio
-    if (incidencia.id_estado !== ESTADOS.EN_PROCESO) {
-        await incidenciasData.registrarHistorial(client, idIncidencia, ESTADOS.EN_PROCESO);
-    }
+        // Solo se registra en el historial si el estado cambio
+        if (incidencia.id_estado !== ESTADOS.EN_PROCESO) {
+            await incidenciasData.registrarHistorial(client, idIncidencia, ESTADOS.EN_PROCESO);
+        }
+
+        return modificada;
+    });
+
+    // Se avisa en tiempo real (fuera de la transaccion) para que el Director actualice sus graficos
+    emitirEventoEnSalas(EVENTOS.INCIDENCIA_ASIGNADA, {
+        id_incidencia: idIncidencia,
+        id_estado: ESTADOS.EN_PROCESO,
+        estado: NOMBRE_ESTADO[ESTADOS.EN_PROCESO],
+        asignado_a: actualizada?.asignado_a ?? null
+    }, SALAS_TODAS);
+
+    // Ademas se avisa SOLO al empleado de sistemas que recibio la asignacion:
+    // su pantalla muestra un modal y recarga la tabla con la nueva incidencia.
+    const datosAsignacion = await incidenciasData.obtenerDatosAsignacion(idIncidencia);
+    emitirEventoAUsuario(EVENTOS.INCIDENCIA_RECIBIDA, {
+        id_incidencia: idIncidencia,
+        id_estado: ESTADOS.EN_PROCESO,
+        estado: NOMBRE_ESTADO[ESTADOS.EN_PROCESO],
+        prioridad: datosAsignacion?.prioridad ?? null,
+        descripcion_pedido: datosAsignacion?.descripcion_pedido ?? null,
+        articulo: datosAsignacion?.articulo ?? null,
+        area: datosAsignacion?.area ?? null,
+        creado: datosAsignacion?.creado ?? null,
+        creador: datosAsignacion?.nombre_creador
+            ? `${datosAsignacion.nombre_creador} ${datosAsignacion.apellido_creador ?? ''}`.trim()
+            : null
+    }, actualizada?.asignado_a);
 
     return actualizada;
-});
+};
 
 // Cancela una incidencia pendiente.
 // El director puede cancelar cualquiera; el empleado municipal solo las propias.
@@ -89,7 +119,58 @@ export const cancelarIncidencia = async (idIncidencia, usuario) => {
     // El mail se envia fuera de la transaccion: si falla, la cancelacion ya quedo guardada
     const notificado = await notificarCancelacion(idIncidencia, usuario.id);
 
+    // Se avisa en tiempo real para que el Director actualice sus graficos
+    emitirEventoEnSalas(EVENTOS.INCIDENCIA_CANCELADA, {
+        id_incidencia: idIncidencia,
+        id_estado: ESTADOS.CANCELADA,
+        estado: NOMBRE_ESTADO[ESTADOS.CANCELADA],
+        cancelada_por: usuario.id
+    }, SALAS_TODAS);
+
     return { incidencia: cancelada, notificado };
+};
+
+// Actualiza el estado de una incidencia (finalizarla o cambiar su estado) y notifica por socket.
+// Se usa cuando el empleado de sistemas cierra una incidencia o el director la actualiza.
+export const actualizarIncidencia = async (idIncidencia, { id_estado, descripcion_resolucion }, usuario) => {
+    if (!id_estado) {
+        throw new ErrorHttp(400, 'El estado de la incidencia es obligatorio');
+    }
+
+    const actualizada = await enTransaccion(async (client) => {
+        const incidencia = await incidenciasData.obtenerParaActualizar(client, idIncidencia);
+        if (!incidencia) {
+            throw new ErrorHttp(404, 'Incidencia no encontrada');
+        }
+
+        const modificada = await incidenciasData.actualizarEstadoYResolucion(
+            client, idIncidencia, id_estado, descripcion_resolucion ?? null
+        );
+
+        // El historial se registra solo si el estado cambio
+        if (incidencia.id_estado !== id_estado) {
+            await incidenciasData.registrarHistorial(client, idIncidencia, id_estado);
+        }
+
+        return modificada;
+    });
+
+    const finalizada = id_estado === ESTADOS.RESUELTA;
+
+    // Se avisa en tiempo real para que el Director actualice sus graficos
+    emitirEventoEnSalas(
+        finalizada ? EVENTOS.INCIDENCIA_FINALIZADA : EVENTOS.INCIDENCIA_ACTUALIZADA,
+        {
+            id_incidencia: idIncidencia,
+            id_estado: id_estado,
+            estado: NOMBRE_ESTADO[id_estado] ?? null,
+            descripcion_resolucion: descripcion_resolucion ?? null,
+            actualizado_por: usuario?.id ?? null
+        },
+        SALAS_TODAS
+    );
+
+    return actualizada;
 };
 
 const notificarCancelacion = async (idIncidencia, idUsuarioQueCancela) => {

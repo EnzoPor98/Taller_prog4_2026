@@ -62,7 +62,7 @@ async function cargarTabla() {
         const boton = document.createElement("button");
         boton.id = "botonFinalizar";
         boton.className = "btn btn-warning";
-        boton.textContent = "FINALIZAR";
+        boton.textContent = "Cancelar";
 
         columnaAcciones.appendChild(boton);
       }
@@ -77,50 +77,17 @@ async function cargarTabla() {
 
 // MODAL
 const modal = new bootstrap.Modal(document.getElementById("modal"));
-const btnCrearIncidencia = document.getElementById("btnCrearIncidencia");
-const btnReiniciar = document.getElementById("btnReiniciar");
-const btnReportar = document.getElementById("btnReportar");
 const alertaArticulo = document.getElementById("div-articulo");
 
-btnCrearIncidencia.addEventListener("click", () => {
-  modal.show();
-  alertaArticulo.hidden = true;
-});
-
-btnReiniciar.addEventListener("click", () => {
-  reiniciarFormulario();
-});
-
-function reiniciarFormulario() {
-  const textArea = document.getElementById("pedidoInput");
-  textArea.disabled = true;
-  textArea.value = "";
-
-  const buscarArticuloInput = document.getElementById("articuloInput");
-  buscarArticuloInput.value = "";
-
-  alertaArticulo.hidden = true;
-}
-
-// BUSCAR ARTICULO PARA CREAR INCIDENCIA
-let articuloIncidencia = null;
-
-document
-  .getElementById("buscarArticulo")
-  .addEventListener("click", async () => {
-    try {
-      const idArticulo = Number(document.getElementById("articuloInput").value);
-
-      const respuesta = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/articulos/${idArticulo}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      const articulo = await respuesta.json();
+// Carga la lista de articulos disponibles para reportar
+async function cargarArticulos() {
+  try {
+    const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/articulos`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const articulos = await respuesta.json();
 
     const select = document.getElementById("articuloInput");
     select.textContent = "";
@@ -136,45 +103,9 @@ document
   } catch (error) {
     console.error("Error al conectar con el backend:", error);
   }
-  })
+}
 
-
-// CREAR INCIDENCIA
-const nuevaIncidencia = document
-  .getElementById("btnReportar")
-  .addEventListener("click", async () => {
-    try {
-      const pedido = document.getElementById("pedidoInput").value;
-
-      const nuevaIncidencia = {
-        id_articulo: articuloIncidencia,
-        id_estado: 1,
-        creado_por: user.id_usuario,
-        asignado_a: 4, //Aca hay que ver logica en lo del director que asigna las incidencias.(estren@correo.com es empleado de sist). 
-                        //Hasta que se haga la pantalla del director todo se asigna a ese usuario.
-        creado: new Date().toISOString(),
-        prioridad: 3,
-        descripcion_pedido: pedido,
-        descripcion_resolucion: "",
-      };
-
-      const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/incidencias`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(nuevaIncidencia),
-      });
-
-      cargarTabla();
-      reiniciarFormulario();
-      modal.hide();
-    } catch (error) {
-      console.error("Error al conectar con el backend:", error);
-    }
-  });
-
+// CANCELAR INCIDENCIA PROPIA (estado Pendiente -> Cancelada)
 document
   .getElementById("bodyTable")
   .addEventListener("click", async (event) => {
@@ -203,9 +134,6 @@ document
       console.error("Error al conectar con el backend:", error);
     }
   });
-
-// MODAL
-const modal = new bootstrap.Modal(document.getElementById("modal"));
 
 // ABRIR MODAL
 const btnReportar = document.getElementById("btnReportar");
@@ -327,7 +255,7 @@ btnConfirmar.addEventListener("click", async () => {
       descripcion_resolucion: "",
     };
 
-    const respuesta = await fetch("http://localhost:3000/api/incidencias", {
+    const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/incidencias`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

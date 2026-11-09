@@ -2,6 +2,8 @@ import pool from '../../config/db.js';
 import { enviarMail } from '../services/mail.service.js';
 import * as incidenciasService from '../services/incidencias.service.js';
 import { responderError } from '../utils/errores.js';
+import { ESTADOS } from '../utils/estados.js';
+import { EVENTOS, SALAS_TODAS, emitirEventoEnSalas } from '../socket/socket.js';
 const getIncidencias = async (req, res) => {
     try {
         const idUsuario = req.usuario.id;
@@ -103,52 +105,51 @@ const updateIncidencia = async (req, res) => {
         id_estado
     } = req.body;
 
-    const id_incidencia = req.params.id;
+    const id_incidencia = Number(req.params.id);
+
     try {
-        const status = finalizada ? 3 : (id_estado ?? null);
-        const queryUpdate = `UPDATE incidencias SET
-                id_estado = $1,
-                descripcion_resolucion = $2
-                WHERE id_incidencia = $3
-                RETURNING *;
-        `;
-        const values = [
-            status, descripcion_resolucion, id_incidencia
-        ]
-        
-        await pool.query(queryUpdate, values);
+        // "finalizada: true" es la forma que usa el frontend para cerrar una incidencia.
+        const status = finalizada ? ESTADOS.RESUELTA : Number(id_estado);
 
-        const query = `
-        INSERT INTO incidencias_estados (id_incidencia,id_estado, fecha_hora_estado)
-        VALUES ($1, $2, $3)
-        RETURNING *;
-        `;
-        await pool.query(query, [Number(id_incidencia), Number(status), new Date().toISOString()]);
-
+        // El servicio actualiza la incidencia, registra el historial
+        // y avisa por socket a los demas usuarios conectados.
+        const incidencia = await incidenciasService.actualizarIncidencia(
+            id_incidencia,
+            { id_estado: status, descripcion_resolucion },
+            req.usuario
+        );
 
         // Aca inyectar el envio de emails
         if (finalizada) {
-            await enviarMail({
-                to: 'barretocristian7@gmail.com',
-                subject: 'Incidencia finalizada',
-                template: 'incidencia-finalizada',
-                data: {
-                    nombre: 'Cristian',
-                    id: 123,
-                    articulo: 'Monitor Samsung',
-                    descripcion: 'Falla de funcionamiento',
-                    area: 'Sistemas',
-                    finalizadoPor: 'Juan Pérez'
-                }
-            });
+            try {
+                await enviarMail({
+                    to: 'barretocristian7@gmail.com',
+                    subject: 'Incidencia finalizada',
+                    template: 'incidencia-finalizada',
+                    data: {
+                        nombre: 'Cristian',
+                        id: id_incidencia,
+                        articulo: 'Monitor Samsung',
+                        descripcion: 'Falla de funcionamiento',
+                        area: 'Sistemas',
+                        finalizadoPor: 'Juan Pérez'
+                    }
+                });
+            } catch (errorMail) {
+                // La incidencia ya quedo guardada: un mail fallido no debe romper la operacion
+                console.error(`No se pudo enviar el mail de finalizacion de la incidencia #${id_incidencia}:`, errorMail.message);
+            }
         }
 
-        return res.status(200).json({ mensaje: 'Categoría actualizada con éxito' });
+        return res.status(200).json({
+            mensaje: 'Incidencia actualizada con éxito',
+            incidencia
+        });
 
 
     } catch (error) {
         console.log("Ocurrio un error al actualizar la incidencia", error)
-        return res.status(500).json({ mensaje: 'Ocurrio un error al actualizar la incidencia' });
+        return responderError(res, error, 'Ocurrio un error al actualizar la incidencia');
 
     }
 
@@ -167,10 +168,11 @@ const createIncidencia = async(req, res) =>{
     } = req.body;
  try {
 
-    const sql = `INSERT INTO 
-                  public.incidencias 
-                  (id_articulo, id_estado, creado_por, asignado_a, creado, prioridad, descripcion_pedido, descripcion_resolucion) 
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`;
+    const sql = `INSERT INTO
+                  public.incidencias
+                  (id_articulo, id_estado, creado_por, asignado_a, creado, prioridad, descripcion_pedido, descripcion_resolucion)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                RETURNING *;`;
 
     const values = [
       id_articulo,
@@ -184,6 +186,15 @@ const createIncidencia = async(req, res) =>{
     ];
 
     const { rows } = await pool.query(sql, values);
+
+    // Se avisa en tiempo real para que el Director actualice sus graficos
+    const idIncidencia = rows[0]?.id_incidencia ?? null;
+    emitirEventoEnSalas(EVENTOS.INCIDENCIA_CREADA, {
+        id_incidencia: idIncidencia,
+        id_estado: id_estado ?? null,
+        prioridad: prioridad ?? null,
+        creado_por: creado_por ?? req.usuario?.id ?? null
+    }, SALAS_TODAS);
 
     res.status(200).json({ incidencias: rows });
   } catch (error) {

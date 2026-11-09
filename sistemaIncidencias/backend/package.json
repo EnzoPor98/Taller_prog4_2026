@@ -24,7 +24,11 @@
     "pg": "^8.23.0",
     "puppeteer": "^25.16.0",
     "resend": "^6.34.1",
+    "socket.io": "^4.8.4",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.4"
   }
 }

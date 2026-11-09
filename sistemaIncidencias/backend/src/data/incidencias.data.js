@@ -37,6 +37,18 @@ export const actualizarEstado = async (client, idIncidencia, idEstado) => {
     return rows[0];
 };
 
+// Actualiza el estado de la incidencia y su descripcion de resolucion en una sola operacion.
+export const actualizarEstadoYResolucion = async (client, idIncidencia, idEstado, descripcionResolucion) => {
+    const query = `
+        UPDATE incidencias
+        SET id_estado = $1, descripcion_resolucion = $2
+        WHERE id_incidencia = $3
+        RETURNING *;
+    `;
+    const { rows } = await client.query(query, [idEstado, descripcionResolucion, idIncidencia]);
+    return rows[0];
+};
+
 // fecha_hora_estado toma el valor por defecto de la base (NOW)
 export const registrarHistorial = async (client, idIncidencia, idEstado) => {
     const query = `
@@ -60,6 +72,31 @@ export const obtenerDatosNotificacion = async (idIncidencia) => {
             INNER JOIN articulos art ON art.id_articulo = inc.id_articulo
             INNER JOIN areas ar ON ar.id_area = art.id_area
             INNER JOIN usuarios creador ON creador.id_usuario = inc.creado_por
+        WHERE inc.id_incidencia = $1;
+    `;
+    const { rows } = await pool.query(query, [idIncidencia]);
+    return rows[0] ?? null;
+};
+
+// Datos de la incidencia para avisarle al empleado de sistemas que la recibio.
+// Se usa para el modal en tiempo real y para el contenido del mensaje.
+export const obtenerDatosAsignacion = async (idIncidencia) => {
+    const query = `
+        SELECT
+            inc.id_incidencia,
+            inc.descripcion_pedido,
+            inc.prioridad,
+            inc.creado,
+            art.descripcion AS articulo,
+            ar.descripcion AS area,
+            creador.nombres AS nombre_creador,
+            creador.apellidos AS apellido_creador,
+            est.descripcion AS estado
+        FROM incidencias inc
+            INNER JOIN articulos art ON art.id_articulo = inc.id_articulo
+            INNER JOIN areas ar ON ar.id_area = art.id_area
+            INNER JOIN usuarios creador ON creador.id_usuario = inc.creado_por
+            INNER JOIN estados est ON est.id_estado = inc.id_estado
         WHERE inc.id_incidencia = $1;
     `;
     const { rows } = await pool.query(query, [idIncidencia]);
