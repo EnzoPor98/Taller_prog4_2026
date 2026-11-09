@@ -47,11 +47,8 @@
     <h6>© 2026 Sistema de Incidencias. Todos los derechos reservados.</h6>
   </footer>
   <script type="module" src="./src/main.js"></script>
-  <script>
-
-
-
-    const API_URL = "http://localhost:3000"; // ajustar puerto/host del backend si es distinto
+  <script type="module">
+    const API_URL = import.meta.env.VITE_API_URL;
 
     const form = document.getElementById("loginForm");
 
@@ -74,7 +71,6 @@
         });
 
         const data = await response.json();
-        console.log("🚀 ~ data:", data)
 
         if (!response.ok) {
           alert(data.mensaje || "Email o contraseña incorrectos.");
@@ -82,8 +78,8 @@
         }
 
         // Guardamos el token y los datos del usuario para usarlos en otras páginas
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("usuario", JSON.stringify(data.usuario));
+        sessionStorage.setItem("token", data.token);
+        sessionStorage.setItem("usuario", JSON.stringify(data.usuario));
 
 
         switch (data.usuario.rol) {
@@ -91,10 +87,10 @@
             window.location.href = "/src/pages/empleadoSistemas/empleadoSistemas.html";
             break;
           case 2:
-            window.location.href = "/src/pages/empleadoMunicipal/empleadoMunicipal.html";
+            window.location.href = "/src/pages/empleadoMunicipal/Inicio/Inicio.html";
             break;
           case 1:
-            window.location.href = "/src/pages/director/director.html";
+           window.location.href = "/src/pages/directorSistemas/Dashboard/Inicio.html";
             break;
           default:
             alert("Rol no reconocido.");

@@ -1,3 +1,5 @@
+const token = sessionStorage.getItem('token');
+const API_URL = `${import.meta.env.VITE_API_URL}/api`;
 document.addEventListener("DOMContentLoaded", () => {
   cargarTabla();
 });
@@ -5,13 +7,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function cargarTabla() {
   try {
-    
-    const resIncidencias = await fetch("http://localhost:3000/api/incidencias");
+
+    const resIncidencias = await fetch(`${API_URL}/incidencias`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     const { incidencias } = await resIncidencias.json();
 
     // 2. Traemos la lista de empleados de sistemas para el select
     // (Asegurate de que exista un endpoint similar a este)
-    const resEmpleados = await fetch("http://localhost:3000/api/empleados-sistemas");
+    const resEmpleados = await fetch(`${API_URL}/empleados-sistemas`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     const { empleados } = await resEmpleados.json();
 
     const tbody = document.getElementById("bodyTable");
@@ -90,9 +100,12 @@ async function asignarEmpleado(idIncidencia, idEmpleado) {
   }
 
   try {
-    await fetch(`http://localhost:3000/api/incidencias/${idIncidencia}/asignar`, {
-      method: 'PUT', 
-      headers: { 'Content-Type': 'application/json' },
+    await fetch(`${API_URL}/incidencias/${idIncidencia}/asignar`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ asignado_a: idEmpleado })
     });
     alert("Incidencia asignada correctamente.");
@@ -107,9 +120,12 @@ async function cancelarIncidencia(idIncidencia) {
   if (!confirmacion) return;
 
   try {
-    await fetch(`http://localhost:3000/api/incidencias/${idIncidencia}/cancelar`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/api/incidencias/${idIncidencia}/cancelar`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' }
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      }
     });
     alert("Incidencia cancelada con éxito.");
     cargarTabla(); 

@@ -17,5 +17,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    console.log(`DOM listo. Se configuraron ${botonesMenu.length} botones de navegación.`);
 });

@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function cargarTabla() {
   try {
-    const resIncidencias = await fetch("http://localhost:3000/api/incidencias");
+    const resIncidencias = await fetch(`${import.meta.env.VITE_API_URL}/api/incidencias`);
     const { incidencias } = await resIncidencias.json();
     
     

@@ -1,137 +1,74 @@
+
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import apiRouter from './src/routes/index.js';
 import pool from './config/db.js';
+import apiRouter from './src/routes/index.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './swagger.js';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+
 app.use(
-  morgan((tokens, req, res) => {
-    const timestamp = new Date().toISOString();
-    const method = tokens.method(req, res);
-    const endpoint = tokens.url(req, res);
-    const status = tokens.status(req, res);
-    const responseTime = tokens['response-time'](req, res);
+    morgan((tokens, req, res) => {
+        const timestamp = new Date().toISOString();
 
-    return `${timestamp} [TFI-PROG-4] ${method} ${endpoint} ${status} ${responseTime} ms`;
-  })
+        return `${timestamp} [TFI-PROG-4] ${tokens.method(req, res)} ${tokens.url(req, res)} ${tokens.status(req, res)} ${tokens['response-time'](req, res)} ms`;
+    })
 );
-app.use(express.static('public'));
 
-// Ruta raíz de prueba
-app.get('/healtcheck', (req, res) => {
-  res.json({ mensaje: '¡El servidor está funcionando correctamente!' });
+// Healthcheck
+app.get('/healthcheck', (req, res) => {
+    res.json({
+        mensaje: '¡El servidor está funcionando correctamente!'
+    });
+});
+app.get('/db-check', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT
+                NOW() AS fecha,
+                current_database() AS base_datos,
+                current_user AS usuario
+        `);
+
+        res.json({
+            conectado: true,
+            mensaje: 'Conexión exitosa con Supabase',
+            datos: result.rows[0]
+        });
+
+    } catch (error) {
+        console.error('Error de conexión:', error);
+
+        res.status(500).json({
+            conectado: false,
+            mensaje: 'Error al conectar con PostgreSQL',
+            error: error.message
+        });
+    }
 });
 
-// ---------------------------------------------------------------------
-// -------------------------------------------------- EMPLEADO MUNICIPAL
-// ---------------------------------------------------------------------
-
-// BROWSE: OBTIENE TODOS LOS ARTICULOS.
-app.get('/src/pages/empleadoMunicipal/Articulos', async (req, res) => {
-  try {
-    const sql = 'SELECT * FROM public.articulos;';
-    const { rows } = await pool.query(sql);
-
-    console.log(rows);
-
-    res.status(200).json({ articulos: rows });
-  } catch (error) {
-    console.log(`Paso algo -> ${error}`);
-    res.status(500).json({ error: 'Error interno.' });
-  }
-});
-
-// READ: OBTIENE UN SOLO ARTICULO.
-app.get('/src/pages/empleadoMunicipal/Articulos/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const sql = 'SELECT * FROM public.articulos WHERE id_articulo = $1';
-    const { rows } = await pool.query(sql, [id]);
-
-    res.status(200).json(rows);
-  } catch (error) {
-    res.status(500).json({ error: 'Error interno.' });
-  }
-});
-
-// LISTA LAS INCIDENCIAS DEL USUARIO.
-app.get('/src/pages/empleadoMunicipal/Incidencias', async (req, res) => {
-  try {
-    const sql = `SELECT 
-                    *
-                FROM 
-                    public.incidencias
-                WHERE
-                    creado_por = 4;`;
-    const { rows } = await pool.query(sql);
-
-    console.log(rows);
-
-    res.status(200).json({ incidencias: rows });
-  } catch (error) {
-    console.log(`Paso algo -> ${error}`);
-    res.status(500).json({ error: 'Error interno.' });
-  }
-});
-
-app.get('/src/pages/empleadoMunicipal/Perfil', async (req, res) => {
-  try {
-    const sql = `SELECT 
-                    id_usuario,
-                    id_area,
-                    nombres,
-                    apellidos,
-                    usuario,
-
-                    rol
-                FROM 
-                    public.usuarios
-                WHERE
-                    id_usuario = 4;`;
-    const { rows } = await pool.query(sql);
-
-    console.log(rows);
-
-    res.status(200).json({ usuario: rows });
-  } catch (error) {
-    console.log(`Paso algo -> ${error}`);
-    res.status(500).json({ error: 'Error interno.' });
-  }
-});
-
-// Rutas de la API
+// Rutas
 app.use('/api', apiRouter);
 
-app.use ('/api-docs', 
-  swaggerUi.serve , 
-  swaggerUi.setup (swaggerSpec)
-); // Aquí van las rutas de tu aplicación... app.listen (port, () => { console.log ( ` El servidor se está ejecutando en el puerto ${port} ` ); });
+app.use(
+    '/api-docs',
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerSpec)
+);
 
-
-// 404 handler
+// 404
 app.use((req, res) => {
-  res.status(404).json({ error: `Cannot GET ${req.originalUrl}` });
+    res.status(404).json({
+        error: `Cannot GET ${req.originalUrl}`
+    });
 });
 
-// Iniciar el servidor
-try {
-  await pool.query('SELECT 1'); // Si responde está conectado
-  console.log('Conexión exitosa a la base de datos ✅');
-
-  app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
-  });
-} catch (error) {
-  console.error('❌ Error al conectar con la base de datos');
-  console.error(error.message);
-  process.exit(1);
-}
+// Exportar aplicación para Vercel
+export default app;

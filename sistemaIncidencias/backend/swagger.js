@@ -18,8 +18,17 @@ const options = {
       { name: 'Articulos',  description: 'Endpoints de artículos' },
       { name: 'Categorias', description: 'Endpoints de categorías' },
       { name: 'Incidencias',description: 'Endpoints de incidencias' },
+      { name: 'Auth',       description: 'Endpoints de autenticación' },
     ],
-    
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
   },
    apis: [path.join(__dirname, 'src/routes/*.js')],
 };

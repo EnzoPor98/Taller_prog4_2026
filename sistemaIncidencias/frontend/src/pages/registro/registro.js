@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/api";
+const API_URL = `${import.meta.env.VITE_API_URL}/api`;
 let areas = [];
 
 async function getAreas() {
@@ -64,7 +64,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
 
             const data = await response.json();
-            console.log("🚀 ~ data:", data);
 
             if (!response.ok) {
                 alert(data.mensaje || "No se pudo registrar el usuario.");

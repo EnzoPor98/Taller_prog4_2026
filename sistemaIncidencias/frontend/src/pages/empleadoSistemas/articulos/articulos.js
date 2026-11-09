@@ -1,6 +1,6 @@
 // Lista de áreas (podría venir de un backend en el futuro)
-const BACKEND_URL = 'http://localhost:3000/api';
-const token = localStorage.getItem('token');
+const API_URL = `${import.meta.env.VITE_API_URL}/api`;
+const token = sessionStorage.getItem('token');
 
 // Bootstrap viene expuesto en window.bootstrap desde /src/main.js
 // (cargado como módulo, así que se garantiza antes que este script).
@@ -14,7 +14,12 @@ function goToMenu() {
 async function getAreas() {
     let areas = [];
     try {
-        const response = await fetch(`${BACKEND_URL}/areas`);
+        const response = await fetch(`${API_URL}/areas`,{
+             headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
@@ -26,11 +31,15 @@ async function getAreas() {
     return areas;
 }
 
-// Categorías desde localStorage (las que el módulo de categorías ya guardó)
 async function getCategorias() {
     let categorias = [];
     try {
-        const response = await fetch(`${BACKEND_URL}/categories`);
+        const response = await fetch(`${API_URL}/categorias`,{
+             headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
@@ -93,7 +102,24 @@ function abrirModalCrear() {
 }
 
 async function abrirModalEditar(idArticulo) {
-    const art = articulos.find(art => art.id_articulo == idArticulo);
+    // READ: pedimos el artículo puntual al backend (consume la API).
+    let art = null;
+    try {
+        const response = await fetch(`${API_URL}/articulos/${idArticulo}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        art = await response.json();
+    } catch (error) {
+        console.error('Ocurrio un error al recuperar el articulo', error);
+        return;
+    }
+
     document.getElementById('createModalTitle').textContent = 'Editar Artículo';
 
     // Esperamos a que los <select> se pueblen antes de setear los valores
@@ -102,8 +128,8 @@ async function abrirModalEditar(idArticulo) {
 
     // Cargamos los valores actuales del artículo
     document.getElementById('descripcion').value = art.descripcion;
-    document.getElementById('categoria').value = art.categoria?.id_categoria;
-    document.getElementById('area').value = art.area?.id_area;
+    document.getElementById('categoria').value = art.categoria?.id_categoria ?? art.id_categoria;
+    document.getElementById('area').value = art.area?.id_area ?? art.id_area;
     document.getElementById('flexCheckChecked').checked = art.activo;
 
     modal.dataset.modo = 'editar';
@@ -120,7 +146,7 @@ async function eliminarArticulo(idArticulo) {
     if (!confirm(`¿Eliminar el artículo "${art.descripcion}"?`)) return;
 
     try {
-        const respuesta = await fetch(`${BACKEND_URL}/articulos/${idArticulo}`, {
+        const respuesta = await fetch(`${API_URL}/articulos/${idArticulo}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -152,6 +178,20 @@ async function guardarArticulo(e) {
     const areaId = document.getElementById('area').value;
     const activo = document.getElementById('flexCheckChecked').checked;
 
+const formData = new FormData();
+
+formData.append('descripcion', descripcion);
+formData.append('areaId', areaId);
+formData.append('categoriaId', categoriaId);
+formData.append('activo', activo);
+
+
+const archivo = document.getElementById('formFile').files[0];
+
+if (archivo) {
+    formData.append('archivo', archivo);
+}
+
     if (!descripcion) {
         alert('La descripción no puede estar vacía');
         return;
@@ -163,23 +203,18 @@ async function guardarArticulo(e) {
 
     // Guardamos el objeto entero (categoría y área) para que la tabla
     // pueda mostrar la descripción sin tener que volver a buscarla
-    const articulo = {
-        areaId,
-        categoriaId,
-        descripcion,
-        activo
-    }
+  
 
 
     if (modal.dataset.modo === 'crear') {
         try {
-            const respuesta = await fetch(`${BACKEND_URL}/articulos`, {
+            const respuesta = await fetch(`${API_URL}/articulos`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    // 'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(articulo)
+                body: formData
             });
 
             if (!respuesta.ok) {
@@ -194,8 +229,8 @@ async function guardarArticulo(e) {
     } else {
         const idArticulo = modal.dataset.idx;
         try {
-            const token = localStorage.getItem('token');
-            const respuesta = await fetch(`${BACKEND_URL}/articulos/${idArticulo}`, {
+            const token = sessionStorage.getItem('token');
+            const respuesta = await fetch(`${API_URL}/articulos/${idArticulo}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -210,7 +245,6 @@ async function guardarArticulo(e) {
             alert('Categoria ACTUALIZADA correctamente')
 
         } catch (error) {
-            console.log("🚀 ~ guardarArticulo ~ error:", error)
             alert
                 ('Ocurrio error al actualizar el articulo')
         }
@@ -226,7 +260,7 @@ async function guardarArticulo(e) {
 // ----------------------------------------------------
 async function renderTabla() {
     try {
-        const response = await fetch(`${BACKEND_URL}/articulos`,
+        const response = await fetch(`${API_URL}/articulos`,
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -256,11 +290,11 @@ async function renderTabla() {
                 : '<span class="badge bg-secondary">Inactiva</span>'}
           </td>
           <td class="mobile-buttons">
-            <button class="btn btn-sm btn-outline-primary" data-action="editar" data-idx="${art.id_articulo}">
-              <i class="fa fa-edit"></i>
+            <button class="btn btn-sm btn-outline-primary" data-action="editar" data-idx="${art.id_articulo}" title="Editar">
+              <i class="bi bi-pencil-square"></i>
             </button>
-            <button class="btn btn-sm btn-outline-danger" data-action="eliminar" data-idx="${art.id_articulo}">
-              <i class="fa fa-trash"></i>
+            <button class="btn btn-sm btn-outline-danger" data-action="eliminar" data-idx="${art.id_articulo}" title="Eliminar">
+              <i class="bi bi-trash"></i>
             </button>
           </td>
         </tr>
@@ -279,6 +313,35 @@ tbody.addEventListener('click', (e) => {
 
 document.getElementById('articulo-form').addEventListener('submit', guardarArticulo);
 
+
+const inputArchivo = document.getElementById('formFile');
+const preview = document.getElementById('preview');
+
+inputArchivo.addEventListener('change', () => {
+    const archivo = inputArchivo.files[0];
+
+    if (!archivo) {
+        preview.style.display = 'none';
+        preview.src = '';
+        return;
+    }
+
+    if (!archivo.type.startsWith('image/')) {
+        preview.style.display = 'none';
+        preview.src = '';
+        return;
+    }
+
+    preview.src = URL.createObjectURL(archivo);
+    preview.style.display = 'block';
+});
+
+modal.addEventListener('hidden.bs.modal', () => {
+    document.getElementById('articulo-form').reset();
+    if (preview.src.startsWith('blob:')) URL.revokeObjectURL(preview.src);
+    preview.src = '';
+    preview.style.display = 'none';
+});
 
 window.abrirModalCrear = abrirModalCrear;
 window.abrirModalEditar = abrirModalEditar;
