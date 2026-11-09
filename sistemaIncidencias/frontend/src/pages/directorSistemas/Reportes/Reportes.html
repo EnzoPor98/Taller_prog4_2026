@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reportes - Director de Sistemas</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="/src/components/navbar/navbar.css" />
+    <link rel="stylesheet" href="/src/pages/directorSistemas/director.css" />
+</head>
+
+<body>
+    <header>
+        <div id="navbar-placeholder"></div>
+    </header>
+
+    <main class="container py-4">
+        <h1 class="h3 mb-1">Reportes</h1>
+        <p class="text-body-secondary">Generación de reportes estadísticos de incidencias en PDF.</p>
+
+        <div class="tarjeta-panel text-body-secondary">
+            Próximamente: filtros por fecha y estado, y descarga del reporte en PDF.
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/components/navbar/navbar.js"></script>
+    <script type="module" src="/src/components/footer/footer.js"></script>
+    <!-- Reportes.js se rehace en el Dia 2 (PDF con Handlebars + Puppeteer desde la API) -->
+    <script type="module" src="/src/pages/directorSistemas/director.js"></script>
+</body>
+
+</html>
