@@ -19,10 +19,9 @@ async function cargarTabla() {
     for (let art of articulos) {
       const atributos_art = [
         art.id_articulo,
-        art.id_area,
-        art.id_categoria,
+        art.area?.descripcion,
+        art.categoria?.descripcion,
         art.descripcion,
-        art.activo,
       ];
 
       const fila = document.createElement("tr");
