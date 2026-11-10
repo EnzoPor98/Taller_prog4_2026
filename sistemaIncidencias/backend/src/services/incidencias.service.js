@@ -1,6 +1,6 @@
 import pool from '../../config/db.js';
 import IncidenciasRepository from '../repositories/incidencias.repository.js';
-import * as usuariosData from '../data/usuarios.data.js';
+import UsuariosRepository from '../repositories/usuarios.repository.js';
 import { enviarMail } from './mail.service.js';
 import { ErrorHttp } from '../utils/errores.js';
 import { ROLES } from '../utils/roles.js';
@@ -51,6 +51,7 @@ const enTransaccion = async (operacion) => {
 export default class IncidenciasService {
     constructor() {
         this.incidencias = new IncidenciasRepository();
+        this.usuarios = new UsuariosRepository();
     }
 
     getIncidencias = async (idUsuario) => {
@@ -93,7 +94,7 @@ export default class IncidenciasService {
                 throw new ErrorHttp(409, 'Solo se pueden asignar incidencias pendientes o en proceso');
             }
 
-            const empleado = await usuariosData.obtenerActivoPorId(client, idEmpleado);
+            const empleado = await this.usuarios.obtenerActivoPorId(idEmpleado, client);
             if (!empleado || empleado.rol !== ROLES.SISTEMAS) {
                 throw new ErrorHttp(400, 'El usuario indicado no es un empleado activo del área de sistemas');
             }
@@ -227,7 +228,7 @@ export default class IncidenciasService {
         try {
             const datos = await this.incidencias.obtenerDatosNotificacion(idIncidencia);
             const quienFinaliza = idUsuarioQueFinaliza
-                ? await usuariosData.obtenerActivoPorId(pool, idUsuarioQueFinaliza)
+                ? await this.usuarios.obtenerActivoPorId(idUsuarioQueFinaliza)
                 : null;
 
             await enviarMail({
@@ -255,7 +256,7 @@ export default class IncidenciasService {
     notificarCancelacion = async (idIncidencia, idUsuarioQueCancela) => {
         try {
             const datos = await this.incidencias.obtenerDatosNotificacion(idIncidencia);
-            const quienCancela = await usuariosData.obtenerActivoPorId(pool, idUsuarioQueCancela);
+            const quienCancela = await this.usuarios.obtenerActivoPorId(idUsuarioQueCancela);
 
             await enviarMail({
                 to: datos.email_creador,
@@ -333,7 +334,7 @@ export default class IncidenciasService {
                 zonaHoraria: ZONA_HORARIA,
                 rolSistemas: ROLES.SISTEMAS
             }),
-            usuariosData.obtenerActivoPorId(pool, idUsuario)
+            this.usuarios.obtenerActivoPorId(idUsuario)
         ]);
 
         let periodo = 'Todas las fechas';
