@@ -98,7 +98,7 @@ export default class IncidenciasRepository {
             id_articulo,
             id_estado,
             creado_por,
-            asignado_a ?? 0,
+            asignado_a ?? null,
             creado,
             prioridad,
             descripcion_pedido,
