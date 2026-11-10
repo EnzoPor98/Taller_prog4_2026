@@ -42,7 +42,7 @@ router.get('/',
     [
         query('rol')
             .optional()
-            .isInt({ min: 1, max: 3 }).withMessage('El rol debe ser 1, 2 o 3'),
+            .isIn(Object.values(ROLES).map(String)).withMessage(`El rol debe ser uno de: ${Object.values(ROLES).join(', ')}`),
     ],
     validate,
     getUsuarios);

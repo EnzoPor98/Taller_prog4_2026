@@ -7,6 +7,7 @@ import areasRoutes from './areas.routes.js';
 import incidenciasRoutes from './incidencias.routes.js';
 import mailRoutes from './mail.routes.js';
 import usuariosRoutes from './usuarios.routes.js';
+import rolesRoutes from './roles.routes.js';
 
 
 
@@ -22,6 +23,7 @@ router.use('/articulos', articulosRoutes);
 router.use('/categorias', categoriasRoutes);
 router.use('/incidencias', incidenciasRoutes);
 router.use('/usuarios', usuariosRoutes);
+router.use('/roles', rolesRoutes);
 
 
 

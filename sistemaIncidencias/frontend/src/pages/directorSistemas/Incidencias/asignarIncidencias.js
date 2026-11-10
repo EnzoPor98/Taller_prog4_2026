@@ -9,10 +9,11 @@ import {
   mostrarAlerta
 } from '../director.js';
 
-const ROL_SISTEMAS = 3;
+import { ROLES, idRolPorNombre } from '../../../utils/roles.js';
 
 let incidencias = [];
 let tecnicos = [];
+let idRolSistemas = null; // se resuelve con GET /roles
 let incidenciaSeleccionada = null;
 
 // Referencias al DOM
@@ -36,10 +37,15 @@ const btnConfirmarAsignar = document.getElementById('asignar-confirmar');
 
 async function cargarDatos() {
   try {
-    const [listaIncidencias, listaTecnicos] = await Promise.all([
+    const [listaIncidencias, roles] = await Promise.all([
       apiFetch('/incidencias'),
-      apiFetch('/usuarios?rol=3')
+      apiFetch('/roles')
     ]);
+    idRolSistemas = idRolPorNombre(roles, ROLES.SISTEMAS);
+    if (idRolSistemas === undefined) {
+      throw new Error(`No existe el rol "${ROLES.SISTEMAS}" en la base de datos.`);
+    }
+    const listaTecnicos = await apiFetch(`/usuarios?rol=${idRolSistemas}`);
     // Mas nuevas primero
     incidencias = listaIncidencias.sort((a, b) => b.id_incidencia - a.id_incidencia);
     tecnicos = listaTecnicos;
@@ -56,7 +62,7 @@ async function cargarDatos() {
 
 // Mientras nadie de sistemas la tome, la incidencia queda asignada al director
 function estaAsignadaATecnico(inc) {
-  return inc.asignado_a?.rol === ROL_SISTEMAS;
+  return inc.asignado_a?.rol === idRolSistemas;
 }
 
 function filtrarIncidencias() {

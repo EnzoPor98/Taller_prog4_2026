@@ -20,7 +20,7 @@ window.logout = logout;
     const nameEl = document.getElementById("userName");
     const roleEl = document.querySelector(".user-role");
     if (nameEl) nameEl.textContent = `${usuario.nombres} ${usuario.apellidos}`;
-    if (roleEl) roleEl.textContent = getRol(usuario.rol) || "Rol del usuario";
+    if (roleEl) roleEl.textContent = usuario.rol_descripcion || "Rol del usuario";
 
 
     const avatar = document.querySelector(".user-avatar");
@@ -42,17 +42,5 @@ window.logout = logout;
     }
   }
 
-  function getRol(rol) {
-    switch (rol) {
-      case 3:
-        return "Empleado del área de sistemas";
-      case 1:
-        return "Director del área de sistemas";
-      case 2:
-        return "Empleado Municipal";
-      default:
-        return "Rol del usuario";
-    }
-  }
   document.addEventListener("DOMContentLoaded", loadNavbar);
 })();

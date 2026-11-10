@@ -1,6 +1,5 @@
-const token = sessionStorage.getItem('token');
-const user = JSON.parse(sessionStorage.getItem('usuario'));
-
+const token = sessionStorage.getItem("token");
+const user = JSON.parse(sessionStorage.getItem("usuario"));
 
 document.addEventListener("DOMContentLoaded", () => {
   cargarTabla();
@@ -24,18 +23,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function cargarTabla() {
   try {
-    const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/incidencias`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const respuesta = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/incidencias`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
     const incidencias = await respuesta.json();
 
     const tbody = document.getElementById("bodyTable");
     tbody.textContent = "";
     for (let inc of incidencias) {
-      const asignadoA =
-        inc.asignado_a
+      const asignadoA = inc.asignado_a
         ? inc.asignado_a.nombres + " " + inc.asignado_a.apellidos
         : "Sin asignar";
       const articulo = inc.articulo?.descripcion;
@@ -84,11 +85,14 @@ const alertaArticulo = document.getElementById("div-articulo");
 // Carga la lista de articulos disponibles para reportar
 async function cargarArticulos() {
   try {
-    const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/articulos`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const respuesta = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/articulos`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
     const articulos = await respuesta.json();
 
     const select = document.getElementById("articuloInput");
@@ -174,13 +178,7 @@ btnContinuar.addEventListener("click", () => {
   let index = 0;
   let articuloIncidencia = "";
 
-  if (select.options.length === 1) {
-    index = select.value;
-    articuloIncidencia = select.textContent;
-  } else {
-    index = select.value - 1;
-    articuloIncidencia = select[index].textContent;
-  }
+  articuloIncidencia = select.options[select.selectedIndex].textContent;
 
   const pedidoIncidencia = document.getElementById("pedidoInput").value;
 
@@ -255,14 +253,17 @@ btnConfirmar.addEventListener("click", async () => {
       descripcion_resolucion: "",
     };
 
-    const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/incidencias`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+    const respuesta = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/incidencias`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(nuevaIncidencia),
       },
-      body: JSON.stringify(nuevaIncidencia),
-    });
+    );
 
     cargarTabla();
     reiniciarFormulario();

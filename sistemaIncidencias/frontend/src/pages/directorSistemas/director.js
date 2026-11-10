@@ -4,7 +4,7 @@
 // - helpers para llamar a la API y armar la interfaz
 
 const API_URL = `${import.meta.env.VITE_API_URL}/api`;
-const ROL_DIRECTOR = 1;
+import { ROLES } from '../../utils/roles.js';
 
 const PAGINAS = [
     { texto: 'Dashboard', icono: 'bi-speedometer2', href: '/src/pages/directorSistemas/Dashboard/Inicio.html' },
@@ -50,7 +50,7 @@ export function cerrarSesion() {
     window.location.href = '/index.html';
 }
 
-if (!token || usuario?.rol !== ROL_DIRECTOR) {
+if (!token || usuario?.rol_nombre !== ROLES.DIRECTOR) {
     cerrarSesion();
     // Corta la ejecucion del script de la pagina que importa este modulo
     throw new Error('Acceso no autorizado: se requiere rol Director');
