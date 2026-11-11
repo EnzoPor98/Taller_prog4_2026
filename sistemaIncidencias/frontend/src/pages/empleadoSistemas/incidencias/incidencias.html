@@ -100,6 +100,55 @@
         </div>
     </div>
 
+    <!-- Modal: nueva incidencia asignada (llega por socket en tiempo real) -->
+    <div class="modal fade" id="asignacionModal" tabindex="-1" aria-labelledby="asignacionModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="asignacionModalTitle">
+                        <i class="bi bi-bell-fill me-2" aria-hidden="true"></i>Se te asigno una nueva incidencia
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-3" id="asignacion-mensaje">
+                        Se te asigno una nueva incidencia. Ya esta disponible en la tabla de incidencias.
+                    </p>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Incidencia</dt>
+                        <dd class="col-sm-8" id="asignacion-id">-</dd>
+
+                        <dt class="col-sm-4">Prioridad</dt>
+                        <dd class="col-sm-8">
+                            <span id="asignacion-prioridad-badge" class="badge">-</span>
+                        </dd>
+
+                        <dt class="col-sm-4">Descripción</dt>
+                        <dd class="col-sm-8" id="asignacion-descripcion">-</dd>
+
+                        <dt class="col-sm-4">Artículo</dt>
+                        <dd class="col-sm-8" id="asignacion-articulo">-</dd>
+
+                        <dt class="col-sm-4">Área</dt>
+                        <dd class="col-sm-8" id="asignacion-area">-</dd>
+
+                        <dt class="col-sm-4">Solicitante</dt>
+                        <dd class="col-sm-8" id="asignacion-creador">-</dd>
+
+                        <dt class="col-sm-4">Estado</dt>
+                        <dd class="col-sm-8" id="asignacion-estado">-</dd>
+                    </dl>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="asignacion-ver">
+                        <i class="bi bi-eye me-1" aria-hidden="true"></i>Ver incidencia
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="/src/main.js"></script>
     <script type="module" src="/src/components/navbar/navbar.js"></script>
     <script type="module" src="/src/pages/empleadoSistemas/incidencias/incidencias.js"></script>

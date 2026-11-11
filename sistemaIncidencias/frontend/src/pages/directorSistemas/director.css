@@ -1,0 +1,125 @@
+/* Estilos compartidos por las paginas del Director de Sistemas */
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f7fa;
+}
+
+main {
+    flex: 1;
+}
+
+/* Links de navegacion dentro del navbar compartido */
+#navbar-placeholder .navbar-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin-left: 1rem;
+}
+
+#navbar-placeholder .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    padding: 0.25rem 0;
+}
+
+#navbar-placeholder .nav-link:hover,
+#navbar-placeholder .nav-link:focus-visible {
+    color: #ffffff;
+}
+
+#navbar-placeholder .nav-link.active {
+    color: #ffffff;
+    font-weight: 600;
+    border-bottom: 2px solid #ffffff;
+}
+
+/* El footer compartido usa 100vw y genera scroll horizontal cuando hay barra vertical */
+#footer-placeholder footer {
+    width: 100%;
+}
+
+.tarjeta-panel {
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    padding: 1rem;
+}
+
+/* Chart.js necesita un contenedor con alto definido para ser responsive */
+.contenedor-grafico {
+    position: relative;
+    height: 260px;
+}
+
+.tabla-incidencias td,
+.tabla-incidencias th {
+    vertical-align: middle;
+}
+
+.tabla-incidencias .celda-texto {
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.acciones {
+    white-space: nowrap;
+}
+
+/* Tablet: entre 577px y 991.98px (sm y md de Bootstrap) */
+@media (min-width: 577px) and (max-width: 991.98px) {
+    /* Logo y perfil en la primera fila, links de navegacion en una fila completa debajo */
+    #navbar-placeholder .custom-navbar .container-fluid {
+        flex-wrap: wrap;
+    }
+
+    #navbar-placeholder #navbarNavAltMarkup {
+        order: 3;
+        width: 100%;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    #navbar-placeholder .navbar-nav {
+        justify-content: center;
+        gap: 0.25rem 2rem;
+        margin-left: 0;
+    }
+
+    #navbar-placeholder .logo {
+        width: 170px;
+    }
+
+    /* Tabla de incidencias: botones solo con icono para evitar scroll horizontal */
+    .acciones .texto-boton {
+        display: none;
+    }
+
+    .tabla-incidencias .celda-texto {
+        max-width: 160px;
+    }
+
+    .contenedor-grafico {
+        height: 240px;
+    }
+}
+
+@media (max-width: 576px) {
+    #navbar-placeholder .navbar-nav {
+        order: 3;
+        width: 100%;
+        margin: 0.5rem 0 0;
+    }
+
+    .acciones .texto-boton {
+        display: none;
+    }
+
+    .tarjeta-panel {
+        padding: 0.5rem;
+    }
+}
