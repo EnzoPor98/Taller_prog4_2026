@@ -16,7 +16,8 @@ Tiene dos partes:
 | Backend    | Node.js, Express, `pg`, `jsonwebtoken`, `express-validator`, Morgan, Multer, Swagger |
 | Reportes y mails | Handlebars (plantillas), Puppeteer (PDF), Nodemailer (mails, SMTP) |
 | Frontend   | Vite, Bootstrap, Bootstrap Icons, Chart.js     |
-| Base datos | PostgreSQL (local o Supabase)                 |
+| Base datos | PostgreSQL en Supabase (dev), o local          |
+| Mails dev  | Mailpit (Docker)                               |
 
 ---
 
@@ -34,7 +35,7 @@ sistemaIncidencias/
 │   │   ├── routes/             # Rutas Express + validaciones + docs Swagger
 │   │   ├── controllers/        # Reciben la request y arman la respuesta
 │   │   ├── services/           # Reglas de negocio, transacciones, mails y PDF
-│   │   ├── data/               # Consultas SQL
+│   │   ├── repositories/       # Consultas SQL
 │   │   ├── middleware/         # Auth (token y roles), validaciones, upload
 │   │   ├── templates/          # Plantillas Handlebars (emails/ y reportes/)
 │   │   └── utils/              # Constantes (roles, estados), fechas, errores
@@ -60,14 +61,60 @@ sistemaIncidencias/
 
 ### 1. Base de datos
 
-Hay dos opciones:
+En desarrollo se usa la base **compartida en Supabase**: definir `DATABASE_URL` en `backend/.env` con la cadena de conexión del proyecto (pedírsela al equipo, no se sube al repo). Con `DATABASE_URL` definida, [`backend/config/db.js`](backend/config/db.js) se conecta a Supabase con SSL e ignora las variables `DB_*`.
 
-- **Supabase (compartida):** definir `DATABASE_URL` en `backend/.env` con la cadena de conexión del proyecto.
-- **PostgreSQL local:** dejar `DATABASE_URL` sin definir y completar `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` y `DB_NAME`. La base necesita las tablas del diagrama (áreas, artículos, categorías, estados, incidencias, incidencias_estados, usuarios), la extensión `pgcrypto` y las tablas de archivos de [`backend/config/run.txt`](backend/config/run.txt).
+```env
+DATABASE_URL=postgresql://usuario:password@host:6543/postgres
+```
 
-Si querés ver la base desde una UI web, en `run.txt` también está el comando de `pgweb` con Docker.
+#### Alternativa: PostgreSQL local (sin `DATABASE_URL`)
 
-### 2. Backend
+Si no tenés la `DATABASE_URL` de Supabase, podés levantar la base en tu Postgres local importando el dump que está en la raíz del proyecto. Trae la extensión `pgcrypto`, todas las tablas y datos de prueba.
+
+1. Crear la base e importar el dump:
+
+   ```bash
+   createdb -U postgres incidencias_db
+   psql -U postgres -d incidencias_db -f incidencias_db.sql
+   ```
+
+   > `incidencias_db_export.sql` es el mismo dump pero hace `DROP` de las tablas antes de crearlas. Usalo si querés reimportar sobre una base que ya existe (se pierden los datos que tenga).
+   >
+   > Si `psql` tira error con la línea `\restrict`, actualizá el cliente de PostgreSQL o borrá las líneas `\restrict` y `\unrestrict` del archivo.
+
+2. En `backend/.env`, dejar `DATABASE_URL` comentada o sin definir y completar los datos de conexión:
+
+   ```env
+   # DATABASE_URL=...
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_USER=postgres
+   DB_PASSWORD=tu_password
+   DB_NAME=incidencias_db
+   ```
+
+Si querés ver la base local desde una UI web, en [`backend/config/run.txt`](backend/config/run.txt) está el comando de `pgweb` con Docker.
+
+### 2. Mailpit (mails de desarrollo)
+
+Los mails (por ejemplo, el aviso al cancelar una incidencia) se capturan con **Mailpit** en Docker, así no salen a casillas reales:
+
+```bash
+cd backend
+docker compose up -d        # levanta el contenedor incidencias-mailpit
+```
+
+- Bandeja web: http://localhost:8025
+- SMTP: `localhost:1025`, sin usuario ni contraseña (ya viene así en `.env-example`).
+
+Para ver logs o apagarlo:
+
+```bash
+docker compose logs -f mailpit
+docker compose down
+```
+
+### 3. Backend
 
 ```bash
 cd backend
@@ -90,7 +137,7 @@ Las rutas principales cuelgan de `/api`:
 - `/incidencias`
 - `/usuarios`
 
-### 3. Frontend
+### 4. Frontend
 
 ```bash
 cd frontend
@@ -147,4 +194,4 @@ Estados de una incidencia: `1` Pendiente → `2` En Proceso (al asignarla) → `
 - Los endpoints de `/api/*` (salvo `/auth/login` y `/auth/register`) requieren token JWT en el header `Authorization: Bearer <token>`.
 - El token incluye el rol del usuario y el middleware `autorizarUsuarios([...])` controla qué roles pueden usar cada ruta. Si se inició sesión con una versión anterior, hay que volver a loguearse.
 - Asignar y cancelar se ejecutan en una transacción (`BEGIN`/`COMMIT`) y bloquean la incidencia con `SELECT ... FOR UPDATE`; el mail se envía después del `COMMIT`.
-- Los mails se envían por SMTP con Nodemailer (variables `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`). En desarrollo se usa Mailpit: `docker compose up -d` en `backend/` y los mails se ven en http://localhost:8025 (SMTP en `localhost:1025`, sin usuario). Si el envío falla, la operación se guarda igual y la respuesta indica `notificado: false`.
+- Los mails se envían por SMTP con Nodemailer (variables `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`). En desarrollo se usa Mailpit (ver [paso 2](#2-mailpit-mails-de-desarrollo)). Si el envío falla, la operación se guarda igual y la respuesta indica `notificado: false`.
